@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
   <title>Gastos Pareja 💑</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <style>
-    :root {
-      --c-manolo:#2563EB; --c-esposa:#DB2777;
-      --user-color:#2563EB; --user-light:#EFF6FF;
-      --c-bg:#F0F4FF; --c-card:#fff;
-      --c-text:#1e293b; --c-muted:#64748b;
-      --c-border:#e2e8f0; --shadow:0 4px 20px rgba(0,0,0,.08);
+    :root{
+      --c-manolo:#2563EB;--c-esposa:#DB2777;
+      --user-color:#2563EB;--user-light:#EFF6FF;
+      --c-bg:#F0F4FF;--c-card:#fff;
+      --c-text:#1e293b;--c-muted:#64748b;
+      --c-border:#e2e8f0;--shadow:0 4px 20px rgba(0,0,0,.08);
       --radius:18px;
     }
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -21,8 +22,8 @@
     /* LOADING */
     #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;
       height:100vh;gap:12px;color:var(--c-muted);font-size:15px;}
-    .spin{width:36px;height:36px;border:3px solid var(--c-border);border-top-color:var(--c-manolo);
-      border-radius:50%;animation:rot .8s linear infinite;}
+    .spin{width:36px;height:36px;border:3px solid var(--c-border);
+      border-top-color:var(--c-manolo);border-radius:50%;animation:rot .8s linear infinite;}
     @keyframes rot{to{transform:rotate(360deg);}}
 
     /* LOGIN */
@@ -39,7 +40,8 @@
     .lc:active{transform:scale(.95);}
     .lc-emoji{font-size:52px;}
     .lc-name{font-size:17px;font-weight:800;margin-top:10px;}
-    .login-hint{margin-top:28px;font-size:12px;color:#94a3b8;text-align:center;max-width:260px;line-height:1.7;}
+    .login-hint{margin-top:28px;font-size:12px;color:#94a3b8;text-align:center;
+      max-width:260px;line-height:1.7;}
 
     /* HEADER */
     #hdr{color:#fff;padding:20px 18px 22px;transition:background .4s;}
@@ -48,6 +50,10 @@
     .h-who{font-size:22px;font-weight:900;margin-top:2px;}
     .h-badge{background:rgba(255,255,255,.2);border-radius:50px;padding:3px 10px;
       font-size:11px;margin-top:5px;display:inline-block;font-weight:600;}
+    .h-new-week{background:#22c55e;border-radius:50px;padding:3px 10px;
+      font-size:11px;margin-top:5px;display:inline-block;font-weight:700;margin-left:6px;
+      animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
     .btn-cam{background:rgba(255,255,255,.2);border:none;color:#fff;padding:7px 14px;
       border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;}
     .h-disp-lbl{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:1px;
@@ -74,13 +80,23 @@
     /* TABS */
     #tabs{display:flex;background:#fff;border-bottom:1px solid var(--c-border);
       position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.04);}
-    .tab{flex:1;padding:13px 2px;border:none;background:none;cursor:pointer;font-size:11px;
+    .tab{flex:1;padding:12px 1px;border:none;background:none;cursor:pointer;font-size:10px;
       color:#94a3b8;border-bottom:2.5px solid transparent;font-weight:600;
-      font-family:inherit;transition:all .2s;}
+      font-family:inherit;transition:all .2s;line-height:1.3;}
     .tab.on{color:var(--user-color);border-bottom-color:var(--user-color);font-weight:800;}
 
     /* VIEW */
     #view{padding:16px 16px 90px;}
+
+    /* ALERTA */
+    .alerta{border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;
+      display:flex;align-items:center;gap:12px;animation:si .3s ease;}
+    .alerta-warn{background:linear-gradient(135deg,#fef3c7,#fde68a);}
+    .alerta-danger{background:linear-gradient(135deg,#fee2e2,#fca5a5);}
+    .alerta-nueva{background:linear-gradient(135deg,#d1fae5,#6ee7b7);}
+    .al-icon{font-size:28px;}
+    .al-t{font-size:13px;font-weight:800;color:#374151;}
+    .al-s{font-size:12px;color:#6b7280;margin-top:2px;}
 
     /* BALANCE */
     .bal-card{border-radius:var(--radius);padding:15px 18px;margin-bottom:14px;
@@ -92,6 +108,16 @@
     .bal-title{font-size:13px;font-weight:800;color:#374151;}
     .bal-sub{font-size:12px;color:#6b7280;margin-top:2px;}
     .bal-monto{font-size:20px;font-weight:900;color:#92400e;}
+
+    /* META AHORRO */
+    .meta-card{background:#fff;border-radius:var(--radius);padding:16px;
+      margin-bottom:14px;box-shadow:var(--shadow);border-left:4px solid #8b5cf6;}
+    .meta-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .meta-title{font-size:13px;font-weight:800;color:#5b21b6;}
+    .meta-monto{font-size:16px;font-weight:900;color:#5b21b6;}
+    .meta-bar-w{background:#ede9fe;border-radius:50px;height:8px;}
+    .meta-bar-f{background:linear-gradient(90deg,#8b5cf6,#a78bfa);height:8px;border-radius:50px;transition:width .6s;}
+    .meta-sub{font-size:11px;color:#7c3aed;margin-top:6px;font-weight:600;}
 
     /* USER CARDS */
     .ucards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
@@ -120,13 +146,15 @@
     .gc-inf{flex:1;min-width:0;}
     .gc-d{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .gc-m{font-size:11px;color:#94a3b8;margin-top:2px;}
+    .gc-split{font-size:10px;background:#f0fdf4;color:#16a34a;border-radius:4px;
+      padding:1px 5px;font-weight:700;margin-left:4px;}
     .gc-r{text-align:right;flex-shrink:0;}
     .gc-v{font-size:17px;font-weight:900;}
     .gc-del{background:none;border:none;cursor:pointer;font-size:15px;display:block;margin-top:2px;}
 
     /* HISTORIAL */
     .sem-blk{margin-bottom:22px;}
-    .sem-hdr{font-size:13px;font-weight:800;color:var(--c-text);margin-bottom:10px;
+    .sem-hdr{font-size:13px;font-weight:800;margin-bottom:10px;
       display:flex;align-items:center;justify-content:space-between;}
     .sem-tot{font-size:12px;background:var(--c-border);padding:3px 8px;
       border-radius:50px;color:var(--c-muted);}
@@ -134,6 +162,22 @@
     .sem-mini-card{flex:1;border-radius:12px;padding:10px;text-align:center;}
     .sem-mini-n{font-size:11px;color:#64748b;}
     .sem-mini-v{font-size:16px;font-weight:900;margin-top:2px;}
+
+    /* ANÁLISIS */
+    .chart-card{background:#fff;border-radius:var(--radius);padding:18px;
+      box-shadow:var(--shadow);margin-bottom:16px;}
+    .chart-title{font-size:14px;font-weight:800;margin-bottom:16px;color:var(--c-text);}
+    .chart-wrap{position:relative;height:220px;display:flex;align-items:center;justify-content:center;}
+    .chart-wrap canvas{max-width:100%;}
+    .month-selector{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+    .ms-btn{background:var(--c-border);border:none;border-radius:10px;
+      padding:6px 12px;cursor:pointer;font-size:18px;font-family:inherit;}
+    .ms-label{flex:1;text-align:center;font-size:14px;font-weight:700;}
+    .mes-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;justify-content:space-between;align-items:center;}
+    .mes-nombre{font-size:14px;font-weight:700;}
+    .mes-sub{font-size:12px;color:var(--c-muted);margin-top:2px;}
+    .mes-total{font-size:18px;font-weight:900;color:var(--user-color);}
 
     /* EMPTY */
     .empty{text-align:center;padding:48px 0;color:#94a3b8;}
@@ -155,7 +199,31 @@
       cursor:pointer;font-size:11px;color:#374151;font-family:inherit;font-weight:600;transition:all .15s;}
     .cb.on{border-color:var(--user-color);background:var(--user-light);}
     .cb span{font-size:22px;display:block;margin-bottom:2px;}
-    .btn-g{width:100%;margin-top:20px;padding:15px;font-size:16px;font-weight:900;
+
+    /* SPLIT TOGGLE */
+    .split-row{display:flex;align-items:center;justify-content:space-between;
+      background:#f0fdf4;border-radius:12px;padding:12px 14px;margin-top:14px;
+      border:2px solid #bbf7d0;cursor:pointer;}
+    .split-row.on{background:#dcfce7;border-color:#4ade80;}
+    .split-label{font-size:13px;font-weight:700;color:#15803d;}
+    .split-sub{font-size:11px;color:#4ade80;margin-top:2px;}
+    .toggle{width:44px;height:24px;background:#ccc;border-radius:50px;
+      position:relative;transition:background .2s;flex-shrink:0;}
+    .toggle.on{background:#22c55e;}
+    .toggle::after{content:"";width:18px;height:18px;background:#fff;border-radius:50%;
+      position:absolute;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+    .toggle.on::after{left:23px;}
+
+    /* OCR BUTTON */
+    .ocr-btn{display:flex;align-items:center;justify-content:center;gap:8px;
+      width:100%;padding:12px;border:2px dashed var(--c-border);border-radius:12px;
+      background:#f8fafc;cursor:pointer;font-size:13px;font-weight:700;
+      color:var(--c-muted);font-family:inherit;margin-top:12px;transition:all .2s;}
+    .ocr-btn:hover{border-color:var(--user-color);color:var(--user-color);background:var(--user-light);}
+    .ocr-loading{border-color:var(--user-color);color:var(--user-color);background:var(--user-light);}
+    #ocr-input{display:none;}
+
+    .btn-g{width:100%;margin-top:16px;padding:15px;font-size:16px;font-weight:900;
       color:#fff;border:none;border-radius:14px;cursor:pointer;background:var(--user-color);
       font-family:inherit;transition:opacity .2s;}
     .btn-g:disabled{opacity:.4;cursor:not-allowed;}
@@ -176,15 +244,11 @@
       color:var(--c-text);background:#f8fafc;outline:none;}
     .pe-sv{margin-top:6px;border:none;border-radius:10px;padding:7px 14px;
       font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;color:#fff;}
-
-    /* DIA GRID */
     .dg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px;}
     .db{padding:8px 2px;border:2px solid var(--c-border);border-radius:10px;
       background:#fff;cursor:pointer;font-size:11px;font-weight:700;
       color:var(--c-muted);font-family:inherit;transition:all .15s;}
     .db.on{border-color:var(--user-color);background:var(--user-light);color:var(--user-color);}
-
-    /* SETTINGS ROWS */
     .sr{display:flex;justify-content:space-between;align-items:center;
       padding:12px 0;border-bottom:1px solid var(--c-border);}
     .sr:last-child{border-bottom:none;}
@@ -208,6 +272,17 @@
     .mc{width:100%;margin-top:16px;padding:13px;background:#f1f5f9;border:none;
       border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
 
+    /* NOTIF BANNER */
+    .notif-banner{background:linear-gradient(135deg,#fbbf24,#f59e0b);
+      border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;
+      display:flex;align-items:center;gap:12px;}
+    .nb-icon{font-size:28px;}
+    .nb-t{font-size:13px;font-weight:800;color:#78350f;}
+    .nb-s{font-size:12px;color:#92400e;margin-top:2px;}
+    .nb-btn{background:#78350f;color:#fff;border:none;border-radius:10px;
+      padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;
+      font-family:inherit;flex-shrink:0;}
+
     /* TOAST */
     #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);
       color:#fff;padding:11px 22px;border-radius:50px;font-size:14px;font-weight:700;
@@ -216,13 +291,20 @@
     #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
     .btn-sec{background:#f1f5f9;color:#475569;border:none;border-radius:14px;
-      padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:6px;}
+      padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;
+      font-family:inherit;width:100%;margin-top:6px;}
+
+    /* NOTIF BADGE */
+    .notif-badge{background:#ef4444;color:#fff;font-size:9px;font-weight:800;
+      border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;
+      justify-content:center;position:relative;top:-6px;left:-4px;}
   </style>
 </head>
 <body>
 <div id="app">
   <div id="loading"><div class="spin"></div><span>Conectando...</span></div>
 </div>
+<input type="file" id="ocr-input" accept="image/*" capture="environment"/>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -240,59 +322,114 @@ const firebaseConfig = {
 };
 
 const EMOJIS = {
-  manolo:["👨","🧔","👦","👨‍💼","👨‍🦱","👨‍🦳","🧑","🤠","😎","🥷","👻","🐻","🦁","🐯","🐸","🎮"],
-  esposa:["👩","👧","👩‍💼","👩‍🦱","👩‍🦳","🧑‍🦰","💁‍♀️","🧖‍♀️","🌸","🦋","🐱","🌺","👸","🧚‍♀️","🦄","🌙"]
+  manolo:["👨","🧔","👦","👨‍💼","🧑","🤠","😎","🥷","👻","🐻","🦁","🐯","🐸","🎮","🚀","⚡"],
+  esposa:["👩","👧","👩‍💼","👩‍🦱","💁‍♀️","🧖‍♀️","🌸","🦋","🐱","🌺","👸","🧚‍♀️","🦄","🌙","💅","🎀"]
 };
 const COL = {manolo:"#2563EB", esposa:"#DB2777"};
 const CATS = [
-  {id:"super",l:"Súper",i:"🛒"},{id:"renta",l:"Renta",i:"🏠"},
-  {id:"comida",l:"Comida",i:"🍽️"},{id:"trans",l:"Transporte",i:"🚗"},
-  {id:"salud",l:"Salud",i:"💊"},{id:"ocio",l:"Ocio",i:"🎉"},
-  {id:"ropa",l:"Ropa",i:"👕"},{id:"otro",l:"Otro",i:"📦"}
+  {id:"super",l:"Súper",i:"🛒",c:"#3b82f6"},
+  {id:"renta",l:"Renta",i:"🏠",c:"#8b5cf6"},
+  {id:"comida",l:"Comida",i:"🍽️",c:"#f59e0b"},
+  {id:"trans",l:"Transporte",i:"🚗",c:"#10b981"},
+  {id:"salud",l:"Salud",i:"💊",c:"#ef4444"},
+  {id:"ocio",l:"Ocio",i:"🎉",c:"#ec4899"},
+  {id:"ropa",l:"Ropa",i:"👕",c:"#f97316"},
+  {id:"otro",l:"Otro",i:"📦",c:"#94a3b8"}
 ];
 const DIAS = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Jul","Agosto","Sep","Octubre","Nov","Diciembre"];
 const AJS = [100,200,500,1000];
 
 const fmt = n => new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",minimumFractionDigits:0}).format(n);
 const fmtD = iso => new Date(iso).toLocaleDateString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
 const fmtR = (a,b) => `${a.toLocaleDateString("es-MX",{day:"2-digit",month:"short"})} – ${b.toLocaleDateString("es-MX",{day:"2-digit",month:"short"})}`;
 
-function inicioSem(diaI, offset=0) {
-  const hoy = new Date();
-  let d = hoy.getDay() - diaI; if(d<0)d+=7;
-  const ini = new Date(hoy); ini.setDate(hoy.getDate()-d-(offset*7)); ini.setHours(0,0,0,0);
-  return ini;
+function inicioSem(diaI,offset=0){
+  const hoy=new Date(); let d=hoy.getDay()-diaI; if(d<0)d+=7;
+  const ini=new Date(hoy); ini.setDate(hoy.getDate()-d-(offset*7)); ini.setHours(0,0,0,0); return ini;
 }
-function finSem(ini) {
-  const f = new Date(ini); f.setDate(f.getDate()+6); f.setHours(23,59,59,999); return f;
+function finSem(ini){
+  const f=new Date(ini); f.setDate(f.getDate()+6); f.setHours(23,59,59,999); return f;
 }
-function keyIni(ini) { return ini.toISOString().split("T")[0]; }
+function keyIni(ini){ return ini.toISOString().split("T")[0]; }
 
-// STATE
+// ── STATE ──────────────────────────────────
 let db;
 let state = {
-  settings:{presupuesto:4000,semanaInicia:4},
+  settings:{presupuesto:4000,semanaInicia:4,metaAhorro:0,notifActivas:false},
   perfiles:{manolo:{nombre:"Manolo",emoji:"👨"},esposa:{nombre:"Esposa",emoji:"👩"}},
-  gastos:{}
+  gastos:{},
+  ultimaSemana:null
 };
-let usuario=null, vista="home", ajuste=100, cat="super", emojiFor=null, saving=false;
+let usuario=null,vista="home",ajuste=100,cat="super",emojiFor=null,saving=false;
+let splitActivo=false,ocrLoading=false;
+let mesOffset=0; // para análisis mensual
+let chartCat=null, chartMes=null;
+let notifBadge=false;
 
-const app2 = initializeApp(firebaseConfig);
-db = getDatabase(app2);
-onValue(ref(db,"gastos-pareja"), snap => {
+const app2=initializeApp(firebaseConfig);
+db=getDatabase(app2);
+onValue(ref(db,"gastos-pareja"),snap=>{
   if(snap.exists()){
     const v=snap.val();
-    if(v.settings) state.settings=v.settings;
+    if(v.settings) state.settings={...state.settings,...v.settings};
     if(v.perfiles) state.perfiles=v.perfiles;
     state.gastos=v.gastos||{};
+    state.ultimaSemana=v.ultimaSemana||null;
   }
+  checkNuevaSemanaBadge();
   render();
 });
 
-const save = () => set(ref(db,"gastos-pareja"), state);
+const save=()=>set(ref(db,"gastos-pareja"),state);
 
-// ── RENDER ──────────────────────────────────
-function render() {
+// ── SEMANA NUEVA DETECTION ─────────────────
+function checkNuevaSemanaBadge(){
+  const dI=state.settings.semanaInicia??4;
+  const iniActual=keyIni(inicioSem(dI,0));
+  if(state.ultimaSemana && state.ultimaSemana!==iniActual){
+    notifBadge=true;
+    // Notificación del navegador
+    if(Notification.permission==="granted"){
+      new Notification("🆕 ¡Nueva semana!",{
+        body:`Presupuesto de ${fmt(state.settings.presupuesto)} reiniciado. ¡A cuidar los gastos!`,
+        icon:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💑</text></svg>"
+      });
+    }
+  }
+  // Guardar semana actual
+  if(iniActual!==state.ultimaSemana){
+    state.ultimaSemana=iniActual;
+    set(ref(db,"gastos-pareja/ultimaSemana"),iniActual);
+  }
+}
+
+// ── NOTIFICACIONES ─────────────────────────
+async function pedirNotif(){
+  if(!("Notification" in window)){toast("Tu navegador no soporta notificaciones","#ef4444");return;}
+  const perm=await Notification.requestPermission();
+  if(perm==="granted"){
+    state.settings.notifActivas=true;
+    await save();
+    toast("🔔 Notificaciones activadas");
+    new Notification("✅ Notificaciones activadas",{body:"Te avisaremos cuando gasten el 80% del presupuesto."});
+  } else {
+    toast("Permiso denegado","#ef4444");
+  }
+}
+
+function checkNotif80(total,pres){
+  if(!state.settings.notifActivas) return;
+  const pct=(total/pres)*100;
+  if(pct>=80&&pct<100&&Notification.permission==="granted"){
+    new Notification("⚠️ 80% del presupuesto gastado",{
+      body:`Llevan ${fmt(total)} de ${fmt(pres)}. Solo quedan ${fmt(pres-total)}.`
+    });
+  }
+}
+
+// ── RENDER ─────────────────────────────────
+function render(){
   if(!usuario){renderLogin();return;}
   renderApp();
 }
@@ -318,7 +455,7 @@ function renderLogin(){
     </div>`;
 }
 
-window.elegir = k => {
+window.elegir=k=>{
   usuario=k;
   document.documentElement.style.setProperty("--user-color",COL[k]);
   document.documentElement.style.setProperty("--user-light",k==="manolo"?"#EFF6FF":"#FDF2F8");
@@ -326,18 +463,23 @@ window.elegir = k => {
 };
 
 function renderApp(){
-  const u=usuario, p=state.perfiles, s=state.settings;
-  const dI=s.semanaInicia??4, pres=s.presupuesto??4000;
-  const iniA=inicioSem(dI,0), finA=finSem(iniA);
+  if(chartCat){try{chartCat.destroy();}catch(e){} chartCat=null;}
+  if(chartMes){try{chartMes.destroy();}catch(e){} chartMes=null;}
+
+  const u=usuario,p=state.perfiles,s=state.settings;
+  const dI=s.semanaInicia??4,pres=s.presupuesto??4000;
+  const iniA=inicioSem(dI,0),finA=finSem(iniA);
+  const esNuevaSemana=notifBadge;
 
   const todos=Object.entries(state.gastos||{}).map(([id,g])=>({...g,id}))
     .sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
   const semActual=todos.filter(g=>{const f=new Date(g.fecha);return f>=iniA&&f<=finA;});
   const total=semActual.reduce((s,g)=>s+g.monto,0);
-  const disp=pres-total;
-  const pct=Math.min((total/Math.max(pres,1))*100,100);
-  const rojo=disp<0;
-  const hdrBg=rojo?"#dc2626":COL[u];
+  const disp=pres-total; const pct=Math.min((total/Math.max(pres,1))*100,100);
+  const rojo=disp<0; const hdrBg=rojo?"#dc2626":COL[u];
+
+  // Check 80%
+  if(pct>=80) checkNotif80(total,pres);
 
   document.getElementById("app").innerHTML=`
     <div id="toast"></div>
@@ -347,7 +489,10 @@ function renderApp(){
         <div>
           <div class="h-meta">Semana actual</div>
           <div class="h-who">${p[u].emoji} ${p[u].nombre}</div>
-          <div class="h-badge">${fmtR(iniA,finA)} · inicia ${DIAS[dI]}</div>
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-top:4px">
+            <div class="h-badge">${fmtR(iniA,finA)} · ${DIAS[dI]}</div>
+            ${esNuevaSemana?`<div class="h-new-week">🆕 Nueva semana</div>`:""}
+          </div>
         </div>
         <button class="btn-cam" onclick="cambU()">Cambiar 🔄</button>
       </div>
@@ -368,26 +513,70 @@ function renderApp(){
       <button class="tab${vista==="home"?" on":""}" onclick="sv('home')">📊 Resumen</button>
       <button class="tab${vista==="agregar"?" on":""}" onclick="sv('agregar')">➕ Agregar</button>
       <button class="tab${vista==="historial"?" on":""}" onclick="sv('historial')">📅 Semanas</button>
+      <button class="tab${vista==="analisis"?" on":""}" onclick="sv('analisis')">📈 Análisis</button>
       <button class="tab${vista==="config"?" on":""}" onclick="sv('config')">⚙️ Config</button>
     </div>
-    <div id="view">${vistas(semActual,todos,pres)}</div>`;
+    <div id="view">${vistas(semActual,todos,pres,total,disp)}</div>`;
+
+  if(vista==="analisis") renderCharts(todos);
 }
 
-function vistas(sem,todos,pres){
-  if(vista==="home")     return vHome(sem,pres);
-  if(vista==="agregar")  return vAgregar();
+function vistas(sem,todos,pres,total,disp){
+  if(vista==="home")      return vHome(sem,pres,total,disp);
+  if(vista==="agregar")   return vAgregar();
   if(vista==="historial") return vHistorial(todos);
-  if(vista==="config")   return vConfig();
+  if(vista==="analisis")  return vAnalisis(todos);
+  if(vista==="config")    return vConfig();
   return "";
 }
 
-function vHome(gastos,pres){
+// ── HOME ────────────────────────────────────
+function vHome(gastos,pres,total,disp){
   const p=state.perfiles;
+  const pct=(total/Math.max(pres,1))*100;
   const mT=gastos.filter(g=>g.usuario==="manolo").reduce((s,g)=>s+g.monto,0);
   const eT=gastos.filter(g=>g.usuario==="esposa").reduce((s,g)=>s+g.monto,0);
   const dif=Math.abs(mT-eT);
   const masGasto=mT>eT?"manolo":"esposa";
   const menosGasto=mT>eT?"esposa":"manolo";
+
+  // Alerta presupuesto
+  let alertaHtml="";
+  if(pct>=100){
+    alertaHtml=`<div class="alerta alerta-danger">
+      <div class="al-icon">🚨</div>
+      <div><div class="al-t">¡Se pasaron del presupuesto!</div>
+        <div class="al-s">Llevan ${fmt(Math.abs(disp))} de más esta semana</div></div>
+    </div>`;
+  } else if(pct>=80){
+    alertaHtml=`<div class="alerta alerta-warn">
+      <div class="al-icon">⚠️</div>
+      <div><div class="al-t">80% del presupuesto gastado</div>
+        <div class="al-s">Solo quedan ${fmt(disp)} para terminar la semana</div></div>
+    </div>`;
+  } else if(notifBadge){
+    alertaHtml=`<div class="alerta alerta-nueva">
+      <div class="al-icon">🎉</div>
+      <div><div class="al-t">¡Nueva semana, presupuesto renovado!</div>
+        <div class="al-s">Empiezan con ${fmt(pres)} disponibles</div></div>
+    </div>`;
+  }
+
+  // Meta ahorro
+  const meta=state.settings.metaAhorro||0;
+  const metaHtml = meta>0 ? (()=>{
+    const ahorro=Math.max(0,pres-total);
+    const pctMeta=Math.min((ahorro/meta)*100,100);
+    const falta=Math.max(0,meta-ahorro);
+    return `<div class="meta-card">
+      <div class="meta-top">
+        <div class="meta-title">🎯 Meta de ahorro: ${fmt(meta)}</div>
+        <div class="meta-monto">${fmt(ahorro)}</div>
+      </div>
+      <div class="meta-bar-w"><div class="meta-bar-f" style="width:${pctMeta}%"></div></div>
+      <div class="meta-sub">${pctMeta>=100?"✅ ¡Meta alcanzada esta semana!":"Faltan "+fmt(falta)+" para tu meta"}</div>
+    </div>`;
+  })():"";
 
   const balHtml = dif<10 ? `
     <div class="bal-card bal-ok">
@@ -409,8 +598,7 @@ function vHome(gastos,pres){
     const cnt=gastos.filter(g=>g.usuario===k).length;
     const pt=pres>0?Math.min((t/pres)*100,100):0;
     return `<div class="ucard${k===usuario?" act":""}">
-      <div class="uc-e">${u2.emoji}</div>
-      <div class="uc-n">${u2.nombre}</div>
+      <div class="uc-e">${u2.emoji}</div><div class="uc-n">${u2.nombre}</div>
       <div class="uc-m" style="color:${COL[k]}">${fmt(t)}</div>
       <div class="uc-c">${cnt} gasto${cnt!==1?"s":""} · ${pt.toFixed(0)}%</div>
       <div class="mb-w"><div class="mb-f" style="width:${pt}%;background:${COL[k]}"></div></div>
@@ -418,43 +606,71 @@ function vHome(gastos,pres){
   }).join("");
 
   const ultimos=gastos.slice(0,5).map(gcard).join("");
-  return `${balHtml}<div class="ucards">${ucards}</div>
+  return `${alertaHtml}${metaHtml}${balHtml}
+    <div class="ucards">${ucards}</div>
     <div class="st">Últimos movimientos<span class="st-badge">${gastos.length}</span></div>
     ${gastos.length===0?`<div class="empty"><div class="em-i">📭</div><div class="em-t">Sin gastos esta semana</div></div>`:ultimos}
-    ${gastos.length>5?`<button class="btn-sec" onclick="sv('historial')">Ver historial completo →</button>`:""}`;
+    ${gastos.length>5?`<button class="btn-sec" onclick="sv('historial')">Ver historial →</button>`:""}`;
 }
 
+// ── GASTO CARD ──────────────────────────────
 function gcard(g){
   const u2=state.perfiles[g.usuario]; const c=CATS.find(x=>x.id===g.categoria)||CATS[7];
+  const splitTag=g.split?`<span class="gc-split">÷2</span>`:"";
   return `<div class="gc" style="border-color:${COL[g.usuario]}">
     <div class="gc-i">${c.i}</div>
-    <div class="gc-inf"><div class="gc-d">${g.descripcion}</div>
-      <div class="gc-m">${u2.emoji} ${u2.nombre} · ${c.l} · ${fmtD(g.fecha)}</div></div>
+    <div class="gc-inf">
+      <div class="gc-d">${g.descripcion}${splitTag}</div>
+      <div class="gc-m">${u2.emoji} ${u2.nombre} · ${c.l} · ${fmtD(g.fecha)}</div>
+    </div>
     <div class="gc-r"><div class="gc-v" style="color:${COL[g.usuario]}">${fmt(g.monto)}</div>
       ${g.usuario===usuario?`<button class="gc-del" onclick="del('${g.id}')">🗑️</button>`:""}
     </div>
   </div>`;
 }
 
+// ── AGREGAR ─────────────────────────────────
 function vAgregar(){
   const u2=state.perfiles[usuario];
   return `<div class="fcard">
     <div class="ftitle">Gasto de ${u2.emoji} ${u2.nombre}</div>
-    <label class="flbl">Monto (MXN)</label>
+
+    <!-- OCR -->
+    <button class="ocr-btn${ocrLoading?" ocr-loading":""}" onclick="triggerOCR()">
+      ${ocrLoading?"⏳ Leyendo ticket...":"📷 Escanear ticket con la cámara"}
+    </button>
+
+    <label class="flbl" style="margin-top:16px">Monto (MXN)</label>
     <input type="number" inputmode="decimal" class="inpm" id="im" placeholder="0"
       style="color:${COL[usuario]}" oninput="chkF()"/>
+
     <label class="flbl" style="margin-top:16px">¿En qué?</label>
     <input type="text" id="id2" placeholder="Ej. Mercado, gasolina..." oninput="chkF()"/>
+
     <label class="flbl" style="margin-top:16px">Categoría</label>
     <div class="cg">${CATS.map(c=>`<button class="cb${c.id===cat?" on":""}" onclick="setCat('${c.id}')">
       <span>${c.i}</span>${c.l}</button>`).join("")}</div>
-    <button class="btn-g" id="bg" onclick="agregar()" disabled>💾 Registrar gasto</button>
+
+    <!-- SPLIT -->
+    <div class="split-row${splitActivo?" on":""}" onclick="toggleSplit()">
+      <div>
+        <div class="split-label">💚 Dividir gasto entre los dos</div>
+        <div class="split-sub" style="color:${splitActivo?"#15803d":"#94a3b8"}">
+          ${splitActivo?"Cada quien pagará la mitad":"El gasto se registra solo para ti"}
+        </div>
+      </div>
+      <div class="toggle${splitActivo?" on":""}"></div>
+    </div>
+
+    <button class="btn-g" id="bg" onclick="agregar()" disabled>
+      💾 Registrar gasto
+    </button>
   </div>`;
 }
 
+// ── HISTORIAL ───────────────────────────────
 function vHistorial(todos){
   const dI=state.settings.semanaInicia??4;
-  // Agrupar por semana
   const mapa={};
   todos.forEach(g=>{
     const f=new Date(g.fecha); let d=f.getDay()-dI; if(d<0)d+=7;
@@ -464,8 +680,7 @@ function vHistorial(todos){
     mapa[k].gastos.push(g);
   });
   const sems=Object.entries(mapa).sort((a,b)=>new Date(b[0])-new Date(a[0]));
-  if(!sems.length) return `<div class="empty"><div class="em-i">📭</div><div class="em-t">Sin gastos registrados</div></div>`;
-
+  if(!sems.length) return `<div class="empty"><div class="em-i">📭</div><div class="em-t">Sin gastos aún</div></div>`;
   const keyAct=keyIni(inicioSem(dI,0));
   const p=state.perfiles;
   return sems.map(([k,{ini,gastos}])=>{
@@ -474,7 +689,10 @@ function vHistorial(todos){
     const eT=gastos.filter(g=>g.usuario==="esposa").reduce((s,g)=>s+g.monto,0);
     const esAct=k===keyAct;
     return `<div class="sem-blk">
-      <div class="sem-hdr">${esAct?"📅 Esta semana — "+fmtR(ini,fin):fmtR(ini,fin)}<span class="sem-tot">${fmt(tot)}</span></div>
+      <div class="sem-hdr">
+        ${esAct?`<span>📅 Esta semana</span>`:fmtR(ini,fin)}
+        <span class="sem-tot">${fmt(tot)}</span>
+      </div>
       <div class="sem-mini">
         <div class="sem-mini-card" style="background:#EFF6FF">
           <div class="sem-mini-n">${p.manolo.emoji} ${p.manolo.nombre}</div>
@@ -486,65 +704,270 @@ function vHistorial(todos){
         </div>
       </div>
       ${gastos.slice(0,3).map(gcard).join("")}
-      ${gastos.length>3?`<div style="text-align:center;font-size:12px;color:#94a3b8;margin-top:-2px;margin-bottom:6px">+${gastos.length-3} gastos más</div>`:""}
+      ${gastos.length>3?`<div style="text-align:center;font-size:12px;color:#94a3b8;margin-top:-2px;margin-bottom:6px">+${gastos.length-3} más</div>`:""}
     </div><hr style="border:none;border-top:1px solid var(--c-border);margin:0 0 16px"/>`;
   }).join("");
 }
 
+// ── ANÁLISIS ────────────────────────────────
+function vAnalisis(todos){
+  // Mes seleccionado
+  const hoy=new Date();
+  const año=new Date(hoy.getFullYear(),hoy.getMonth()-mesOffset,1);
+  const mesNom=MESES[año.getMonth()]+" "+año.getFullYear();
+  const mesStr=`${año.getFullYear()}-${String(año.getMonth()+1).padStart(2,"0")}`;
+  const delMes=todos.filter(g=>g.fecha.startsWith(mesStr));
+  const totalMes=delMes.reduce((s,g)=>s+g.monto,0);
+  const mT=delMes.filter(g=>g.usuario==="manolo").reduce((s,g)=>s+g.monto,0);
+  const eT=delMes.filter(g=>g.usuario==="esposa").reduce((s,g)=>s+g.monto,0);
+  const p=state.perfiles;
+
+  // Por categoría
+  const catTotals=CATS.map(c=>({...c,total:delMes.filter(g=>g.categoria===c.id).reduce((s,g)=>s+g.monto,0)}))
+    .filter(c=>c.total>0).sort((a,b)=>b.total-a.total);
+
+  // Últimos 6 meses para barra
+  const meses6=Array.from({length:6},(_,i)=>{
+    const m=new Date(hoy.getFullYear(),hoy.getMonth()-i,1);
+    const str=`${m.getFullYear()}-${String(m.getMonth()+1).padStart(2,"0")}`;
+    const total=todos.filter(g=>g.fecha.startsWith(str)).reduce((s,g)=>s+g.monto,0);
+    return {nom:MESES[m.getMonth()].substring(0,3),total,str};
+  }).reverse();
+
+  return `
+    <!-- SELECTOR MES -->
+    <div class="month-selector">
+      <button class="ms-btn" onclick="setMesOffset(${mesOffset+1})">◀</button>
+      <div class="ms-label">${mesNom}</div>
+      <button class="ms-btn" onclick="setMesOffset(${Math.max(0,mesOffset-1)})"${mesOffset===0?" disabled style='opacity:.4'":""}>▶</button>
+    </div>
+
+    <!-- RESUMEN MES -->
+    <div class="chart-card">
+      <div class="chart-title">💰 Resumen de ${MESES[año.getMonth()]}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+        <div style="background:#f8fafc;border-radius:12px;padding:12px">
+          <div style="font-size:11px;color:#64748b">Total</div>
+          <div style="font-size:18px;font-weight:900;color:#1e293b">${fmt(totalMes)}</div>
+        </div>
+        <div style="background:#EFF6FF;border-radius:12px;padding:12px">
+          <div style="font-size:11px;color:#64748b">${p.manolo.emoji} ${p.manolo.nombre}</div>
+          <div style="font-size:18px;font-weight:900;color:#2563EB">${fmt(mT)}</div>
+        </div>
+        <div style="background:#FDF2F8;border-radius:12px;padding:12px">
+          <div style="font-size:11px;color:#64748b">${p.esposa.emoji} ${p.esposa.nombre}</div>
+          <div style="font-size:18px;font-weight:900;color:#DB2777">${fmt(eT)}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRÁFICA CATEGORÍAS -->
+    ${catTotals.length>0?`
+    <div class="chart-card">
+      <div class="chart-title">🍕 Gastos por categoría</div>
+      <div class="chart-wrap"><canvas id="chartCat"></canvas></div>
+      <div style="margin-top:12px">
+        ${catTotals.map(c=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:18px">${c.i}</span>
+              <span style="font-size:13px;font-weight:600">${c.l}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="background:#f1f5f9;border-radius:4px;height:6px;width:60px">
+                <div style="background:${c.c};height:6px;border-radius:4px;width:${((c.total/totalMes)*100).toFixed(0)}%"></div>
+              </div>
+              <span style="font-size:13px;font-weight:800;color:${c.c};min-width:60px;text-align:right">${fmt(c.total)}</span>
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>`:`<div class="empty"><div class="em-i">📊</div><div class="em-t">Sin gastos en ${MESES[año.getMonth()]}</div></div>`}
+
+    <!-- ÚLTIMOS 6 MESES -->
+    <div class="chart-card">
+      <div class="chart-title">📅 Últimos 6 meses</div>
+      <div class="chart-wrap"><canvas id="chartMes"></canvas></div>
+    </div>`;
+}
+
+function renderCharts(todos){
+  const hoy=new Date();
+  const año=new Date(hoy.getFullYear(),hoy.getMonth()-mesOffset,1);
+  const mesStr=`${año.getFullYear()}-${String(año.getMonth()+1).padStart(2,"0")}`;
+  const delMes=todos.filter(g=>g.fecha.startsWith(mesStr));
+  const catTotals=CATS.map(c=>({...c,total:delMes.filter(g=>g.categoria===c.id).reduce((s,g)=>s+g.monto,0)})).filter(c=>c.total>0);
+
+  // Donut categorías
+  const ctxCat=document.getElementById("chartCat");
+  if(ctxCat&&catTotals.length>0){
+    try{
+      chartCat=new Chart(ctxCat,{
+        type:"doughnut",
+        data:{labels:catTotals.map(c=>c.l),datasets:[{data:catTotals.map(c=>c.total),backgroundColor:catTotals.map(c=>c.c),borderWidth:2,borderColor:"#fff"}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.raw)}`}}},cutout:"65%"}
+      });
+    }catch(e){}
+  }
+
+  // Bar últimos 6 meses
+  const meses6=Array.from({length:6},(_,i)=>{
+    const m=new Date(hoy.getFullYear(),hoy.getMonth()-i,1);
+    const str=`${m.getFullYear()}-${String(m.getMonth()+1).padStart(2,"0")}`;
+    return {nom:MESES[m.getMonth()].substring(0,3),
+      manolo:todos.filter(g=>g.fecha.startsWith(str)&&g.usuario==="manolo").reduce((s,g)=>s+g.monto,0),
+      esposa:todos.filter(g=>g.fecha.startsWith(str)&&g.usuario==="esposa").reduce((s,g)=>s+g.monto,0)};
+  }).reverse();
+
+  const ctxMes=document.getElementById("chartMes");
+  if(ctxMes){
+    try{
+      chartMes=new Chart(ctxMes,{
+        type:"bar",
+        data:{labels:meses6.map(m=>m.nom),datasets:[
+          {label:state.perfiles.manolo.nombre,data:meses6.map(m=>m.manolo),backgroundColor:"#93c5fd",borderRadius:6},
+          {label:state.perfiles.esposa.nombre,data:meses6.map(m=>m.esposa),backgroundColor:"#f9a8d4",borderRadius:6}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{position:"bottom",labels:{usePointStyle:true,padding:16,font:{family:"Nunito",weight:"700"}}}},
+          scales:{y:{ticks:{callback:v=>"$"+v.toLocaleString()},grid:{color:"#f1f5f9"}},x:{grid:{display:false}}}}
+      });
+    }catch(e){}
+  }
+}
+
+// ── CONFIG ──────────────────────────────────
 function vConfig(){
   const p=state.perfiles; const dI=state.settings.semanaInicia??4;
+  const notifActivas=state.settings.notifActivas;
+  const notifSoportadas="Notification" in window;
   return `
     <div class="ss">
       <div class="ss-t">👤 Perfiles</div>
       <div class="scard">
-        ${["manolo","esposa"].map(k=>{
-          const u2=p[k];
-          return `<div class="pe">
-            <button class="pe-eb" onclick="openModal('${k}')">${u2.emoji}<br><span style="font-size:9px">✏️</span></button>
+        ${["manolo","esposa"].map(k=>`
+          <div class="pe">
+            <button class="pe-eb" onclick="openModal('${k}')">${p[k].emoji}<br><span style="font-size:9px">✏️</span></button>
             <div class="pe-info">
               <div style="font-size:11px;font-weight:800;color:${COL[k]};text-transform:uppercase;margin-bottom:6px">${k}</div>
-              <input class="pe-ni" id="pn-${k}" value="${u2.nombre}" placeholder="Nombre"/>
-              <button class="pe-sv" style="background:${COL[k]}" onclick="savePerfil('${k}')">Guardar nombre ✓</button>
+              <input class="pe-ni" id="pn-${k}" value="${p[k].nombre}" placeholder="Nombre"/>
+              <button class="pe-sv" style="background:${COL[k]}" onclick="savePerfil('${k}')">Guardar ✓</button>
             </div>
-          </div>`;
-        }).join("")}
+          </div>`).join("")}
       </div>
     </div>
 
     <div class="ss">
-      <div class="ss-t">📅 ¿Qué día inicia tu semana?</div>
+      <div class="ss-t">📅 Día de inicio de semana</div>
       <div class="scard">
-        <p style="font-size:13px;color:var(--c-muted)">Actualmente: <strong>${DIAS[dI]}</strong> — cambia cuando quieras</p>
+        <p style="font-size:13px;color:var(--c-muted)">Actualmente: <strong>${DIAS[dI]}</strong></p>
         <div class="dg">${DIAS.map((d,i)=>`<button class="db${i===dI?" on":""}" onclick="setDia(${i})">${d}</button>`).join("")}</div>
       </div>
     </div>
 
     <div class="ss">
-      <div class="ss-t">📊 Datos generales</div>
+      <div class="ss-t">🎯 Meta de ahorro semanal</div>
       <div class="scard">
-        <div class="sr"><div><div class="sr-l">Presupuesto semanal</div><div class="sr-s">Ajústalo desde la pantalla principal</div></div><div class="sr-v">${fmt(state.settings.presupuesto??4000)}</div></div>
+        <p style="font-size:13px;color:var(--c-muted);margin-bottom:12px">
+          ¿Cuánto quieren ahorrar esta semana? Aparece como barra de progreso en el resumen.
+        </p>
+        <input type="number" id="inp-meta" value="${state.settings.metaAhorro||""}"
+          placeholder="Ej. 500" inputmode="decimal"/>
+        <button style="width:100%;margin-top:10px;padding:12px;background:var(--user-color);
+          color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;
+          cursor:pointer;font-family:inherit" onclick="saveMeta()">Guardar meta 🎯</button>
+        ${state.settings.metaAhorro>0?`<p style="font-size:12px;color:#7c3aed;margin-top:8px;font-weight:600">Meta actual: ${fmt(state.settings.metaAhorro)}</p>`:""}
+      </div>
+    </div>
+
+    <div class="ss">
+      <div class="ss-t">🔔 Notificaciones</div>
+      <div class="scard">
+        ${!notifSoportadas?`<p style="font-size:13px;color:var(--c-muted)">Tu navegador no soporta notificaciones.</p>`:
+          notifActivas?`<p style="font-size:13px;color:#16a34a;font-weight:700">✅ Notificaciones activas — te avisaremos al llegar al 80% del presupuesto y al iniciar nueva semana.</p>`:
+          `<p style="font-size:13px;color:var(--c-muted);margin-bottom:12px">
+            Activa las notificaciones para recibir avisos cuando lleven el 80% gastado o empiece una nueva semana.
+          </p>
+          <button style="width:100%;padding:12px;background:#f59e0b;color:#fff;border:none;
+            border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit"
+            onclick="pedirNotif()">🔔 Activar notificaciones</button>`}
+      </div>
+    </div>
+
+    <div class="ss">
+      <div class="ss-t">ℹ️ Estadísticas</div>
+      <div class="scard">
+        <div class="sr"><div><div class="sr-l">Presupuesto semanal</div></div><div class="sr-v">${fmt(state.settings.presupuesto??4000)}</div></div>
+        <div class="sr"><div><div class="sr-l">Meta de ahorro</div></div><div class="sr-v">${state.settings.metaAhorro>0?fmt(state.settings.metaAhorro):"No definida"}</div></div>
         <div class="sr"><div><div class="sr-l">Semana inicia el</div></div><div class="sr-v">${DIAS[dI]}</div></div>
-        <div class="sr"><div><div class="sr-l">Gastos guardados en total</div></div><div class="sr-v">${Object.keys(state.gastos||{}).length}</div></div>
+        <div class="sr"><div><div class="sr-l">Gastos registrados</div></div><div class="sr-v">${Object.keys(state.gastos||{}).length}</div></div>
       </div>
     </div>`;
 }
 
+// ── MODAL EMOJI ──────────────────────────────
 function renderModal(){
-  const k=emojiFor; const emojis=EMOJIS[k]; const act=state.perfiles[k].emoji;
+  const k=emojiFor; const emojis=EMOJIS[k]||[]; const act=state.perfiles[k].emoji;
   return `<div class="mo" onclick="closeModal(event)">
     <div class="mb">
-      <div class="mt">Elegir avatar para ${state.perfiles[k].nombre}</div>
+      <div class="mt">Avatar para ${state.perfiles[k].nombre}</div>
       <div class="eg">${emojis.map(e=>`<button class="eo${e===act?" sel":""}" onclick="selEmoji('${k}','${e}')">${e}</button>`).join("")}</div>
       <button class="mc" onclick="emojiFor=null;renderApp()">Cerrar</button>
     </div>
   </div>`;
 }
 
+// ── OCR ─────────────────────────────────────
+window.triggerOCR=()=>{
+  const input=document.getElementById("ocr-input");
+  input.onchange=async e=>{
+    const file=e.target.files[0]; if(!file)return;
+    ocrLoading=true; renderApp();
+    try{
+      const b64=await new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=()=>res(r.result.split(",")[1]);
+        r.onerror=rej;
+        r.readAsDataURL(file);
+      });
+      const resp=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          model:"claude-sonnet-4-20250514",
+          max_tokens:200,
+          messages:[{role:"user",content:[
+            {type:"image",source:{type:"base64",media_type:file.type,data:b64}},
+            {type:"text",text:"Analiza esta foto de un ticket o recibo. Extrae ÚNICAMENTE el monto TOTAL a pagar (el número más grande o el que diga 'Total', 'TOTAL', 'A pagar', etc). Responde SOLO con el número, sin símbolo de moneda, sin texto adicional. Si no puedes encontrar un monto claro, responde: 0"}
+          ]}]
+        })
+      });
+      const data=await resp.json();
+      const texto=data.content?.[0]?.text?.trim()||"0";
+      const monto=parseFloat(texto.replace(/[^0-9.]/g,""));
+      if(monto>0){
+        ocrLoading=false; renderApp();
+        setTimeout(()=>{
+          const inp=document.getElementById("im");
+          if(inp){inp.value=monto;chkF();toast(`📷 Detectado: ${fmt(monto)}`,"#10b981");}
+        },100);
+      } else {
+        ocrLoading=false; renderApp(); toast("No se detectó monto en la imagen","#f59e0b");
+      }
+    }catch(err){
+      ocrLoading=false; renderApp(); toast("Error al procesar la imagen","#ef4444");
+    }
+    input.value="";
+  };
+  input.click();
+};
+
 // ── ACTIONS ─────────────────────────────────
 window.cambU=()=>{usuario=null;render();};
-window.sv=v=>{vista=v;renderApp();};
+window.sv=v=>{vista=v;if(v!=="analisis"){mesOffset=0;}renderApp();};
 window.setAj=a=>{ajuste=a;renderApp();};
 window.setCat=c=>{cat=c;renderApp();};
+window.toggleSplit=()=>{splitActivo=!splitActivo;renderApp();};
+window.setMesOffset=o=>{mesOffset=o;renderApp();};
 window.chkF=()=>{
   const m=document.getElementById("im")?.value;
   const d=document.getElementById("id2")?.value?.trim();
@@ -556,32 +979,43 @@ window.camPres=async delta=>{
 };
 window.agregar=async()=>{
   if(saving)return;
-  const m=parseFloat(document.getElementById("im")?.value);
-  const d=document.getElementById("id2")?.value?.trim();
-  if(!m||!d)return; saving=true;
-  state.gastos["g"+Date.now()]={usuario,monto:m,descripcion:d,categoria:cat,fecha:new Date().toISOString()};
-  await save(); saving=false; vista="home";
-  toast(`✅ ${fmt(m)} registrado`);
+  const monto=parseFloat(document.getElementById("im")?.value);
+  const desc=document.getElementById("id2")?.value?.trim();
+  if(!monto||!desc)return; saving=true;
+  const fecha=new Date().toISOString();
+  if(splitActivo){
+    // Crear dos gastos, uno por cada usuario, con la mitad
+    const mitad=Math.round((monto/2)*10)/10;
+    ["manolo","esposa"].forEach(u=>{
+      state.gastos["g"+Date.now()+u]={usuario:u,monto:mitad,descripcion:desc,categoria:cat,fecha,split:true};
+    });
+    toast(`✅ ${fmt(monto)} dividido (${fmt(mitad)} c/u)`);
+  } else {
+    state.gastos["g"+Date.now()]={usuario,monto,descripcion:desc,categoria:cat,fecha};
+    toast(`✅ ${fmt(monto)} registrado`);
+  }
+  await save(); saving=false; splitActivo=false; vista="home"; renderApp();
 };
 window.del=async id=>{
   if(!confirm("¿Eliminar este gasto?"))return;
   delete state.gastos[id]; await save(); toast("🗑️ Eliminado","#ef4444");
 };
 window.setDia=async i=>{
-  state.settings.semanaInicia=i; await save();
-  toast(`📅 Semana inicia el ${DIAS[i]}`);
+  state.settings.semanaInicia=i; await save(); toast(`📅 Semana inicia el ${DIAS[i]}`);
 };
 window.savePerfil=async k=>{
   const n=document.getElementById(`pn-${k}`)?.value?.trim();
-  if(!n)return; state.perfiles[k].nombre=n; await save();
-  toast(`✅ Nombre: ${n}`);
+  if(!n)return; state.perfiles[k].nombre=n; await save(); toast(`✅ Nombre: ${n}`);
+};
+window.saveMeta=async()=>{
+  const v=parseFloat(document.getElementById("inp-meta")?.value)||0;
+  state.settings.metaAhorro=v; await save();
+  toast(v>0?`🎯 Meta: ${fmt(v)}`:"Meta eliminada");
 };
 window.openModal=k=>{emojiFor=k;renderApp();};
 window.closeModal=e=>{if(e.target.classList.contains("mo")){emojiFor=null;renderApp();}};
-window.selEmoji=async(k,e)=>{
-  state.perfiles[k].emoji=e; await save(); emojiFor=null;
-  toast("✅ Avatar actualizado");
-};
+window.selEmoji=async(k,e)=>{state.perfiles[k].emoji=e;await save();emojiFor=null;toast("✅ Avatar actualizado");};
+window.pedirNotif=pedirNotif;
 
 function toast(msg,color="#10b981"){
   const el=document.getElementById("toast"); if(!el)return;
