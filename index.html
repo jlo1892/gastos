@@ -489,18 +489,39 @@ function renderLogin(){
       <div class="lhero">💑</div>
       <div class="ltitle">Gastos Pareja</div>
       <div class="lsub">¿Quién va a registrar?</div>
-      <div class="lcards">
-        <div class="lc" style="border-color:${COL.manolo}" onclick="elegir('manolo')">
-          <div class="lc-e">${p.manolo.emoji}</div><div class="lc-n" style="color:${COL.manolo}">${p.manolo.nombre}</div>
-        </div>
-        <div class="lc" style="border-color:${COL.esposa}" onclick="elegir('esposa')">
-          <div class="lc-e">${p.esposa.emoji}</div><div class="lc-n" style="color:${COL.esposa}">${p.esposa.nombre}</div>
-        </div>
+
+      <div class="lcards" id="loginCards">
+        <button type="button" class="lc" data-user="manolo" style="border-color:${COL.manolo}">
+          <div class="lc-e">${p.manolo.emoji}</div>
+          <div class="lc-n" style="color:${COL.manolo}">${p.manolo.nombre}</div>
+        </button>
+
+        <button type="button" class="lc" data-user="esposa" style="border-color:${COL.esposa}">
+          <div class="lc-e">${p.esposa.emoji}</div>
+          <div class="lc-n" style="color:${COL.esposa}">${p.esposa.nombre}</div>
+        </button>
       </div>
+
       <div class="lhint">📱 Datos sincronizados en tiempo real</div>
     </div>`;
-}
 
+  bindLoginHandlers();
+}
+  function bindLoginHandlers(){
+  const wrap = document.getElementById("loginCards");
+  if(!wrap) return;
+
+  const pick = (ev)=>{
+    const btn = ev.target.closest?.(".lc");
+    if(!btn) return;
+    ev.preventDefault();
+    const u = btn.getAttribute("data-user");
+    if(u) window.elegir(u);
+  };
+
+  wrap.addEventListener("click", pick, { passive:false });
+  wrap.addEventListener("touchend", pick, { passive:false });
+}
 window.elegir=k=>{
   usuario=k;
   document.documentElement.style.setProperty("--user-color",COL[k]);
