@@ -507,29 +507,25 @@ function renderLogin(){
 
   bindLoginHandlers();
 }
-  function bindLoginHandlers(){
+ function bindLoginHandlers(){
   const wrap = document.getElementById("loginCards");
   if(!wrap) return;
+
+  // Evita que se acumulen listeners si renderizas varias veces
+  wrap.onclick = null;
+  wrap.ontouchend = null;
 
   const pick = (ev)=>{
     const btn = ev.target.closest ? ev.target.closest(".lc") : null;
     if(!btn) return;
 
-    // Evita doble disparo touch+click y asegura que iOS no “coma” el tap
-    ev.preventDefault();
-    ev.stopPropagation();
+    ev.preventDefault(); // iPhone: evita que se “pierda” el tap
 
     const u = btn.getAttribute("data-user");
     if(u) window.elegir(u);
   };
 
-  // iPhone: usa touchend + click SIN options object (más compatible)
   wrap.addEventListener("touchend", pick, false);
-  wrap.addEventListener("click", pick, false);
-}
-
-  wrap.addEventListener("click", pick, { passive:false });
-  wrap.addEventListener("touchend", pick, { passive:false });
 }
 window.elegir=k=>{
   usuario=k;
