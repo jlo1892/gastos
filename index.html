@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Gastos Pareja 💑</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; }
+    #app { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+
+    /* LOGIN */
+    #login { display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:100vh; background: linear-gradient(160deg,#EFF6FF 0%,#FDF2F8 100%); padding:24px; }
+    #login h1 { font-size:26px; font-weight:800; color:#1e293b; margin:8px 0 4px; }
+    #login p { color:#64748b; font-size:14px; margin-bottom:40px; }
+    .login-cards { display:flex; gap:16px; }
+    .login-card { background:#fff; border-radius:22px; padding:28px 36px; cursor:pointer;
+      text-align:center; box-shadow:0 8px 30px rgba(0,0,0,.1); border:3px solid; transition:transform .15s; }
+    .login-card:hover { transform:scale(1.05); }
+    .login-card .emoji { font-size:42px; }
+    .login-card .nombre { font-size:18px; font-weight:700; margin-top:10px; }
+    .login-hint { margin-top:32px; font-size:12px; color:#94a3b8; text-align:center; max-width:270px; line-height:1.7; }
+
+    /* HEADER */
+    #header { color:#fff; padding:22px 20px 24px; transition:background .4s; }
+    #header .top-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+    #header .label { font-size:11px; opacity:.75; text-transform:uppercase; letter-spacing:1.5px; }
+    #header .who { font-size:20px; font-weight:700; margin-top:2px; }
+    .btn-cambiar { background:rgba(255,255,255,.2); border:none; color:#fff; padding:6px 14px;
+      border-radius:20px; cursor:pointer; font-size:12px; }
+    #header .disponible-label { font-size:11px; opacity:.75; text-transform:uppercase; letter-spacing:1px; text-align:center; }
+    #header .monto-grande { font-size:48px; font-weight:800; letter-spacing:-2px; line-height:1.1; text-align:center; }
+    #header .sub { font-size:13px; opacity:.75; margin-top:4px; text-align:center; }
+    .barra-wrap { background:rgba(255,255,255,.25); border-radius:50px; height:8px; margin:16px 0; }
+    .barra-fill { height:8px; border-radius:50px; transition:width .5s, background .3s; }
+
+    /* CONTROL PRESUPUESTO */
+    .ctrl-presupuesto { background:rgba(0,0,0,.15); border-radius:16px; padding:14px; }
+    .ctrl-presupuesto .titulo { font-size:12px; opacity:.9; margin-bottom:10px; font-weight:600; text-align:center; }
+    .ajuste-btns { display:flex; gap:6px; margin-bottom:10px; }
+    .ajuste-btn { flex:1; padding:7px 4px; border:2px solid rgba(255,255,255,.3); border-radius:10px;
+      background:transparent; color:#fff; cursor:pointer; font-size:12px; }
+    .ajuste-btn.activo { border-color:#fff; background:rgba(255,255,255,.25); font-weight:700; }
+    .pm-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .pm-btn { padding:13px; border:2px solid rgba(255,255,255,.3); border-radius:12px;
+      color:#fff; cursor:pointer; font-size:16px; font-weight:700; }
+    .pm-btn.menos { background:rgba(0,0,0,.2); }
+    .pm-btn.mas { background:rgba(255,255,255,.2); }
+
+    /* TABS */
+    #tabs { display:flex; background:#fff; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:10; }
+    .tab { flex:1; padding:13px 4px; border:none; background:none; cursor:pointer; font-size:13px;
+      color:#94a3b8; border-bottom:2.5px solid transparent; font-weight:400; transition:all .2s; }
+    .tab.activo { font-weight:700; border-bottom-color:var(--user-color); color:var(--user-color); }
+
+    /* VIEWS */
+    #view { padding:18px; padding-bottom:80px; }
+
+    /* CARDS USUARIOS */
+    .user-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .user-card { background:#fff; border-radius:18px; padding:16px;
+      border:2.5px solid #e2e8f0; box-shadow:0 2px 12px rgba(0,0,0,.07); }
+    .user-card.activo { border-color:var(--user-color); }
+    .user-card .u-emoji { font-size:26px; }
+    .user-card .u-nombre { font-size:13px; color:#64748b; margin-top:4px; }
+    .user-card .u-monto { font-size:22px; font-weight:800; margin-top:4px; letter-spacing:-1px; }
+    .user-card .u-count { font-size:11px; color:#94a3b8; margin-top:2px; }
+    .mini-barra-wrap { background:#f1f5f9; border-radius:50px; height:4px; margin-top:8px; }
+    .mini-barra-fill { height:4px; border-radius:50px; transition:width .5s; }
+
+    /* GASTOS LISTA */
+    .section-title { font-size:14px; font-weight:700; color:#1e293b; margin-bottom:12px; }
+    .empty { text-align:center; color:#94a3b8; padding:40px 0; }
+    .empty .big { font-size:44px; margin-bottom:8px; }
+    .gasto-card { background:#fff; border-radius:14px; padding:13px 15px; margin-bottom:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; align-items:center; gap:12px; border-left:4px solid; }
+    .gasto-cat { font-size:26px; }
+    .gasto-info { flex:1; min-width:0; }
+    .gasto-desc { font-size:14px; font-weight:600; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gasto-meta { font-size:11px; color:#94a3b8; margin-top:2px; }
+    .gasto-right { text-align:right; flex-shrink:0; }
+    .gasto-monto { font-size:17px; font-weight:800; }
+    .btn-delete { background:none; border:none; cursor:pointer; color:#ef4444; font-size:16px; padding:2px 0; margin-top:2px; }
+    .btn-ver-todos { background:#f1f5f9; color:#475569; border:none; border-radius:14px;
+      padding:12px 20px; cursor:pointer; font-size:14px; width:100%; margin-top:6px; }
+
+    /* FORM */
+    .form-card { background:#fff; border-radius:20px; padding:22px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
+    .form-title { font-size:17px; font-weight:700; margin-bottom:20px; color:#1e293b; }
+    label { display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:7px; }
+    input[type=number], input[type=text] { width:100%; border:2px solid #e2e8f0; border-radius:12px;
+      padding:12px 14px; font-size:16px; color:#1e293b; outline:none; background:#f8fafc; font-family:inherit; }
+    .input-monto { font-size:36px !important; text-align:center; font-weight:800; letter-spacing:-1px; }
+    .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+    .cat-btn { padding:10px 4px; border:2px solid #e2e8f0; border-radius:12px; background:#fff;
+      cursor:pointer; font-size:11px; color:#374151; }
+    .cat-btn.activo { border-color:var(--user-color); }
+    .cat-emoji { font-size:22px; display:block; margin-bottom:2px; }
+    .btn-guardar { width:100%; margin-top:22px; padding:14px 20px; font-size:16px; font-weight:700;
+      color:#fff; border:none; border-radius:14px; cursor:pointer; background:var(--user-color);
+      font-family:inherit; transition:opacity .2s; }
+    .btn-guardar:disabled { opacity:.45; cursor:not-allowed; }
+
+    /* TOAST */
+    #toast { position:fixed; top:18px; left:50%; transform:translateX(-50%);
+      color:#fff; padding:10px 22px; border-radius:50px; font-size:14px; z-index:999;
+      box-shadow:0 4px 20px rgba(0,0,0,.2); white-space:nowrap; pointer-events:none;
+      opacity:0; transition:opacity .3s; }
+    #toast.visible { opacity:1; }
+
+    /* LOADING */
+    #loading { display:flex; align-items:center; justify-content:center; height:100vh;
+      color:#64748b; font-size:18px; }
+
+    /* CONFIG FIREBASE */
+    #config-screen { display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:100vh; background:#f8fafc; padding:24px; }
+    #config-screen h2 { font-size:22px; font-weight:800; color:#1e293b; margin-bottom:8px; }
+    #config-screen p { color:#64748b; font-size:14px; text-align:center; margin-bottom:24px; line-height:1.6; }
+    .config-form { background:#fff; border-radius:20px; padding:24px; width:100%; max-width:400px;
+      box-shadow:0 4px 20px rgba(0,0,0,.08); }
+    .config-form input { margin-bottom:12px; }
+    .btn-conectar { width:100%; padding:14px; font-size:15px; font-weight:700; color:#fff;
+      border:none; border-radius:14px; cursor:pointer; background:#2563EB; font-family:inherit; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="loading">Conectando... 🔥</div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, push, remove, get }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// ╔══════════════════════════════════════════════╗
+// ║  PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE      ║
+// ║  (ver instrucciones en el README)            ║
+// ╚══════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey: "AIzaSyAx0ILxze_MTBEoElQSvJEjHwaHjC9Uqkg",
+  authDomain: "gastos-7adfd.firebaseapp.com",
+  databaseURL: "https://gastos-7adfd-default-rtdb.firebaseio.com",
+  projectId: "gastos-7adfd",
+  storageBucket: "gastos-7adfd.firebasestorage.app",
+  messagingSenderId: "562517695534",
+  appId: "1:562517695534:web:ce38c380a7bce4215293bf"
+};
+
+// ══════════════════════════════════════════════
+
+const USERS = {
+  manolo: { name: "Manolo", emoji: "👨", color: "#2563EB" },
+  esposa: { name: "Esposa", emoji: "👩", color: "#DB2777" }
+};
+
+const CATEGORIES = [
+  { id:"super", label:"Súper", icon:"🛒" },
+  { id:"renta", label:"Renta", icon:"🏠" },
+  { id:"comida", label:"Comida", icon:"🍽️" },
+  { id:"trans", label:"Transporte", icon:"🚗" },
+  { id:"salud", label:"Salud", icon:"💊" },
+  { id:"ocio", label:"Ocio", icon:"🎉" },
+  { id:"ropa", label:"Ropa", icon:"👕" },
+  { id:"otro", label:"Otro", icon:"📦" }
+];
+
+const AJUSTES = [100, 200, 500, 1000];
+
+function fmt(n) {
+  return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",minimumFractionDigits:0}).format(n);
+}
+function fmtDate(iso) {
+  return new Date(iso).toLocaleDateString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+}
+
+let db, state = { presupuesto:4000, gastos:{} };
+let usuario = null, vistaActual = "home", ajusteActivo = 100;
+
+// Check si Firebase está configurado
+if (firebaseConfig.apiKey === "TU_API_KEY") {
+  mostrarConfigScreen();
+} else {
+  iniciarApp();
+}
+
+function mostrarConfigScreen() {
+  document.getElementById("app").innerHTML = `
+    <div id="config-screen">
+      <div style="font-size:52px;margin-bottom:8px">🔥</div>
+      <h2>Configurar Firebase</h2>
+      <p>Abre el archivo <strong>index.html</strong> en un editor de texto y reemplaza los valores de <strong>firebaseConfig</strong> con los de tu proyecto Firebase.<br><br>Sigue las instrucciones del archivo <strong>README.txt</strong>.</p>
+    </div>`;
+}
+
+function iniciarApp() {
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    // Escuchar cambios en tiempo real
+    onValue(ref(db, "gastos-pareja"), (snap) => {
+      if (snap.exists()) {
+        state = snap.val();
+        if (!state.gastos) state.gastos = {};
+      }
+      render();
+    });
+  } catch(e) {
+    document.getElementById("app").innerHTML = `
+      <div style="padding:40px;text-align:center;color:#ef4444">
+        <div style="font-size:40px;margin-bottom:12px">❌</div>
+        <div style="font-size:16px;font-weight:700">Error de configuración Firebase</div>
+        <div style="font-size:13px;color:#64748b;margin-top:8px">${e.message}</div>
+      </div>`;
+  }
+}
+
+async function guardarEstado() {
+  await set(ref(db, "gastos-pareja"), state);
+}
+
+function render() {
+  if (!usuario) { renderLogin(); return; }
+  renderApp();
+}
+
+function renderLogin() {
+  document.getElementById("app").innerHTML = `
+    <div id="login">
+      <div style="font-size:52px">💑</div>
+      <h1>Gastos Pareja</h1>
+      <p>¿Quién va a registrar?</p>
+      <div class="login-cards">
+        ${Object.entries(USERS).map(([key,u]) => `
+          <div class="login-card" style="border-color:${u.color}" onclick="elegirUsuario('${key}')">
+            <div class="emoji">${u.emoji}</div>
+            <div class="nombre" style="color:${u.color}">${u.name}</div>
+          </div>`).join("")}
+      </div>
+      <div class="login-hint">📱 Los datos se sincronizan en tiempo real entre los dos dispositivos</div>
+    </div>`;
+}
+
+window.elegirUsuario = (key) => {
+  usuario = key;
+  document.documentElement.style.setProperty("--user-color", USERS[key].color);
+  renderApp();
+};
+
+function renderApp() {
+  const u = USERS[usuario];
+  const gastosList = Object.entries(state.gastos || {})
+    .map(([id,g]) => ({...g, id}))
+    .sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+  const totalGastado = gastosList.reduce((s,g) => s+g.monto, 0);
+  const disponible = state.presupuesto - totalGastado;
+  const pct = Math.min((totalGastado / Math.max(state.presupuesto,1))*100, 100);
+  const enRojo = disponible < 0;
+  const headerBg = enRojo ? "#dc2626" : u.color;
+
+  document.getElementById("app").innerHTML = `
+    <div id="toast"></div>
+    <div id="header" style="background:${headerBg}">
+      <div class="top-row">
+        <div>
+          <div class="label">Semana actual</div>
+          <div class="who">${u.emoji} ${u.name}</div>
+        </div>
+        <button class="btn-cambiar" onclick="cambiarUsuario()">Cambiar 🔄</button>
+      </div>
+      <div class="disponible-label">${enRojo ? "⚠️ Te pasaste por" : "Disponible"}</div>
+      <div class="monto-grande">${fmt(Math.abs(disponible))}</div>
+      <div class="sub">Gastado ${fmt(totalGastado)} de ${fmt(state.presupuesto)}</div>
+      <div class="barra-wrap">
+        <div class="barra-fill" style="width:${pct}%;background:${enRojo?"#fbbf24":"#fff"}"></div>
+      </div>
+      <div class="ctrl-presupuesto">
+        <div class="titulo">💰 Ajustar presupuesto semanal</div>
+        <div class="ajuste-btns">
+          ${AJUSTES.map(a => `<button class="ajuste-btn${a===ajusteActivo?" activo":""}" onclick="setAjuste(${a})">$${a}</button>`).join("")}
+        </div>
+        <div class="pm-btns">
+          <button class="pm-btn menos" onclick="cambiarPresupuesto(-${ajusteActivo})">− ${fmt(ajusteActivo)}</button>
+          <button class="pm-btn mas" onclick="cambiarPresupuesto(${ajusteActivo})">+ ${fmt(ajusteActivo)}</button>
+        </div>
+      </div>
+    </div>
+    <div id="tabs">
+      <button class="tab${vistaActual==="home"?" activo":""}" onclick="setVista('home')">📊 Resumen</button>
+      <button class="tab${vistaActual==="agregar"?" activo":""}" onclick="setVista('agregar')">➕ Agregar</button>
+      <button class="tab${vistaActual==="historial"?" activo":""}" onclick="setVista('historial')">📋 Historial</button>
+    </div>
+    <div id="view">${renderVista(gastosList)}</div>`;
+}
+
+function renderVista(gastosList) {
+  if (vistaActual === "home") return renderHome(gastosList);
+  if (vistaActual === "agregar") return renderAgregar();
+  if (vistaActual === "historial") return renderHistorial(gastosList);
+  return "";
+}
+
+function renderHome(gastosList) {
+  const userCards = Object.entries(USERS).map(([key,u2]) => {
+    const total = gastosList.filter(g=>g.usuario===key).reduce((s,g)=>s+g.monto,0);
+    const count = gastosList.filter(g=>g.usuario===key).length;
+    const pct = state.presupuesto>0?Math.min((total/state.presupuesto)*100,100):0;
+    const isActive = key===usuario;
+    return `<div class="user-card${isActive?" activo":""}">
+      <div class="u-emoji">${u2.emoji}</div>
+      <div class="u-nombre">${u2.name}</div>
+      <div class="u-monto" style="color:${u2.color}">${fmt(total)}</div>
+      <div class="u-count">${count} gasto${count!==1?"s":""} · ${pct.toFixed(0)}%</div>
+      <div class="mini-barra-wrap"><div class="mini-barra-fill" style="width:${pct}%;background:${u2.color}"></div></div>
+    </div>`;
+  }).join("");
+
+  const ultimos = gastosList.slice(0,5).map(g => renderGastoCard(g)).join("");
+  const hayMas = gastosList.length > 5;
+
+  return `
+    <div class="user-cards">${userCards}</div>
+    <div class="section-title">Últimos movimientos</div>
+    ${gastosList.length===0
+      ? `<div class="empty"><div class="big">📭</div><div>Sin gastos esta semana</div></div>`
+      : ultimos}
+    ${hayMas ? `<button class="btn-ver-todos" onclick="setVista('historial')">Ver todos (${gastosList.length}) →</button>` : ""}`;
+}
+
+function renderAgregar() {
+  const u = USERS[usuario];
+  const catButtons = CATEGORIES.map(c => `
+    <button class="cat-btn" id="cat-${c.id}" onclick="setCategoria('${c.id}')">
+      <span class="cat-emoji">${c.icon}</span>${c.label}
+    </button>`).join("");
+  return `
+    <div class="form-card">
+      <div class="form-title">Gasto de ${u.emoji} ${u.name}</div>
+      <label>Monto (MXN)</label>
+      <input type="number" inputmode="decimal" class="input-monto" id="inp-monto"
+        placeholder="0" style="color:${u.color}" oninput="updateGuardar()" />
+      <label style="margin-top:16px">¿En qué?</label>
+      <input type="text" id="inp-desc" placeholder="Ej. Mercado, gasolina..."
+        oninput="updateGuardar()" />
+      <label style="margin-top:16px">Categoría</label>
+      <div class="cat-grid">${catButtons}</div>
+      <button class="btn-guardar" id="btn-guardar" onclick="agregarGasto()" disabled>
+        💾 Registrar gasto
+      </button>
+    </div>`;
+}
+
+let catSeleccionada = "super";
+window.setCategoria = (id) => {
+  catSeleccionada = id;
+  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("activo"));
+  document.getElementById("cat-"+id)?.classList.add("activo");
+};
+window.updateGuardar = () => {
+  const m = document.getElementById("inp-monto")?.value;
+  const d = document.getElementById("inp-desc")?.value?.trim();
+  const btn = document.getElementById("btn-guardar");
+  if (btn) btn.disabled = !(m && parseFloat(m)>0 && d);
+};
+
+function renderHistorial(gastosList) {
+  return `
+    <div class="section-title">Historial completo — ${gastosList.length} registros</div>
+    ${gastosList.length===0
+      ? `<div class="empty"><div class="big">📭</div><div>Sin gastos</div></div>`
+      : gastosList.map(g => renderGastoCard(g)).join("")}`;
+}
+
+function renderGastoCard(g) {
+  const u = USERS[g.usuario];
+  const cat = CATEGORIES.find(c=>c.id===g.categoria)||CATEGORIES[7];
+  const esMio = g.usuario===usuario;
+  return `
+    <div class="gasto-card" style="border-color:${u.color}">
+      <div class="gasto-cat">${cat.icon}</div>
+      <div class="gasto-info">
+        <div class="gasto-desc">${g.descripcion}</div>
+        <div class="gasto-meta">${u.emoji} ${u.name} · ${cat.label} · ${fmtDate(g.fecha)}</div>
+      </div>
+      <div class="gasto-right">
+        <div class="gasto-monto" style="color:${u.color}">${fmt(g.monto)}</div>
+        ${esMio ? `<button class="btn-delete" onclick="eliminarGasto('${g.id}')">🗑️</button>` : ""}
+      </div>
+    </div>`;
+}
+
+window.cambiarUsuario = () => { usuario = null; render(); };
+window.setVista = (v) => { vistaActual = v; renderApp(); };
+window.setAjuste = (a) => { ajusteActivo = a; renderApp(); };
+
+window.cambiarPresupuesto = async (delta) => {
+  state.presupuesto = Math.max(0, (state.presupuesto||4000) + delta);
+  await guardarEstado();
+  showToast(`${delta>0?"➕":"➖"} Presupuesto: ${fmt(state.presupuesto)}`, delta>0?"#10b981":"#f59e0b");
+};
+
+window.agregarGasto = async () => {
+  const monto = parseFloat(document.getElementById("inp-monto").value);
+  const desc = document.getElementById("inp-desc").value.trim();
+  if (!monto||!desc) return;
+  const gasto = { usuario, monto, descripcion:desc, categoria:catSeleccionada, fecha:new Date().toISOString() };
+  if (!state.gastos) state.gastos = {};
+  const id = "g" + Date.now();
+  state.gastos[id] = gasto;
+  await guardarEstado();
+  vistaActual = "home";
+  showToast(`✅ Registrado: ${fmt(monto)}`);
+};
+
+window.eliminarGasto = async (id) => {
+  if (!confirm("¿Eliminar este gasto?")) return;
+  delete state.gastos[id];
+  await guardarEstado();
+  showToast("🗑️ Gasto eliminado", "#ef4444");
+};
+
+function showToast(msg, color="#10b981") {
+  const t = document.getElementById("toast");
+  if (!t) return;
+  t.textContent = msg;
+  t.style.background = color;
+  t.classList.add("visible");
+  setTimeout(() => t.classList.remove("visible"), 2500);
+}
+</script>
+</body>
+</html>
