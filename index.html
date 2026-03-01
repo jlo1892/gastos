@@ -254,16 +254,6 @@
     .bprimary{width:100%;padding:13px;font-size:14px;font-weight:800;color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;margin-top:10px;}
     .empty{text-align:center;padding:48px 0;color:#94a3b8;}
     .emi{font-size:48px;margin-bottom:10px;}.emt{font-size:14px;font-weight:600;}
- /* --- FIX móvil --- */
-button, a, .card, .lc, [role="button"]{
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.lc{
-  user-select: none;
-  -webkit-user-select: none;
-}
   </style>
 </head>
 <body>
@@ -322,7 +312,7 @@ let state={
   perfiles:{manolo:{nombre:"Manolo",emoji:"👨"},esposa:{nombre:"Esposa",emoji:"👩"}},
   finanzas:{ingresoMensual:0,gastosRecurrentes:[]},
   gastos:{},
-  rollovers:{},        // key: semana-inicio → monto sobrante agregado
+  rollovers:{},
   ultimaSemana:null,
   ultimoMes:null,
   resumenesMensuales:{}
@@ -330,6 +320,7 @@ let state={
 let usuario=null,vista="home",ajuste=100,cat="super",emojiFor=null;
 let saving=false,splitActivo=false,ocrLoading=false,mesOffset=0;
 let chartCat=null,chartMes=null,generandoResumen=false;
+let appIniciado=false;
 
 const db2=initializeApp(FC);
 db=getDatabase(db2);
@@ -347,7 +338,9 @@ onValue(ref(db,"gastos-pareja"),snap=>{
   }
   checkSemana();
   checkMes();
-  render();
+  // Solo re-renderizar login en la primera carga. Después, solo si ya hay usuario.
+  if(!appIniciado){ appIniciado=true; render(); }
+  else if(usuario){ renderApp(); }
 });
 const save=()=>set(ref(db,"gastos-pareja"),state);
 
@@ -489,44 +482,18 @@ function renderLogin(){
       <div class="lhero">💑</div>
       <div class="ltitle">Gastos Pareja</div>
       <div class="lsub">¿Quién va a registrar?</div>
-
-      <div class="lcards" id="loginCards">
-        <button type="button" class="lc" data-user="manolo" style="border-color:${COL.manolo}">
-          <div class="lc-e">${p.manolo.emoji}</div>
-          <div class="lc-n" style="color:${COL.manolo}">${p.manolo.nombre}</div>
-        </button>
-
-        <button type="button" class="lc" data-user="esposa" style="border-color:${COL.esposa}">
-          <div class="lc-e">${p.esposa.emoji}</div>
-          <div class="lc-n" style="color:${COL.esposa}">${p.esposa.nombre}</div>
-        </button>
+      <div class="lcards">
+        <div class="lc" style="border-color:${COL.manolo}" onclick="elegir('manolo')">
+          <div class="lc-e">${p.manolo.emoji}</div><div class="lc-n" style="color:${COL.manolo}">${p.manolo.nombre}</div>
+        </div>
+        <div class="lc" style="border-color:${COL.esposa}" onclick="elegir('esposa')">
+          <div class="lc-e">${p.esposa.emoji}</div><div class="lc-n" style="color:${COL.esposa}">${p.esposa.nombre}</div>
+        </div>
       </div>
-
       <div class="lhint">📱 Datos sincronizados en tiempo real</div>
     </div>`;
-
-  bindLoginHandlers();
 }
- function bindLoginHandlers(){
-  const wrap = document.getElementById("loginCards");
-  if(!wrap) return;
 
-  // Evita que se acumulen listeners si renderizas varias veces
-  wrap.onclick = null;
-  wrap.ontouchend = null;
-
-  const pick = (ev)=>{
-    const btn = ev.target.closest ? ev.target.closest(".lc") : null;
-    if(!btn) return;
-
-    ev.preventDefault(); // iPhone: evita que se “pierda” el tap
-
-    const u = btn.getAttribute("data-user");
-    if(u) window.elegir(u);
-  };
-
-  wrap.addEventListener("touchend", pick, false);
-}
 window.elegir=k=>{
   usuario=k;
   document.documentElement.style.setProperty("--user-color",COL[k]);
@@ -829,7 +796,7 @@ function vFinanzas(){
       <div class="finsub">Ingresa tu ingreso mensual combinado y tus gastos fijos. La app calculará cuánto pueden gastar cada semana.</div>
       <label class="flbl">Ingreso mensual combinado</label>
       <input type="number" inputmode="decimal" id="inp-ingreso" placeholder="Ej. 25000"
-        value="${f.ingresoMensual||""}" oninput="updateCalc()"/>
+        value="${f.ingresoMensual||""}"/>
       <div style="margin-top:16px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
         <label class="flbl" style="margin-bottom:0">Gastos fijos mensuales</label>
         <button onclick="addRec()" style="background:var(--user-color);color:#fff;border:none;
@@ -985,10 +952,13 @@ window.delRec=async i=>{
 };
 window.saveFinanzas=async()=>{
   const v=parseFloat(document.getElementById("inp-ingreso")?.value)||0;
-  state.finanzas.ingresoMensual=v; await save();
-  toast("💾 Guardado"); renderApp();
+  state.finanzas.ingresoMensual=v;
+  // Mostrar resultado de inmediato sin esperar Firebase
+  renderApp();
+  await save();
+  toast("💾 Guardado");
 };
-window.updateCalc=()=>{renderApp();};
+window.updateCalc=()=>{}; // ya no se usa, se calcula al guardar
 window.aplicarPresupuesto=async(monto)=>{
   state.settings.presupuesto=monto; await save();
   toast(`✅ Presupuesto actualizado: ${fmt(monto)}`); renderApp();
