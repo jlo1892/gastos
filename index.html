@@ -1,145 +1,234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
   <title>Gastos Pareja 💑</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; }
-    #app { max-width: 480px; margin: 0 auto; min-height: 100vh; }
-
-    /* LOGIN */
-    #login { display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-height:100vh; background: linear-gradient(160deg,#EFF6FF 0%,#FDF2F8 100%); padding:24px; }
-    #login h1 { font-size:26px; font-weight:800; color:#1e293b; margin:8px 0 4px; }
-    #login p { color:#64748b; font-size:14px; margin-bottom:40px; }
-    .login-cards { display:flex; gap:16px; }
-    .login-card { background:#fff; border-radius:22px; padding:28px 36px; cursor:pointer;
-      text-align:center; box-shadow:0 8px 30px rgba(0,0,0,.1); border:3px solid; transition:transform .15s; }
-    .login-card:hover { transform:scale(1.05); }
-    .login-card .emoji { font-size:42px; }
-    .login-card .nombre { font-size:18px; font-weight:700; margin-top:10px; }
-    .login-hint { margin-top:32px; font-size:12px; color:#94a3b8; text-align:center; max-width:270px; line-height:1.7; }
-
-    /* HEADER */
-    #header { color:#fff; padding:22px 20px 24px; transition:background .4s; }
-    #header .top-row { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
-    #header .label { font-size:11px; opacity:.75; text-transform:uppercase; letter-spacing:1.5px; }
-    #header .who { font-size:20px; font-weight:700; margin-top:2px; }
-    .btn-cambiar { background:rgba(255,255,255,.2); border:none; color:#fff; padding:6px 14px;
-      border-radius:20px; cursor:pointer; font-size:12px; }
-    #header .disponible-label { font-size:11px; opacity:.75; text-transform:uppercase; letter-spacing:1px; text-align:center; }
-    #header .monto-grande { font-size:48px; font-weight:800; letter-spacing:-2px; line-height:1.1; text-align:center; }
-    #header .sub { font-size:13px; opacity:.75; margin-top:4px; text-align:center; }
-    .barra-wrap { background:rgba(255,255,255,.25); border-radius:50px; height:8px; margin:16px 0; }
-    .barra-fill { height:8px; border-radius:50px; transition:width .5s, background .3s; }
-
-    /* CONTROL PRESUPUESTO */
-    .ctrl-presupuesto { background:rgba(0,0,0,.15); border-radius:16px; padding:14px; }
-    .ctrl-presupuesto .titulo { font-size:12px; opacity:.9; margin-bottom:10px; font-weight:600; text-align:center; }
-    .ajuste-btns { display:flex; gap:6px; margin-bottom:10px; }
-    .ajuste-btn { flex:1; padding:7px 4px; border:2px solid rgba(255,255,255,.3); border-radius:10px;
-      background:transparent; color:#fff; cursor:pointer; font-size:12px; }
-    .ajuste-btn.activo { border-color:#fff; background:rgba(255,255,255,.25); font-weight:700; }
-    .pm-btns { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .pm-btn { padding:13px; border:2px solid rgba(255,255,255,.3); border-radius:12px;
-      color:#fff; cursor:pointer; font-size:16px; font-weight:700; }
-    .pm-btn.menos { background:rgba(0,0,0,.2); }
-    .pm-btn.mas { background:rgba(255,255,255,.2); }
-
-    /* TABS */
-    #tabs { display:flex; background:#fff; border-bottom:1px solid #e2e8f0; position:sticky; top:0; z-index:10; }
-    .tab { flex:1; padding:13px 4px; border:none; background:none; cursor:pointer; font-size:13px;
-      color:#94a3b8; border-bottom:2.5px solid transparent; font-weight:400; transition:all .2s; }
-    .tab.activo { font-weight:700; border-bottom-color:var(--user-color); color:var(--user-color); }
-
-    /* VIEWS */
-    #view { padding:18px; padding-bottom:80px; }
-
-    /* CARDS USUARIOS */
-    .user-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
-    .user-card { background:#fff; border-radius:18px; padding:16px;
-      border:2.5px solid #e2e8f0; box-shadow:0 2px 12px rgba(0,0,0,.07); }
-    .user-card.activo { border-color:var(--user-color); }
-    .user-card .u-emoji { font-size:26px; }
-    .user-card .u-nombre { font-size:13px; color:#64748b; margin-top:4px; }
-    .user-card .u-monto { font-size:22px; font-weight:800; margin-top:4px; letter-spacing:-1px; }
-    .user-card .u-count { font-size:11px; color:#94a3b8; margin-top:2px; }
-    .mini-barra-wrap { background:#f1f5f9; border-radius:50px; height:4px; margin-top:8px; }
-    .mini-barra-fill { height:4px; border-radius:50px; transition:width .5s; }
-
-    /* GASTOS LISTA */
-    .section-title { font-size:14px; font-weight:700; color:#1e293b; margin-bottom:12px; }
-    .empty { text-align:center; color:#94a3b8; padding:40px 0; }
-    .empty .big { font-size:44px; margin-bottom:8px; }
-    .gasto-card { background:#fff; border-radius:14px; padding:13px 15px; margin-bottom:10px;
-      box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; align-items:center; gap:12px; border-left:4px solid; }
-    .gasto-cat { font-size:26px; }
-    .gasto-info { flex:1; min-width:0; }
-    .gasto-desc { font-size:14px; font-weight:600; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .gasto-meta { font-size:11px; color:#94a3b8; margin-top:2px; }
-    .gasto-right { text-align:right; flex-shrink:0; }
-    .gasto-monto { font-size:17px; font-weight:800; }
-    .btn-delete { background:none; border:none; cursor:pointer; color:#ef4444; font-size:16px; padding:2px 0; margin-top:2px; }
-    .btn-ver-todos { background:#f1f5f9; color:#475569; border:none; border-radius:14px;
-      padding:12px 20px; cursor:pointer; font-size:14px; width:100%; margin-top:6px; }
-
-    /* FORM */
-    .form-card { background:#fff; border-radius:20px; padding:22px; box-shadow:0 4px 20px rgba(0,0,0,.08); }
-    .form-title { font-size:17px; font-weight:700; margin-bottom:20px; color:#1e293b; }
-    label { display:block; font-size:13px; font-weight:600; color:#374151; margin-bottom:7px; }
-    input[type=number], input[type=text] { width:100%; border:2px solid #e2e8f0; border-radius:12px;
-      padding:12px 14px; font-size:16px; color:#1e293b; outline:none; background:#f8fafc; font-family:inherit; }
-    .input-monto { font-size:36px !important; text-align:center; font-weight:800; letter-spacing:-1px; }
-    .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
-    .cat-btn { padding:10px 4px; border:2px solid #e2e8f0; border-radius:12px; background:#fff;
-      cursor:pointer; font-size:11px; color:#374151; }
-    .cat-btn.activo { border-color:var(--user-color); }
-    .cat-emoji { font-size:22px; display:block; margin-bottom:2px; }
-    .btn-guardar { width:100%; margin-top:22px; padding:14px 20px; font-size:16px; font-weight:700;
-      color:#fff; border:none; border-radius:14px; cursor:pointer; background:var(--user-color);
-      font-family:inherit; transition:opacity .2s; }
-    .btn-guardar:disabled { opacity:.45; cursor:not-allowed; }
-
-    /* TOAST */
-    #toast { position:fixed; top:18px; left:50%; transform:translateX(-50%);
-      color:#fff; padding:10px 22px; border-radius:50px; font-size:14px; z-index:999;
-      box-shadow:0 4px 20px rgba(0,0,0,.2); white-space:nowrap; pointer-events:none;
-      opacity:0; transition:opacity .3s; }
-    #toast.visible { opacity:1; }
+    :root {
+      --c-manolo:#2563EB; --c-esposa:#DB2777;
+      --user-color:#2563EB; --user-light:#EFF6FF;
+      --c-bg:#F0F4FF; --c-card:#fff;
+      --c-text:#1e293b; --c-muted:#64748b;
+      --c-border:#e2e8f0; --shadow:0 4px 20px rgba(0,0,0,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    body{font-family:'Nunito',system-ui,sans-serif;background:var(--c-bg);color:var(--c-text);}
+    #app{max-width:480px;margin:0 auto;min-height:100vh;}
 
     /* LOADING */
-    #loading { display:flex; align-items:center; justify-content:center; height:100vh;
-      color:#64748b; font-size:18px; }
+    #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;
+      height:100vh;gap:12px;color:var(--c-muted);font-size:15px;}
+    .spin{width:36px;height:36px;border:3px solid var(--c-border);border-top-color:var(--c-manolo);
+      border-radius:50%;animation:rot .8s linear infinite;}
+    @keyframes rot{to{transform:rotate(360deg);}}
 
-    /* CONFIG FIREBASE */
-    #config-screen { display:flex; flex-direction:column; align-items:center; justify-content:center;
-      min-height:100vh; background:#f8fafc; padding:24px; }
-    #config-screen h2 { font-size:22px; font-weight:800; color:#1e293b; margin-bottom:8px; }
-    #config-screen p { color:#64748b; font-size:14px; text-align:center; margin-bottom:24px; line-height:1.6; }
-    .config-form { background:#fff; border-radius:20px; padding:24px; width:100%; max-width:400px;
-      box-shadow:0 4px 20px rgba(0,0,0,.08); }
-    .config-form input { margin-bottom:12px; }
-    .btn-conectar { width:100%; padding:14px; font-size:15px; font-weight:700; color:#fff;
-      border:none; border-radius:14px; cursor:pointer; background:#2563EB; font-family:inherit; }
+    /* LOGIN */
+    #login{display:flex;flex-direction:column;align-items:center;justify-content:center;
+      min-height:100vh;padding:32px 24px;
+      background:linear-gradient(160deg,#dbeafe 0%,#fce7f3 100%);}
+    .login-hero{font-size:64px;animation:pop .4s ease;}
+    @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+    .login-title{font-size:30px;font-weight:900;letter-spacing:-1px;margin:6px 0 4px;}
+    .login-sub{font-size:14px;color:var(--c-muted);margin-bottom:36px;}
+    .login-cards{display:flex;gap:16px;}
+    .lc{background:#fff;border-radius:24px;padding:28px 32px;cursor:pointer;text-align:center;
+      box-shadow:0 8px 32px rgba(0,0,0,.12);border:3px solid;transition:transform .15s;}
+    .lc:active{transform:scale(.95);}
+    .lc-emoji{font-size:52px;}
+    .lc-name{font-size:17px;font-weight:800;margin-top:10px;}
+    .login-hint{margin-top:28px;font-size:12px;color:#94a3b8;text-align:center;max-width:260px;line-height:1.7;}
+
+    /* HEADER */
+    #hdr{color:#fff;padding:20px 18px 22px;transition:background .4s;}
+    .h-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+    .h-meta{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:1.5px;}
+    .h-who{font-size:22px;font-weight:900;margin-top:2px;}
+    .h-badge{background:rgba(255,255,255,.2);border-radius:50px;padding:3px 10px;
+      font-size:11px;margin-top:5px;display:inline-block;font-weight:600;}
+    .btn-cam{background:rgba(255,255,255,.2);border:none;color:#fff;padding:7px 14px;
+      border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;}
+    .h-disp-lbl{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:1px;
+      text-align:center;margin-bottom:4px;}
+    .h-monto{font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1;text-align:center;}
+    .h-sub{font-size:13px;opacity:.75;margin-top:6px;text-align:center;}
+    .bar-w{background:rgba(255,255,255,.25);border-radius:50px;height:8px;margin:14px 0 16px;}
+    .bar-f{height:8px;border-radius:50px;transition:width .6s;}
+
+    /* PRESUPUESTO CTRL */
+    .ctrl{background:rgba(0,0,0,.15);border-radius:var(--radius);padding:14px;}
+    .ctrl-t{font-size:12px;font-weight:700;opacity:.9;text-align:center;margin-bottom:10px;}
+    .aj-row{display:flex;gap:6px;margin-bottom:8px;}
+    .aj{flex:1;padding:7px 2px;border:2px solid rgba(255,255,255,.3);border-radius:10px;
+      background:transparent;color:#fff;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;}
+    .aj.on{border-color:#fff;background:rgba(255,255,255,.25);font-weight:900;}
+    .pm-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .pm{padding:12px;border:2px solid rgba(255,255,255,.3);border-radius:14px;
+      color:#fff;cursor:pointer;font-size:15px;font-weight:800;font-family:inherit;transition:transform .1s;}
+    .pm:active{transform:scale(.96);}
+    .pm-m{background:rgba(0,0,0,.2);}
+    .pm-p{background:rgba(255,255,255,.2);}
+
+    /* TABS */
+    #tabs{display:flex;background:#fff;border-bottom:1px solid var(--c-border);
+      position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+    .tab{flex:1;padding:13px 2px;border:none;background:none;cursor:pointer;font-size:11px;
+      color:#94a3b8;border-bottom:2.5px solid transparent;font-weight:600;
+      font-family:inherit;transition:all .2s;}
+    .tab.on{color:var(--user-color);border-bottom-color:var(--user-color);font-weight:800;}
+
+    /* VIEW */
+    #view{padding:16px 16px 90px;}
+
+    /* BALANCE */
+    .bal-card{border-radius:var(--radius);padding:15px 18px;margin-bottom:14px;
+      display:flex;align-items:center;gap:14px;}
+    .bal-ok{background:linear-gradient(135deg,#d1fae5,#a7f3d0);}
+    .bal-warn{background:linear-gradient(135deg,#fef3c7,#fde68a);}
+    .bal-icon{font-size:34px;}
+    .bal-info{flex:1;}
+    .bal-title{font-size:13px;font-weight:800;color:#374151;}
+    .bal-sub{font-size:12px;color:#6b7280;margin-top:2px;}
+    .bal-monto{font-size:20px;font-weight:900;color:#92400e;}
+
+    /* USER CARDS */
+    .ucards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+    .ucard{background:#fff;border-radius:var(--radius);padding:15px;
+      border:2.5px solid var(--c-border);box-shadow:var(--shadow);}
+    .ucard.act{border-color:var(--user-color);}
+    .uc-e{font-size:28px;}
+    .uc-n{font-size:13px;color:var(--c-muted);margin-top:3px;font-weight:600;}
+    .uc-m{font-size:24px;font-weight:900;margin-top:3px;letter-spacing:-1px;}
+    .uc-c{font-size:11px;color:#94a3b8;margin-top:2px;}
+    .mb-w{background:#f1f5f9;border-radius:50px;height:4px;margin-top:8px;}
+    .mb-f{height:4px;border-radius:50px;transition:width .5s;}
+
+    /* SEC TITLE */
+    .st{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;
+      align-items:center;justify-content:space-between;}
+    .st-badge{background:var(--c-border);color:var(--c-muted);font-size:11px;
+      padding:3px 8px;border-radius:50px;font-weight:600;}
+
+    /* GASTO CARD */
+    .gc{background:#fff;border-radius:14px;padding:13px 14px;margin-bottom:9px;
+      box-shadow:0 2px 10px rgba(0,0,0,.06);display:flex;align-items:center;
+      gap:11px;border-left:4px solid;animation:si .2s ease;}
+    @keyframes si{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+    .gc-i{font-size:26px;flex-shrink:0;}
+    .gc-inf{flex:1;min-width:0;}
+    .gc-d{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .gc-m{font-size:11px;color:#94a3b8;margin-top:2px;}
+    .gc-r{text-align:right;flex-shrink:0;}
+    .gc-v{font-size:17px;font-weight:900;}
+    .gc-del{background:none;border:none;cursor:pointer;font-size:15px;display:block;margin-top:2px;}
+
+    /* HISTORIAL */
+    .sem-blk{margin-bottom:22px;}
+    .sem-hdr{font-size:13px;font-weight:800;color:var(--c-text);margin-bottom:10px;
+      display:flex;align-items:center;justify-content:space-between;}
+    .sem-tot{font-size:12px;background:var(--c-border);padding:3px 8px;
+      border-radius:50px;color:var(--c-muted);}
+    .sem-mini{display:flex;gap:8px;margin-bottom:10px;}
+    .sem-mini-card{flex:1;border-radius:12px;padding:10px;text-align:center;}
+    .sem-mini-n{font-size:11px;color:#64748b;}
+    .sem-mini-v{font-size:16px;font-weight:900;margin-top:2px;}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:48px 0;color:#94a3b8;}
+    .em-i{font-size:48px;margin-bottom:10px;}
+    .em-t{font-size:14px;font-weight:600;}
+
+    /* FORM */
+    .fcard{background:#fff;border-radius:22px;padding:22px;box-shadow:var(--shadow);}
+    .ftitle{font-size:17px;font-weight:800;margin-bottom:18px;}
+    .flbl{display:block;font-size:12px;font-weight:800;color:#374151;
+      margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+    input[type=number],input[type=text]{width:100%;border:2px solid var(--c-border);
+      border-radius:12px;padding:12px 14px;font-size:16px;color:var(--c-text);
+      outline:none;background:#f8fafc;font-family:inherit;transition:border-color .2s;}
+    input:focus{border-color:var(--user-color);background:#fff;}
+    .inpm{font-size:38px!important;text-align:center;font-weight:900!important;letter-spacing:-1px;}
+    .cg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+    .cb{padding:10px 4px;border:2px solid var(--c-border);border-radius:12px;background:#fff;
+      cursor:pointer;font-size:11px;color:#374151;font-family:inherit;font-weight:600;transition:all .15s;}
+    .cb.on{border-color:var(--user-color);background:var(--user-light);}
+    .cb span{font-size:22px;display:block;margin-bottom:2px;}
+    .btn-g{width:100%;margin-top:20px;padding:15px;font-size:16px;font-weight:900;
+      color:#fff;border:none;border-radius:14px;cursor:pointer;background:var(--user-color);
+      font-family:inherit;transition:opacity .2s;}
+    .btn-g:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* CONFIG */
+    .ss{margin-bottom:20px;}
+    .ss-t{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+      color:var(--c-muted);margin-bottom:10px;}
+    .scard{background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+    .pe{display:flex;align-items:center;gap:14px;padding-bottom:16px;margin-bottom:16px;
+      border-bottom:1px solid var(--c-border);}
+    .pe:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none;}
+    .pe-eb{font-size:44px;background:var(--c-bg);border:none;border-radius:14px;
+      padding:8px 10px;cursor:pointer;flex-shrink:0;line-height:1;text-align:center;}
+    .pe-info{flex:1;}
+    .pe-ni{width:100%;border:2px solid var(--c-border);border-radius:10px;
+      padding:8px 12px;font-size:15px;font-weight:700;font-family:inherit;
+      color:var(--c-text);background:#f8fafc;outline:none;}
+    .pe-sv{margin-top:6px;border:none;border-radius:10px;padding:7px 14px;
+      font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;color:#fff;}
+
+    /* DIA GRID */
+    .dg{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px;}
+    .db{padding:8px 2px;border:2px solid var(--c-border);border-radius:10px;
+      background:#fff;cursor:pointer;font-size:11px;font-weight:700;
+      color:var(--c-muted);font-family:inherit;transition:all .15s;}
+    .db.on{border-color:var(--user-color);background:var(--user-light);color:var(--user-color);}
+
+    /* SETTINGS ROWS */
+    .sr{display:flex;justify-content:space-between;align-items:center;
+      padding:12px 0;border-bottom:1px solid var(--c-border);}
+    .sr:last-child{border-bottom:none;}
+    .sr-l{font-size:14px;font-weight:700;}
+    .sr-s{font-size:12px;color:var(--c-muted);margin-top:2px;}
+    .sr-v{font-size:13px;font-weight:800;color:var(--user-color);}
+
+    /* MODAL */
+    .mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;
+      display:flex;align-items:flex-end;justify-content:center;animation:fi .2s;}
+    @keyframes fi{from{opacity:0}to{opacity:1}}
+    .mb{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;
+      max-width:480px;animation:su .25s ease;}
+    @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .mt{font-size:16px;font-weight:800;margin-bottom:16px;}
+    .eg{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+    .eo{font-size:32px;background:var(--c-bg);border:2px solid transparent;
+      border-radius:12px;padding:8px;cursor:pointer;text-align:center;transition:transform .15s;}
+    .eo:active{transform:scale(.88);}
+    .eo.sel{border-color:var(--user-color);background:var(--user-light);}
+    .mc{width:100%;margin-top:16px;padding:13px;background:#f1f5f9;border:none;
+      border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+
+    /* TOAST */
+    #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);
+      color:#fff;padding:11px 22px;border-radius:50px;font-size:14px;font-weight:700;
+      z-index:999;box-shadow:0 6px 24px rgba(0,0,0,.2);white-space:nowrap;
+      opacity:0;transition:opacity .25s,transform .25s;}
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    .btn-sec{background:#f1f5f9;color:#475569;border:none;border-radius:14px;
+      padding:12px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;margin-top:6px;}
   </style>
 </head>
 <body>
 <div id="app">
-  <div id="loading">Conectando... 🔥</div>
+  <div id="loading"><div class="spin"></div><span>Conectando...</span></div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set, push, remove, get }
+import { getDatabase, ref, onValue, set }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ╔══════════════════════════════════════════════╗
-// ║  PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE      ║
-// ║  (ver instrucciones en el README)            ║
-// ╚══════════════════════════════════════════════╝
 const firebaseConfig = {
   apiKey: "AIzaSyAx0ILxze_MTBEoElQSvJEjHwaHjC9Uqkg",
   authDomain: "gastos-7adfd.firebaseapp.com",
@@ -150,286 +239,354 @@ const firebaseConfig = {
   appId: "1:562517695534:web:ce38c380a7bce4215293bf"
 };
 
-// ══════════════════════════════════════════════
-
-const USERS = {
-  manolo: { name: "Manolo", emoji: "👨", color: "#2563EB" },
-  esposa: { name: "Esposa", emoji: "👩", color: "#DB2777" }
+const EMOJIS = {
+  manolo:["👨","🧔","👦","👨‍💼","👨‍🦱","👨‍🦳","🧑","🤠","😎","🥷","👻","🐻","🦁","🐯","🐸","🎮"],
+  esposa:["👩","👧","👩‍💼","👩‍🦱","👩‍🦳","🧑‍🦰","💁‍♀️","🧖‍♀️","🌸","🦋","🐱","🌺","👸","🧚‍♀️","🦄","🌙"]
 };
-
-const CATEGORIES = [
-  { id:"super", label:"Súper", icon:"🛒" },
-  { id:"renta", label:"Renta", icon:"🏠" },
-  { id:"comida", label:"Comida", icon:"🍽️" },
-  { id:"trans", label:"Transporte", icon:"🚗" },
-  { id:"salud", label:"Salud", icon:"💊" },
-  { id:"ocio", label:"Ocio", icon:"🎉" },
-  { id:"ropa", label:"Ropa", icon:"👕" },
-  { id:"otro", label:"Otro", icon:"📦" }
+const COL = {manolo:"#2563EB", esposa:"#DB2777"};
+const CATS = [
+  {id:"super",l:"Súper",i:"🛒"},{id:"renta",l:"Renta",i:"🏠"},
+  {id:"comida",l:"Comida",i:"🍽️"},{id:"trans",l:"Transporte",i:"🚗"},
+  {id:"salud",l:"Salud",i:"💊"},{id:"ocio",l:"Ocio",i:"🎉"},
+  {id:"ropa",l:"Ropa",i:"👕"},{id:"otro",l:"Otro",i:"📦"}
 ];
+const DIAS = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const AJS = [100,200,500,1000];
 
-const AJUSTES = [100, 200, 500, 1000];
+const fmt = n => new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",minimumFractionDigits:0}).format(n);
+const fmtD = iso => new Date(iso).toLocaleDateString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+const fmtR = (a,b) => `${a.toLocaleDateString("es-MX",{day:"2-digit",month:"short"})} – ${b.toLocaleDateString("es-MX",{day:"2-digit",month:"short"})}`;
 
-function fmt(n) {
-  return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",minimumFractionDigits:0}).format(n);
+function inicioSem(diaI, offset=0) {
+  const hoy = new Date();
+  let d = hoy.getDay() - diaI; if(d<0)d+=7;
+  const ini = new Date(hoy); ini.setDate(hoy.getDate()-d-(offset*7)); ini.setHours(0,0,0,0);
+  return ini;
 }
-function fmtDate(iso) {
-  return new Date(iso).toLocaleDateString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+function finSem(ini) {
+  const f = new Date(ini); f.setDate(f.getDate()+6); f.setHours(23,59,59,999); return f;
 }
+function keyIni(ini) { return ini.toISOString().split("T")[0]; }
 
-let db, state = { presupuesto:4000, gastos:{} };
-let usuario = null, vistaActual = "home", ajusteActivo = 100;
+// STATE
+let db;
+let state = {
+  settings:{presupuesto:4000,semanaInicia:4},
+  perfiles:{manolo:{nombre:"Manolo",emoji:"👨"},esposa:{nombre:"Esposa",emoji:"👩"}},
+  gastos:{}
+};
+let usuario=null, vista="home", ajuste=100, cat="super", emojiFor=null, saving=false;
 
-// Check si Firebase está configurado
-if (firebaseConfig.apiKey === "TU_API_KEY") {
-  mostrarConfigScreen();
-} else {
-  iniciarApp();
-}
-
-function mostrarConfigScreen() {
-  document.getElementById("app").innerHTML = `
-    <div id="config-screen">
-      <div style="font-size:52px;margin-bottom:8px">🔥</div>
-      <h2>Configurar Firebase</h2>
-      <p>Abre el archivo <strong>index.html</strong> en un editor de texto y reemplaza los valores de <strong>firebaseConfig</strong> con los de tu proyecto Firebase.<br><br>Sigue las instrucciones del archivo <strong>README.txt</strong>.</p>
-    </div>`;
-}
-
-function iniciarApp() {
-  try {
-    const app = initializeApp(firebaseConfig);
-    db = getDatabase(app);
-    // Escuchar cambios en tiempo real
-    onValue(ref(db, "gastos-pareja"), (snap) => {
-      if (snap.exists()) {
-        state = snap.val();
-        if (!state.gastos) state.gastos = {};
-      }
-      render();
-    });
-  } catch(e) {
-    document.getElementById("app").innerHTML = `
-      <div style="padding:40px;text-align:center;color:#ef4444">
-        <div style="font-size:40px;margin-bottom:12px">❌</div>
-        <div style="font-size:16px;font-weight:700">Error de configuración Firebase</div>
-        <div style="font-size:13px;color:#64748b;margin-top:8px">${e.message}</div>
-      </div>`;
+const app2 = initializeApp(firebaseConfig);
+db = getDatabase(app2);
+onValue(ref(db,"gastos-pareja"), snap => {
+  if(snap.exists()){
+    const v=snap.val();
+    if(v.settings) state.settings=v.settings;
+    if(v.perfiles) state.perfiles=v.perfiles;
+    state.gastos=v.gastos||{};
   }
-}
+  render();
+});
 
-async function guardarEstado() {
-  await set(ref(db, "gastos-pareja"), state);
-}
+const save = () => set(ref(db,"gastos-pareja"), state);
 
+// ── RENDER ──────────────────────────────────
 function render() {
-  if (!usuario) { renderLogin(); return; }
+  if(!usuario){renderLogin();return;}
   renderApp();
 }
 
-function renderLogin() {
-  document.getElementById("app").innerHTML = `
+function renderLogin(){
+  const p=state.perfiles;
+  document.getElementById("app").innerHTML=`
     <div id="login">
-      <div style="font-size:52px">💑</div>
-      <h1>Gastos Pareja</h1>
-      <p>¿Quién va a registrar?</p>
+      <div class="login-hero">💑</div>
+      <div class="login-title">Gastos Pareja</div>
+      <div class="login-sub">¿Quién va a registrar?</div>
       <div class="login-cards">
-        ${Object.entries(USERS).map(([key,u]) => `
-          <div class="login-card" style="border-color:${u.color}" onclick="elegirUsuario('${key}')">
-            <div class="emoji">${u.emoji}</div>
-            <div class="nombre" style="color:${u.color}">${u.name}</div>
-          </div>`).join("")}
+        <div class="lc" style="border-color:${COL.manolo}" onclick="elegir('manolo')">
+          <div class="lc-emoji">${p.manolo.emoji}</div>
+          <div class="lc-name" style="color:${COL.manolo}">${p.manolo.nombre}</div>
+        </div>
+        <div class="lc" style="border-color:${COL.esposa}" onclick="elegir('esposa')">
+          <div class="lc-emoji">${p.esposa.emoji}</div>
+          <div class="lc-name" style="color:${COL.esposa}">${p.esposa.nombre}</div>
+        </div>
       </div>
-      <div class="login-hint">📱 Los datos se sincronizan en tiempo real entre los dos dispositivos</div>
+      <div class="login-hint">📱 Datos sincronizados en tiempo real</div>
     </div>`;
 }
 
-window.elegirUsuario = (key) => {
-  usuario = key;
-  document.documentElement.style.setProperty("--user-color", USERS[key].color);
-  renderApp();
+window.elegir = k => {
+  usuario=k;
+  document.documentElement.style.setProperty("--user-color",COL[k]);
+  document.documentElement.style.setProperty("--user-light",k==="manolo"?"#EFF6FF":"#FDF2F8");
+  vista="home"; render();
 };
 
-function renderApp() {
-  const u = USERS[usuario];
-  const gastosList = Object.entries(state.gastos || {})
-    .map(([id,g]) => ({...g, id}))
-    .sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+function renderApp(){
+  const u=usuario, p=state.perfiles, s=state.settings;
+  const dI=s.semanaInicia??4, pres=s.presupuesto??4000;
+  const iniA=inicioSem(dI,0), finA=finSem(iniA);
 
-  const totalGastado = gastosList.reduce((s,g) => s+g.monto, 0);
-  const disponible = state.presupuesto - totalGastado;
-  const pct = Math.min((totalGastado / Math.max(state.presupuesto,1))*100, 100);
-  const enRojo = disponible < 0;
-  const headerBg = enRojo ? "#dc2626" : u.color;
+  const todos=Object.entries(state.gastos||{}).map(([id,g])=>({...g,id}))
+    .sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+  const semActual=todos.filter(g=>{const f=new Date(g.fecha);return f>=iniA&&f<=finA;});
+  const total=semActual.reduce((s,g)=>s+g.monto,0);
+  const disp=pres-total;
+  const pct=Math.min((total/Math.max(pres,1))*100,100);
+  const rojo=disp<0;
+  const hdrBg=rojo?"#dc2626":COL[u];
 
-  document.getElementById("app").innerHTML = `
+  document.getElementById("app").innerHTML=`
     <div id="toast"></div>
-    <div id="header" style="background:${headerBg}">
-      <div class="top-row">
+    ${emojiFor?renderModal():""}
+    <div id="hdr" style="background:${hdrBg}">
+      <div class="h-top">
         <div>
-          <div class="label">Semana actual</div>
-          <div class="who">${u.emoji} ${u.name}</div>
+          <div class="h-meta">Semana actual</div>
+          <div class="h-who">${p[u].emoji} ${p[u].nombre}</div>
+          <div class="h-badge">${fmtR(iniA,finA)} · inicia ${DIAS[dI]}</div>
         </div>
-        <button class="btn-cambiar" onclick="cambiarUsuario()">Cambiar 🔄</button>
+        <button class="btn-cam" onclick="cambU()">Cambiar 🔄</button>
       </div>
-      <div class="disponible-label">${enRojo ? "⚠️ Te pasaste por" : "Disponible"}</div>
-      <div class="monto-grande">${fmt(Math.abs(disponible))}</div>
-      <div class="sub">Gastado ${fmt(totalGastado)} de ${fmt(state.presupuesto)}</div>
-      <div class="barra-wrap">
-        <div class="barra-fill" style="width:${pct}%;background:${enRojo?"#fbbf24":"#fff"}"></div>
-      </div>
-      <div class="ctrl-presupuesto">
-        <div class="titulo">💰 Ajustar presupuesto semanal</div>
-        <div class="ajuste-btns">
-          ${AJUSTES.map(a => `<button class="ajuste-btn${a===ajusteActivo?" activo":""}" onclick="setAjuste(${a})">$${a}</button>`).join("")}
-        </div>
-        <div class="pm-btns">
-          <button class="pm-btn menos" onclick="cambiarPresupuesto(-${ajusteActivo})">− ${fmt(ajusteActivo)}</button>
-          <button class="pm-btn mas" onclick="cambiarPresupuesto(${ajusteActivo})">+ ${fmt(ajusteActivo)}</button>
+      <div class="h-disp-lbl">${rojo?"⚠️ Te pasaste por":"Disponible"}</div>
+      <div class="h-monto">${fmt(Math.abs(disp))}</div>
+      <div class="h-sub">Gastado ${fmt(total)} de ${fmt(pres)}</div>
+      <div class="bar-w"><div class="bar-f" style="width:${pct}%;background:${rojo?"#fbbf24":"rgba(255,255,255,.9)"}"></div></div>
+      <div class="ctrl">
+        <div class="ctrl-t">💰 Ajustar presupuesto semanal</div>
+        <div class="aj-row">${AJS.map(a=>`<button class="aj${a===ajuste?" on":""}" onclick="setAj(${a})">$${a}</button>`).join("")}</div>
+        <div class="pm-row">
+          <button class="pm pm-m" onclick="camPres(-${ajuste})">− ${fmt(ajuste)}</button>
+          <button class="pm pm-p" onclick="camPres(${ajuste})">+ ${fmt(ajuste)}</button>
         </div>
       </div>
     </div>
     <div id="tabs">
-      <button class="tab${vistaActual==="home"?" activo":""}" onclick="setVista('home')">📊 Resumen</button>
-      <button class="tab${vistaActual==="agregar"?" activo":""}" onclick="setVista('agregar')">➕ Agregar</button>
-      <button class="tab${vistaActual==="historial"?" activo":""}" onclick="setVista('historial')">📋 Historial</button>
+      <button class="tab${vista==="home"?" on":""}" onclick="sv('home')">📊 Resumen</button>
+      <button class="tab${vista==="agregar"?" on":""}" onclick="sv('agregar')">➕ Agregar</button>
+      <button class="tab${vista==="historial"?" on":""}" onclick="sv('historial')">📅 Semanas</button>
+      <button class="tab${vista==="config"?" on":""}" onclick="sv('config')">⚙️ Config</button>
     </div>
-    <div id="view">${renderVista(gastosList)}</div>`;
+    <div id="view">${vistas(semActual,todos,pres)}</div>`;
 }
 
-function renderVista(gastosList) {
-  if (vistaActual === "home") return renderHome(gastosList);
-  if (vistaActual === "agregar") return renderAgregar();
-  if (vistaActual === "historial") return renderHistorial(gastosList);
+function vistas(sem,todos,pres){
+  if(vista==="home")     return vHome(sem,pres);
+  if(vista==="agregar")  return vAgregar();
+  if(vista==="historial") return vHistorial(todos);
+  if(vista==="config")   return vConfig();
   return "";
 }
 
-function renderHome(gastosList) {
-  const userCards = Object.entries(USERS).map(([key,u2]) => {
-    const total = gastosList.filter(g=>g.usuario===key).reduce((s,g)=>s+g.monto,0);
-    const count = gastosList.filter(g=>g.usuario===key).length;
-    const pct = state.presupuesto>0?Math.min((total/state.presupuesto)*100,100):0;
-    const isActive = key===usuario;
-    return `<div class="user-card${isActive?" activo":""}">
-      <div class="u-emoji">${u2.emoji}</div>
-      <div class="u-nombre">${u2.name}</div>
-      <div class="u-monto" style="color:${u2.color}">${fmt(total)}</div>
-      <div class="u-count">${count} gasto${count!==1?"s":""} · ${pct.toFixed(0)}%</div>
-      <div class="mini-barra-wrap"><div class="mini-barra-fill" style="width:${pct}%;background:${u2.color}"></div></div>
+function vHome(gastos,pres){
+  const p=state.perfiles;
+  const mT=gastos.filter(g=>g.usuario==="manolo").reduce((s,g)=>s+g.monto,0);
+  const eT=gastos.filter(g=>g.usuario==="esposa").reduce((s,g)=>s+g.monto,0);
+  const dif=Math.abs(mT-eT);
+  const masGasto=mT>eT?"manolo":"esposa";
+  const menosGasto=mT>eT?"esposa":"manolo";
+
+  const balHtml = dif<10 ? `
+    <div class="bal-card bal-ok">
+      <div class="bal-icon">⚖️</div>
+      <div class="bal-info"><div class="bal-title">¡Están parejos!</div>
+        <div class="bal-sub">Ambos han gastado casi lo mismo esta semana</div></div>
+    </div>` : `
+    <div class="bal-card bal-warn">
+      <div class="bal-icon">💸</div>
+      <div class="bal-info">
+        <div class="bal-title">${p[menosGasto].emoji} ${p[menosGasto].nombre} puede pagar el próximo</div>
+        <div class="bal-sub">${p[masGasto].emoji} ${p[masGasto].nombre} lleva ${fmt(dif)} más gastado</div>
+      </div>
+      <div class="bal-monto">${fmt(dif/2)}</div>
+    </div>`;
+
+  const ucards=["manolo","esposa"].map(k=>{
+    const u2=p[k]; const t=gastos.filter(g=>g.usuario===k).reduce((s,g)=>s+g.monto,0);
+    const cnt=gastos.filter(g=>g.usuario===k).length;
+    const pt=pres>0?Math.min((t/pres)*100,100):0;
+    return `<div class="ucard${k===usuario?" act":""}">
+      <div class="uc-e">${u2.emoji}</div>
+      <div class="uc-n">${u2.nombre}</div>
+      <div class="uc-m" style="color:${COL[k]}">${fmt(t)}</div>
+      <div class="uc-c">${cnt} gasto${cnt!==1?"s":""} · ${pt.toFixed(0)}%</div>
+      <div class="mb-w"><div class="mb-f" style="width:${pt}%;background:${COL[k]}"></div></div>
     </div>`;
   }).join("");
 
-  const ultimos = gastosList.slice(0,5).map(g => renderGastoCard(g)).join("");
-  const hayMas = gastosList.length > 5;
-
-  return `
-    <div class="user-cards">${userCards}</div>
-    <div class="section-title">Últimos movimientos</div>
-    ${gastosList.length===0
-      ? `<div class="empty"><div class="big">📭</div><div>Sin gastos esta semana</div></div>`
-      : ultimos}
-    ${hayMas ? `<button class="btn-ver-todos" onclick="setVista('historial')">Ver todos (${gastosList.length}) →</button>` : ""}`;
+  const ultimos=gastos.slice(0,5).map(gcard).join("");
+  return `${balHtml}<div class="ucards">${ucards}</div>
+    <div class="st">Últimos movimientos<span class="st-badge">${gastos.length}</span></div>
+    ${gastos.length===0?`<div class="empty"><div class="em-i">📭</div><div class="em-t">Sin gastos esta semana</div></div>`:ultimos}
+    ${gastos.length>5?`<button class="btn-sec" onclick="sv('historial')">Ver historial completo →</button>`:""}`;
 }
 
-function renderAgregar() {
-  const u = USERS[usuario];
-  const catButtons = CATEGORIES.map(c => `
-    <button class="cat-btn" id="cat-${c.id}" onclick="setCategoria('${c.id}')">
-      <span class="cat-emoji">${c.icon}</span>${c.label}
-    </button>`).join("");
+function gcard(g){
+  const u2=state.perfiles[g.usuario]; const c=CATS.find(x=>x.id===g.categoria)||CATS[7];
+  return `<div class="gc" style="border-color:${COL[g.usuario]}">
+    <div class="gc-i">${c.i}</div>
+    <div class="gc-inf"><div class="gc-d">${g.descripcion}</div>
+      <div class="gc-m">${u2.emoji} ${u2.nombre} · ${c.l} · ${fmtD(g.fecha)}</div></div>
+    <div class="gc-r"><div class="gc-v" style="color:${COL[g.usuario]}">${fmt(g.monto)}</div>
+      ${g.usuario===usuario?`<button class="gc-del" onclick="del('${g.id}')">🗑️</button>`:""}
+    </div>
+  </div>`;
+}
+
+function vAgregar(){
+  const u2=state.perfiles[usuario];
+  return `<div class="fcard">
+    <div class="ftitle">Gasto de ${u2.emoji} ${u2.nombre}</div>
+    <label class="flbl">Monto (MXN)</label>
+    <input type="number" inputmode="decimal" class="inpm" id="im" placeholder="0"
+      style="color:${COL[usuario]}" oninput="chkF()"/>
+    <label class="flbl" style="margin-top:16px">¿En qué?</label>
+    <input type="text" id="id2" placeholder="Ej. Mercado, gasolina..." oninput="chkF()"/>
+    <label class="flbl" style="margin-top:16px">Categoría</label>
+    <div class="cg">${CATS.map(c=>`<button class="cb${c.id===cat?" on":""}" onclick="setCat('${c.id}')">
+      <span>${c.i}</span>${c.l}</button>`).join("")}</div>
+    <button class="btn-g" id="bg" onclick="agregar()" disabled>💾 Registrar gasto</button>
+  </div>`;
+}
+
+function vHistorial(todos){
+  const dI=state.settings.semanaInicia??4;
+  // Agrupar por semana
+  const mapa={};
+  todos.forEach(g=>{
+    const f=new Date(g.fecha); let d=f.getDay()-dI; if(d<0)d+=7;
+    const ini=new Date(f); ini.setDate(f.getDate()-d); ini.setHours(0,0,0,0);
+    const k=keyIni(ini);
+    if(!mapa[k])mapa[k]={ini,gastos:[]};
+    mapa[k].gastos.push(g);
+  });
+  const sems=Object.entries(mapa).sort((a,b)=>new Date(b[0])-new Date(a[0]));
+  if(!sems.length) return `<div class="empty"><div class="em-i">📭</div><div class="em-t">Sin gastos registrados</div></div>`;
+
+  const keyAct=keyIni(inicioSem(dI,0));
+  const p=state.perfiles;
+  return sems.map(([k,{ini,gastos}])=>{
+    const fin=finSem(ini); const tot=gastos.reduce((s,g)=>s+g.monto,0);
+    const mT=gastos.filter(g=>g.usuario==="manolo").reduce((s,g)=>s+g.monto,0);
+    const eT=gastos.filter(g=>g.usuario==="esposa").reduce((s,g)=>s+g.monto,0);
+    const esAct=k===keyAct;
+    return `<div class="sem-blk">
+      <div class="sem-hdr">${esAct?"📅 Esta semana — "+fmtR(ini,fin):fmtR(ini,fin)}<span class="sem-tot">${fmt(tot)}</span></div>
+      <div class="sem-mini">
+        <div class="sem-mini-card" style="background:#EFF6FF">
+          <div class="sem-mini-n">${p.manolo.emoji} ${p.manolo.nombre}</div>
+          <div class="sem-mini-v" style="color:#2563EB">${fmt(mT)}</div>
+        </div>
+        <div class="sem-mini-card" style="background:#FDF2F8">
+          <div class="sem-mini-n">${p.esposa.emoji} ${p.esposa.nombre}</div>
+          <div class="sem-mini-v" style="color:#DB2777">${fmt(eT)}</div>
+        </div>
+      </div>
+      ${gastos.slice(0,3).map(gcard).join("")}
+      ${gastos.length>3?`<div style="text-align:center;font-size:12px;color:#94a3b8;margin-top:-2px;margin-bottom:6px">+${gastos.length-3} gastos más</div>`:""}
+    </div><hr style="border:none;border-top:1px solid var(--c-border);margin:0 0 16px"/>`;
+  }).join("");
+}
+
+function vConfig(){
+  const p=state.perfiles; const dI=state.settings.semanaInicia??4;
   return `
-    <div class="form-card">
-      <div class="form-title">Gasto de ${u.emoji} ${u.name}</div>
-      <label>Monto (MXN)</label>
-      <input type="number" inputmode="decimal" class="input-monto" id="inp-monto"
-        placeholder="0" style="color:${u.color}" oninput="updateGuardar()" />
-      <label style="margin-top:16px">¿En qué?</label>
-      <input type="text" id="inp-desc" placeholder="Ej. Mercado, gasolina..."
-        oninput="updateGuardar()" />
-      <label style="margin-top:16px">Categoría</label>
-      <div class="cat-grid">${catButtons}</div>
-      <button class="btn-guardar" id="btn-guardar" onclick="agregarGasto()" disabled>
-        💾 Registrar gasto
-      </button>
+    <div class="ss">
+      <div class="ss-t">👤 Perfiles</div>
+      <div class="scard">
+        ${["manolo","esposa"].map(k=>{
+          const u2=p[k];
+          return `<div class="pe">
+            <button class="pe-eb" onclick="openModal('${k}')">${u2.emoji}<br><span style="font-size:9px">✏️</span></button>
+            <div class="pe-info">
+              <div style="font-size:11px;font-weight:800;color:${COL[k]};text-transform:uppercase;margin-bottom:6px">${k}</div>
+              <input class="pe-ni" id="pn-${k}" value="${u2.nombre}" placeholder="Nombre"/>
+              <button class="pe-sv" style="background:${COL[k]}" onclick="savePerfil('${k}')">Guardar nombre ✓</button>
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>
+
+    <div class="ss">
+      <div class="ss-t">📅 ¿Qué día inicia tu semana?</div>
+      <div class="scard">
+        <p style="font-size:13px;color:var(--c-muted)">Actualmente: <strong>${DIAS[dI]}</strong> — cambia cuando quieras</p>
+        <div class="dg">${DIAS.map((d,i)=>`<button class="db${i===dI?" on":""}" onclick="setDia(${i})">${d}</button>`).join("")}</div>
+      </div>
+    </div>
+
+    <div class="ss">
+      <div class="ss-t">📊 Datos generales</div>
+      <div class="scard">
+        <div class="sr"><div><div class="sr-l">Presupuesto semanal</div><div class="sr-s">Ajústalo desde la pantalla principal</div></div><div class="sr-v">${fmt(state.settings.presupuesto??4000)}</div></div>
+        <div class="sr"><div><div class="sr-l">Semana inicia el</div></div><div class="sr-v">${DIAS[dI]}</div></div>
+        <div class="sr"><div><div class="sr-l">Gastos guardados en total</div></div><div class="sr-v">${Object.keys(state.gastos||{}).length}</div></div>
+      </div>
     </div>`;
 }
 
-let catSeleccionada = "super";
-window.setCategoria = (id) => {
-  catSeleccionada = id;
-  document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("activo"));
-  document.getElementById("cat-"+id)?.classList.add("activo");
-};
-window.updateGuardar = () => {
-  const m = document.getElementById("inp-monto")?.value;
-  const d = document.getElementById("inp-desc")?.value?.trim();
-  const btn = document.getElementById("btn-guardar");
-  if (btn) btn.disabled = !(m && parseFloat(m)>0 && d);
-};
-
-function renderHistorial(gastosList) {
-  return `
-    <div class="section-title">Historial completo — ${gastosList.length} registros</div>
-    ${gastosList.length===0
-      ? `<div class="empty"><div class="big">📭</div><div>Sin gastos</div></div>`
-      : gastosList.map(g => renderGastoCard(g)).join("")}`;
+function renderModal(){
+  const k=emojiFor; const emojis=EMOJIS[k]; const act=state.perfiles[k].emoji;
+  return `<div class="mo" onclick="closeModal(event)">
+    <div class="mb">
+      <div class="mt">Elegir avatar para ${state.perfiles[k].nombre}</div>
+      <div class="eg">${emojis.map(e=>`<button class="eo${e===act?" sel":""}" onclick="selEmoji('${k}','${e}')">${e}</button>`).join("")}</div>
+      <button class="mc" onclick="emojiFor=null;renderApp()">Cerrar</button>
+    </div>
+  </div>`;
 }
 
-function renderGastoCard(g) {
-  const u = USERS[g.usuario];
-  const cat = CATEGORIES.find(c=>c.id===g.categoria)||CATEGORIES[7];
-  const esMio = g.usuario===usuario;
-  return `
-    <div class="gasto-card" style="border-color:${u.color}">
-      <div class="gasto-cat">${cat.icon}</div>
-      <div class="gasto-info">
-        <div class="gasto-desc">${g.descripcion}</div>
-        <div class="gasto-meta">${u.emoji} ${u.name} · ${cat.label} · ${fmtDate(g.fecha)}</div>
-      </div>
-      <div class="gasto-right">
-        <div class="gasto-monto" style="color:${u.color}">${fmt(g.monto)}</div>
-        ${esMio ? `<button class="btn-delete" onclick="eliminarGasto('${g.id}')">🗑️</button>` : ""}
-      </div>
-    </div>`;
-}
-
-window.cambiarUsuario = () => { usuario = null; render(); };
-window.setVista = (v) => { vistaActual = v; renderApp(); };
-window.setAjuste = (a) => { ajusteActivo = a; renderApp(); };
-
-window.cambiarPresupuesto = async (delta) => {
-  state.presupuesto = Math.max(0, (state.presupuesto||4000) + delta);
-  await guardarEstado();
-  showToast(`${delta>0?"➕":"➖"} Presupuesto: ${fmt(state.presupuesto)}`, delta>0?"#10b981":"#f59e0b");
+// ── ACTIONS ─────────────────────────────────
+window.cambU=()=>{usuario=null;render();};
+window.sv=v=>{vista=v;renderApp();};
+window.setAj=a=>{ajuste=a;renderApp();};
+window.setCat=c=>{cat=c;renderApp();};
+window.chkF=()=>{
+  const m=document.getElementById("im")?.value;
+  const d=document.getElementById("id2")?.value?.trim();
+  const b=document.getElementById("bg"); if(b)b.disabled=!(m&&parseFloat(m)>0&&d);
+};
+window.camPres=async delta=>{
+  state.settings.presupuesto=Math.max(0,(state.settings.presupuesto??4000)+delta);
+  await save(); toast(`${delta>0?"➕":"➖"} Presupuesto: ${fmt(state.settings.presupuesto)}`,delta>0?"#10b981":"#f59e0b");
+};
+window.agregar=async()=>{
+  if(saving)return;
+  const m=parseFloat(document.getElementById("im")?.value);
+  const d=document.getElementById("id2")?.value?.trim();
+  if(!m||!d)return; saving=true;
+  state.gastos["g"+Date.now()]={usuario,monto:m,descripcion:d,categoria:cat,fecha:new Date().toISOString()};
+  await save(); saving=false; vista="home";
+  toast(`✅ ${fmt(m)} registrado`);
+};
+window.del=async id=>{
+  if(!confirm("¿Eliminar este gasto?"))return;
+  delete state.gastos[id]; await save(); toast("🗑️ Eliminado","#ef4444");
+};
+window.setDia=async i=>{
+  state.settings.semanaInicia=i; await save();
+  toast(`📅 Semana inicia el ${DIAS[i]}`);
+};
+window.savePerfil=async k=>{
+  const n=document.getElementById(`pn-${k}`)?.value?.trim();
+  if(!n)return; state.perfiles[k].nombre=n; await save();
+  toast(`✅ Nombre: ${n}`);
+};
+window.openModal=k=>{emojiFor=k;renderApp();};
+window.closeModal=e=>{if(e.target.classList.contains("mo")){emojiFor=null;renderApp();}};
+window.selEmoji=async(k,e)=>{
+  state.perfiles[k].emoji=e; await save(); emojiFor=null;
+  toast("✅ Avatar actualizado");
 };
 
-window.agregarGasto = async () => {
-  const monto = parseFloat(document.getElementById("inp-monto").value);
-  const desc = document.getElementById("inp-desc").value.trim();
-  if (!monto||!desc) return;
-  const gasto = { usuario, monto, descripcion:desc, categoria:catSeleccionada, fecha:new Date().toISOString() };
-  if (!state.gastos) state.gastos = {};
-  const id = "g" + Date.now();
-  state.gastos[id] = gasto;
-  await guardarEstado();
-  vistaActual = "home";
-  showToast(`✅ Registrado: ${fmt(monto)}`);
-};
-
-window.eliminarGasto = async (id) => {
-  if (!confirm("¿Eliminar este gasto?")) return;
-  delete state.gastos[id];
-  await guardarEstado();
-  showToast("🗑️ Gasto eliminado", "#ef4444");
-};
-
-function showToast(msg, color="#10b981") {
-  const t = document.getElementById("toast");
-  if (!t) return;
-  t.textContent = msg;
-  t.style.background = color;
-  t.classList.add("visible");
-  setTimeout(() => t.classList.remove("visible"), 2500);
+function toast(msg,color="#10b981"){
+  const el=document.getElementById("toast"); if(!el)return;
+  el.textContent=msg; el.style.background=color;
+  el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),2500);
 }
 </script>
 </body>
