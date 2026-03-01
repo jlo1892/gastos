@@ -512,12 +512,21 @@ function renderLogin(){
   if(!wrap) return;
 
   const pick = (ev)=>{
-    const btn = ev.target.closest?.(".lc");
+    const btn = ev.target.closest ? ev.target.closest(".lc") : null;
     if(!btn) return;
+
+    // Evita doble disparo touch+click y asegura que iOS no “coma” el tap
     ev.preventDefault();
+    ev.stopPropagation();
+
     const u = btn.getAttribute("data-user");
     if(u) window.elegir(u);
   };
+
+  // iPhone: usa touchend + click SIN options object (más compatible)
+  wrap.addEventListener("touchend", pick, false);
+  wrap.addEventListener("click", pick, false);
+}
 
   wrap.addEventListener("click", pick, { passive:false });
   wrap.addEventListener("touchend", pick, { passive:false });
