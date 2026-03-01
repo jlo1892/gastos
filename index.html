@@ -254,6 +254,16 @@
     .bprimary{width:100%;padding:13px;font-size:14px;font-weight:800;color:#fff;border:none;border-radius:14px;cursor:pointer;font-family:inherit;margin-top:10px;}
     .empty{text-align:center;padding:48px 0;color:#94a3b8;}
     .emi{font-size:48px;margin-bottom:10px;}.emt{font-size:14px;font-weight:600;}
+ /* --- FIX móvil --- */
+button, a, .card, .lc, [role="button"]{
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lc{
+  user-select: none;
+  -webkit-user-select: none;
+}
   </style>
 </head>
 <body>
