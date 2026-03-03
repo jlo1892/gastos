@@ -1418,7 +1418,7 @@ function bFinanzas(){
     recs.map(function(r,i){return '<div class="recitem"><div style="font-size:14px;font-weight:700">'+r.nombre+'</div>'+
       '<div style="display:flex;align-items:center;gap:8px"><div style="font-size:14px;font-weight:800;color:#ef4444">− '+fmt(r.monto)+'</div>'+
       '<button class="btn-del-rec" data-i="'+i+'" style="background:#fee2e2;border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px;touch-action:manipulation">🗑️</button></div></div>';}).join("")+
-    '<button id="btn-save-fin" style="width:100%;margin-top:14px;padding:12px;background:var(--uc);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">💾 Guardar y calcular</button></div>''+
+    '<button id="btn-save-fin" style="width:100%;margin-top:14px;padding:12px;background:var(--uc);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">💾 Guardar y calcular</button></div>'+
     '<div style="background:#fff;border-radius:16px;padding:18px;box-shadow:var(--sh);margin-bottom:16px;border-top:4px solid #0ea5e9">'+
       '<div style="font-size:15px;font-weight:800;margin-bottom:4px">📅 Período de cobro</div>'+
       '<div style="font-size:12px;color:#64748b;margin-bottom:16px">Define cuándo cobras y cuándo es el próximo cobro. El sistema calcula las semanas del período para ajustar el presupuesto semanal exacto.</div>'+
@@ -1435,11 +1435,11 @@ function bFinanzas(){
         '<input type="date" id="inp-periodo-fin" value="'+( ST.settings.periodoFin||"")+'" style="width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:10px;font-size:14px;font-family:inherit;outline:none;background:#f8fafc"/></div>'+
       '</div>'+
       '<button id="btn-save-periodo2" style="width:100%;padding:12px;background:#0ea5e9;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">📅 Guardar período</button>'+
-      (ST.settings.periodoInicio&&ST.settings.periodoFin?'<button id="btn-clear-periodo" style="width:100%;margin-top:8px;padding:10px;background:#f1f5f9;color:#64748b;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;touch-action:manipulation">🗑️ Borrar período personalizado</button>':"")+    '</div>'+
-    '+
+      (ST.settings.periodoInicio&&ST.settings.periodoFin?'<button id="btn-clear-periodo" style="width:100%;margin-top:8px;padding:10px;background:#f1f5f9;color:#64748b;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;touch-action:manipulation">🗑️ Borrar período personalizado</button>':"")+
+    '</div>'+
     (calc?'<div class="brcard"><div style="font-size:12px;color:#3b82f6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Presupuesto semanal</div>'+
       '<div class="brmonto">'+fmt(calc.porSem)+'</div>'+
-      +(calc.periodoCustom?'<div style="font-size:13px;color:#3b82f6">'+calc.sems.toFixed(1)+' semanas del período ('+calc.diasPeriodo+' días)</div>':'<div style="font-size:13px;color:#3b82f6">'+calc.sems+' semanas este mes</div>')+
+      (calc.periodoCustom?'<div style="font-size:13px;color:#3b82f6">'+calc.sems.toFixed(1)+' semanas del período ('+calc.diasPeriodo+' días)</div>':'<div style="font-size:13px;color:#3b82f6">'+calc.sems+' semanas este mes</div>')+
       '<div class="brdet">'+
         '<div class="brd"><div style="font-size:11px;color:#64748b">Ingreso</div><div style="font-size:15px;font-weight:800">'+fmt(f.ingresoMensual)+'</div></div>'+
         '<div class="brd"><div style="font-size:11px;color:#64748b">Fijos</div><div style="font-size:15px;font-weight:800;color:#ef4444">− '+fmt(calc.rec)+'</div></div>'+
