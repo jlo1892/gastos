@@ -8,30 +8,70 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',system-ui,sans-serif;background:#F0F4FF;color:#1e293b;}
 :root{--uc:#2563EB;--ul:#EFF6FF;--bo:#e2e8f0;--sh:0 4px 20px rgba(0,0,0,.08);--ra:18px;}
 #app{max-width:480px;margin:0 auto;min-height:100vh;}
 
-/* LOGIN — siempre visible desde el primer render */
-#login{display:flex;flex-direction:column;align-items:center;justify-content:center;
+/* AUTH SCREENS */
+.auth-screen{display:none;flex-direction:column;align-items:center;justify-content:center;
   min-height:100vh;padding:32px 24px;
   background:linear-gradient(160deg,#dbeafe 0%,#fce7f3 100%);}
-.ltitle{font-size:30px;font-weight:900;letter-spacing:-1px;margin:10px 0 4px;text-align:center;}
-.lsub{font-size:14px;color:#64748b;margin-bottom:36px;text-align:center;}
-.lcards{display:flex;gap:16px;}
-.lc{background:#fff;border-radius:24px;padding:28px 24px;text-align:center;
-  box-shadow:0 8px 32px rgba(0,0,0,.12);border:3px solid;
-  font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;
-  cursor:pointer;-webkit-appearance:none;appearance:none;
-  touch-action:manipulation;min-width:120px;display:block;}
-.lc span{display:block;}
-.lc .e{font-size:52px;line-height:1.3;}
-.lhint{margin-top:24px;font-size:12px;color:#94a3b8;text-align:center;}
-#spin{display:flex;flex-direction:column;align-items:center;gap:12px;color:#64748b;font-size:14px;margin-top:20px;}
+.auth-screen.active{display:flex;}
+.auth-logo{font-size:72px;line-height:1;margin-bottom:8px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.15));}
+.auth-title{font-size:32px;font-weight:900;letter-spacing:-1px;margin:8px 0 4px;text-align:center;color:#1e293b;}
+.auth-sub{font-size:14px;color:#64748b;margin-bottom:36px;text-align:center;line-height:1.5;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:12px;
+  background:#fff;border:2px solid #e2e8f0;border-radius:16px;padding:16px 28px;
+  font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);color:#374151;width:100%;max-width:300px;
+  touch-action:manipulation;transition:transform .1s,box-shadow .1s;}
+.btn-google:active{transform:scale(.97);box-shadow:0 2px 8px rgba(0,0,0,.1);}
+.google-icon{width:22px;height:22px;flex-shrink:0;}
+.auth-hint{margin-top:20px;font-size:12px;color:#94a3b8;text-align:center;}
+.auth-hint a{color:#64748b;text-decoration:none;}
+.space-card{background:#fff;border-radius:20px;padding:22px 20px;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);cursor:pointer;width:100%;max-width:340px;
+  border:2px solid transparent;transition:border-color .2s,transform .1s;
+  display:flex;align-items:center;gap:16px;margin-bottom:12px;
+  font-family:inherit;-webkit-appearance:none;appearance:none;touch-action:manipulation;}
+.space-card:active{transform:scale(.98);}
+.space-card:hover{border-color:var(--uc,#2563EB);}
+.space-card-icon{font-size:36px;flex-shrink:0;}
+.space-card-info{text-align:left;}
+.space-card-title{font-size:16px;font-weight:900;color:#1e293b;margin-bottom:3px;}
+.space-card-desc{font-size:13px;color:#64748b;line-height:1.4;}
+.code-display{background:#1e293b;border-radius:16px;padding:22px 28px;text-align:center;
+  width:100%;max-width:300px;margin:16px 0;}
+.code-text{font-size:38px;font-weight:900;letter-spacing:8px;color:#fff;
+  font-family:'Courier New',monospace;}
+.code-label{font-size:12px;color:#94a3b8;margin-top:6px;text-transform:uppercase;letter-spacing:1px;}
+.btn-auth-primary{width:100%;max-width:300px;padding:16px;background:var(--uc,#2563EB);
+  color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:900;
+  cursor:pointer;font-family:inherit;touch-action:manipulation;margin-top:8px;
+  transition:opacity .2s;}
+.btn-auth-primary:disabled{opacity:.5;}
+.btn-auth-sec{width:100%;max-width:300px;padding:14px;background:#f1f5f9;
+  color:#475569;border:none;border-radius:14px;font-size:15px;font-weight:700;
+  cursor:pointer;font-family:inherit;touch-action:manipulation;margin-top:8px;}
+.inp-auth{width:100%;max-width:300px;border:2px solid #e2e8f0;border-radius:14px;
+  padding:14px 16px;font-size:18px;font-weight:800;text-align:center;letter-spacing:4px;
+  outline:none;background:#f8fafc;font-family:inherit;text-transform:uppercase;margin:8px 0;}
+.inp-auth:focus{border-color:var(--uc,#2563EB);}
+.rol-card{background:#fff;border-radius:20px;padding:24px 20px;text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);cursor:pointer;border:3px solid transparent;
+  transition:border-color .2s,transform .1s;touch-action:manipulation;font-family:inherit;
+  -webkit-appearance:none;appearance:none;flex:1;}
+.rol-card:active{transform:scale(.97);}
+.rol-emoji{font-size:52px;line-height:1.2;display:block;}
+.rol-name{font-size:16px;font-weight:900;margin-top:6px;}
+#spin{display:flex;flex-direction:column;align-items:center;gap:12px;color:#64748b;font-size:14px;}
 .spin{width:32px;height:32px;border:3px solid #e2e8f0;border-top-color:#2563EB;border-radius:50%;animation:rot .8s linear infinite;}
 @keyframes rot{to{transform:rotate(360deg);}}
+.auth-back{background:none;border:none;color:#64748b;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;padding:8px;margin-bottom:16px;touch-action:manipulation;}
 
 /* APP */
 #hdr{color:#fff;padding:20px 18px 22px;}
@@ -179,45 +219,93 @@ input:focus{border-color:var(--uc);background:#fff;}
 
 <body>
 <div id="app">
-  <div id="login">
-    <div style="font-size:64px;line-height:1">&#x1F491;</div>
-    <div class="ltitle">Gastos Pareja</div>
-    <div class="lsub">&#xBF;Qui&#xE9;n va a registrar?</div>
-    <div class="lcards">
-      <button class="lc" id="bm" style="border-color:#2563EB">
-        <span class="e">&#x1F468;</span>
-        <span style="color:#2563EB">Manolo</span>
+  <!-- SCREEN 1: LOGIN GOOGLE -->
+  <div id="scr-login" class="auth-screen active">
+    <div class="auth-logo">💑</div>
+    <div class="auth-title">Gastos Pareja</div>
+    <div class="auth-sub">Lleva las finanzas en pareja,<br>sin complicaciones.</div>
+    <button class="btn-google" id="btn-google-login">
+      <svg class="google-icon" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.2l6.8-6.8C35.8 2.2 30.2 0 24 0 14.7 0 6.7 5.4 2.8 13.3l7.9 6.1C12.5 13.1 17.8 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.6 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 6.9-10 6.9-17z"/>
+        <path fill="#FBBC05" d="M10.7 28.6A14.8 14.8 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l8.1-6.2z"/>
+        <path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.2 0-11.5-4.2-13.3-9.8l-8.1 6.2C6.7 42.6 14.7 48 24 48z"/>
+      </svg>
+      Continuar con Google
+    </button>
+    <div id="spin" style="display:none;margin-top:20px"><div class="spin"></div><span>Iniciando sesión...</span></div>
+    <p class="auth-hint">🔒 Tus datos son privados y seguros</p>
+  </div>
+
+  <!-- SCREEN 2: SETUP ESPACIO -->
+  <div id="scr-setup" class="auth-screen">
+    <div class="auth-logo">🏠</div>
+    <div class="auth-title" id="setup-title">¡Bienvenido!</div>
+    <div class="auth-sub">¿Ya tienes un espacio con tu pareja<br>o quieres crear uno nuevo?</div>
+    <button class="space-card" id="btn-crear-espacio">
+      <div class="space-card-icon">✨</div>
+      <div class="space-card-info">
+        <div class="space-card-title">Crear nuevo espacio</div>
+        <div class="space-card-desc">Genera un código e invita a tu pareja</div>
+      </div>
+    </button>
+    <button class="space-card" id="btn-unirse-espacio">
+      <div class="space-card-icon">🔗</div>
+      <div class="space-card-info">
+        <div class="space-card-title">Unirme a un espacio</div>
+        <div class="space-card-desc">Ya tengo el código de mi pareja</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- SCREEN 3: CÓDIGO CREADO -->
+  <div id="scr-codigo" class="auth-screen">
+    <button class="auth-back" id="back-from-codigo">← Volver</button>
+    <div class="auth-logo">🎉</div>
+    <div class="auth-title">¡Espacio creado!</div>
+    <div class="auth-sub">Comparte este código con tu pareja<br>para que se una.</div>
+    <div class="code-display">
+      <div class="code-text" id="code-value">------</div>
+      <div class="code-label">Código de invitación</div>
+    </div>
+    <button class="btn-auth-primary" id="btn-copiar-codigo">📋 Copiar código</button>
+    <button class="btn-auth-primary" id="btn-continuar-sin-pareja" style="background:#10b981;margin-top:6px">Continuar →</button>
+    <p class="auth-hint" style="margin-top:16px">Tu pareja puede unirse después</p>
+  </div>
+
+  <!-- SCREEN 4: UNIRSE CON CÓDIGO -->
+  <div id="scr-join" class="auth-screen">
+    <button class="auth-back" id="back-from-join">← Volver</button>
+    <div class="auth-logo">🔗</div>
+    <div class="auth-title">Unirse a espacio</div>
+    <div class="auth-sub">Pídele el código de 6 letras<br>a quien creó el espacio.</div>
+    <input class="inp-auth" id="inp-join-code" placeholder="XXXXXX" maxlength="6" type="text"/>
+    <button class="btn-auth-primary" id="btn-confirmar-join">Unirme al espacio</button>
+    <div id="join-error" style="color:#ef4444;font-size:13px;font-weight:700;margin-top:8px;display:none">Código inválido. Verifica e intenta de nuevo.</div>
+  </div>
+
+  <!-- SCREEN 5: ELEGIR ROL -->
+  <div id="scr-rol" class="auth-screen">
+    <div class="auth-logo">👋</div>
+    <div class="auth-title">¿Quién eres tú?</div>
+    <div class="auth-sub" id="rol-sub">Hay dos perfiles en este espacio.</div>
+    <div style="display:flex;gap:14px;width:100%;max-width:300px;margin-top:8px">
+      <button class="rol-card" id="btn-rol-0">
+        <span class="rol-emoji" id="rol0-emoji">👨</span>
+        <div class="rol-name" id="rol0-name">Perfil 1</div>
       </button>
-      <button class="lc" id="be" style="border-color:#DB2777">
-        <span class="e">&#x1F469;</span>
-        <span style="color:#DB2777">Esposa</span>
+      <button class="rol-card" id="btn-rol-1">
+        <span class="rol-emoji" id="rol1-emoji">👩</span>
+        <div class="rol-name" id="rol1-name">Perfil 2</div>
       </button>
     </div>
-    <div id="spin" style="display:none"><div class="spin"></div><span>Cargando datos...</span></div>
-    <div class="lhint">&#x1F4F1; Sincronizado en tiempo real</div>
   </div>
 </div>
 <div id="toast"></div>
 <input type="file" id="ocrin" accept="image/*" capture="environment"/>
 <script>
 
-// ── LOGIN BUTTONS ──
-document.getElementById("bm").addEventListener("touchend",function(e){e.preventDefault();elegir("manolo");});
-document.getElementById("be").addEventListener("touchend",function(e){e.preventDefault();elegir("esposa");});
-document.getElementById("bm").addEventListener("click",function(){elegir("manolo");});
-document.getElementById("be").addEventListener("click",function(){elegir("esposa");});
-
-var usuarioSeleccionado=null;
-function elegir(k){
-  if(usuarioSeleccionado)return;
-  usuarioSeleccionado=k;
-  document.getElementById("bm").disabled=true;
-  document.getElementById("be").disabled=true;
-  document.getElementById("spin").style.display="flex";
-  iniciarFirebase(k);
-}
-
-// ── FIREBASE ──
+// ── FIREBASE + AUTH ──
 var FC={
   apiKey:"AIzaSyAx0ILxze_MTBEoElQSvJEjHwaHjC9Uqkg",
   authDomain:"gastos-7adfd.firebaseapp.com",
@@ -227,12 +315,31 @@ var FC={
   messagingSenderId:"562517695534",
   appId:"1:562517695534:web:ce38c380a7bce4215293bf"
 };
-var db=null;
+var db=null,auth=null,currentUser=null,spaceId=null,dbListener=null;
 
-function iniciarFirebase(k){
-  firebase.initializeApp(FC);
-  db=firebase.database();
-  db.ref("gastos-pareja").once("value",function(snap){
+firebase.initializeApp(FC);
+db=firebase.database();
+auth=firebase.auth();
+
+// ── SCREEN HELPERS ──
+function showScreen(id){
+  document.querySelectorAll(".auth-screen").forEach(function(s){s.classList.remove("active");});
+  var s=document.getElementById(id);if(s)s.classList.add("active");
+}
+function showSpin(yes){var sp=document.getElementById("spin");if(sp)sp.style.display=yes?"flex":"none";}
+
+// ── GENERATE CODE ──
+function genCode(){
+  var chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var c="";for(var i=0;i<6;i++)c+=chars[Math.floor(Math.random()*chars.length)];
+  return c;
+}
+
+// ── LOAD SPACE DATA ──
+function cargarEspacio(sid,rol){
+  if(dbListener){db.ref("espacios/"+spaceId).off("value",dbListener);dbListener=null;}
+  spaceId=sid;
+  db.ref("espacios/"+sid).once("value",function(snap){
     if(snap.exists()){
       var v=snap.val();
       if(v.settings)ST.settings=Object.assign({},ST.settings,v.settings);
@@ -247,19 +354,16 @@ function iniciarFirebase(k){
       ST.invitaciones=v.invitaciones||{};
       ST.reacciones=v.reacciones||{};
       ST.deudas=v.deudas||[];
-      ST.autoadds=v.autoadds||{};ST.categorias=v.categorias||[];
+      ST.autoadds=v.autoadds||{};
+      ST.categorias=v.categorias||[];
     }
-    usuario=k;
-    var col=k==="manolo"?"#2563EB":"#DB2777";
-    var light=k==="manolo"?"#EFF6FF":"#FDF2F8";
+    usuario=rol;
+    var col=rol==="manolo"?"#2563EB":"#DB2777";
+    var light=rol==="manolo"?"#EFF6FF":"#FDF2F8";
     document.documentElement.style.setProperty("--uc",col);
     document.documentElement.style.setProperty("--ul",light);
-    // Update login buttons with saved names
-    var bm2=document.getElementById("bm"),be2=document.getElementById("be");
-    if(bm2){var s1=bm2.querySelectorAll("span");if(s1[0])s1[0].textContent=ST.perfiles.manolo.emoji;if(s1[1])s1[1].textContent=ST.perfiles.manolo.nombre;}
-    if(be2){var s2=be2.querySelectorAll("span");if(s2[0])s2[0].textContent=ST.perfiles.esposa.emoji;if(s2[1])s2[1].textContent=ST.perfiles.esposa.nombre;}
     checkSemana();checkMes();renderApp();
-    db.ref("gastos-pareja").on("value",function(snap2){
+    dbListener=function(snap2){
       if(!fbGuard&&snap2.exists()){
         var v2=snap2.val();
         if(v2.settings)ST.settings=Object.assign({},ST.settings,v2.settings);
@@ -273,9 +377,152 @@ function iniciarFirebase(k){
         ST.reacciones=v2.reacciones||{};
         ST.deudas=v2.deudas||[];
         ST.autoadds=v2.autoadds||{};
+        ST.categorias=v2.categorias||[];
         renderApp();
       }
+    };
+    db.ref("espacios/"+sid).on("value",dbListener);
+  });
+}
+
+// ── AUTH STATE ──
+auth.onAuthStateChanged(function(user){
+  if(!user){showScreen("scr-login");return;}
+  currentUser=user;
+  showSpin(true);
+  db.ref("usuarios/"+user.uid).once("value",function(snap){
+    showSpin(false);
+    if(snap.exists()&&snap.val().espacioId){
+      var sid=snap.val().espacioId;
+      // Check if user already has an assigned role in the space
+      db.ref("espacios/"+sid+"/miembros").once("value",function(msnap){
+        var miembros=msnap.val()||{};
+        if(miembros[user.uid]){
+          cargarEspacio(sid,miembros[user.uid]);
+        } else {
+          // User's space exists but role not set — show role picker
+          mostrarRoles(sid);
+        }
+      });
+    } else {
+      // New user — show setup
+      var nombre=user.displayName?user.displayName.split(" ")[0]:"";
+      var titulo=document.getElementById("setup-title");
+      if(titulo&&nombre)titulo.textContent="¡Hola, "+nombre+"!";
+      showScreen("scr-setup");
+    }
+  });
+});
+
+// ── GOOGLE LOGIN ──
+document.getElementById("btn-google-login").onclick=function(){
+  showSpin(true);
+  var provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(function(err){
+    showSpin(false);
+    console.error(err);
+    alert("Error al iniciar sesión: "+err.message);
+  });
+};
+
+// ── CREAR ESPACIO ──
+document.getElementById("btn-crear-espacio").onclick=function(){
+  var user=auth.currentUser;if(!user)return;
+  var code=genCode();
+  var sid=db.ref("espacios").push().key;
+  var rol="manolo";
+  var updates={};
+  updates["espacios/"+sid+"/miembros/"+user.uid]=rol;
+  updates["espacios/"+sid+"/codigoInvitacion"]=code;
+  updates["espacios/"+sid+"/creadoPor"]=user.uid;
+  updates["espacios/"+sid+"/creadoEn"]=Date.now();
+  updates["codigos/"+code]=sid;
+  updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||""};
+  db.ref().update(updates,function(err){
+    if(err){alert("Error creando espacio: "+err.message);return;}
+    document.getElementById("code-value").textContent=code;
+    showScreen("scr-codigo");
+  });
+};
+
+// ── COPIAR CÓDIGO ──
+document.getElementById("btn-copiar-codigo").onclick=function(){
+  var code=document.getElementById("code-value").textContent;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(function(){alert("Código copiado: "+code);}).catch(function(){prompt("Copia este código:",code);});
+  } else {prompt("Copia este código:",code);}
+};
+
+// ── CONTINUAR SIN PAREJA ──
+document.getElementById("btn-continuar-sin-pareja").onclick=function(){
+  var user=auth.currentUser;if(!user)return;
+  db.ref("usuarios/"+user.uid+"/espacioId").once("value",function(snap){
+    var sid=snap.val();if(!sid)return;
+    cargarEspacio(sid,"manolo");
+  });
+};
+
+// ── UNIRSE CON CÓDIGO ──
+document.getElementById("btn-unirse-espacio").onclick=function(){showScreen("scr-join");};
+
+document.getElementById("btn-confirmar-join").onclick=function(){
+  var user=auth.currentUser;if(!user)return;
+  var code=(document.getElementById("inp-join-code").value||"").trim().toUpperCase();
+  if(code.length!==6){document.getElementById("join-error").style.display="block";return;}
+  document.getElementById("join-error").style.display="none";
+  db.ref("codigos/"+code).once("value",function(snap){
+    if(!snap.exists()){document.getElementById("join-error").style.display="block";return;}
+    var sid=snap.val();
+    db.ref("espacios/"+sid+"/miembros").once("value",function(msnap){
+      var miembros=msnap.val()||{};
+      var uids=Object.keys(miembros);
+      if(uids.length>=2&&!miembros[user.uid]){
+        alert("Este espacio ya tiene 2 integrantes.");return;
+      }
+      if(miembros[user.uid]){
+        // Already a member
+        var updates={};
+        updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||""};
+        db.ref().update(updates,function(){cargarEspacio(sid,miembros[user.uid]);});
+        return;
+      }
+      // Assign role: if creator is "manolo", joiner gets "esposa" and vice versa
+      var rolExistente=uids.length>0?Object.values(miembros)[0]:null;
+      var rolNuevo=rolExistente==="manolo"?"esposa":"manolo";
+      var updates={};
+      updates["espacios/"+sid+"/miembros/"+user.uid]=rolNuevo;
+      updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||""};
+      db.ref().update(updates,function(err){
+        if(err){alert("Error: "+err.message);return;}
+        cargarEspacio(sid,rolNuevo);
+      });
     });
+  });
+};
+
+// ── VOLVER BUTTONS ──
+document.getElementById("back-from-codigo").onclick=function(){showScreen("scr-setup");};
+document.getElementById("back-from-join").onclick=function(){showScreen("scr-setup");};
+
+// ── MOSTRAR ROLES (usuario sin rol asignado) ──
+function mostrarRoles(sid){
+  db.ref("espacios/"+sid+"/miembros").once("value",function(msnap){
+    var miembros=msnap.val()||{};
+    var roles=["manolo","esposa"];
+    var rolCards=[document.getElementById("btn-rol-0"),document.getElementById("btn-rol-1")];
+    roles.forEach(function(r,i){
+      var perfil=ST.perfiles[r]||{emoji:i===0?"👨":"👩",nombre:r};
+      var eEl=document.getElementById("rol"+i+"-emoji");
+      var nEl=document.getElementById("rol"+i+"-name");
+      if(eEl)eEl.textContent=perfil.emoji;
+      if(nEl)nEl.textContent=perfil.nombre;
+      if(rolCards[i])rolCards[i].onclick=function(){
+        var updates={};
+        updates["espacios/"+sid+"/miembros/"+auth.currentUser.uid]=r;
+        db.ref().update(updates,function(){cargarEspacio(sid,r);});
+      };
+    });
+    showScreen("scr-rol");
   });
 }
 
@@ -328,8 +575,9 @@ var WF={cat:"",pct:20};
 
 
 function saveDB(){
+  if(!spaceId)return Promise.resolve();
   fbGuard=true;
-  return db.ref("gastos-pareja").set(ST).then(function(){setTimeout(function(){fbGuard=false;},2000);});
+  return db.ref("espacios/"+spaceId).set(ST).then(function(){setTimeout(function(){fbGuard=false;},2000);});
 }
 
 // ── CHECK SEMANA ──
@@ -894,7 +1142,7 @@ function renderApp(){
 function bindAll(todos){
   var g=function(id){return document.getElementById(id);};
   var qa=function(sel,fn){document.querySelectorAll(sel).forEach(fn);};
-  g("bcam").onclick=function(){usuario=null;usuarioSeleccionado=null;location.reload();};
+  g("bcam").onclick=function(){auth.signOut().then(function(){usuario=null;spaceId=null;currentUser=null;location.reload();});};
   g("bmen").onclick=function(){camPres(-ajuste);};
   g("bmas").onclick=function(){camPres(ajuste);};
   qa(".btn-aj",function(b){b.onclick=function(){ajuste=parseInt(b.dataset.a);renderApp();};});
