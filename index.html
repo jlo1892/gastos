@@ -170,6 +170,10 @@ input:focus{border-color:var(--uc);background:#fff;}
 .frecg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
 
 .btnpill{background:#111827;color:#fff;border:none;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit;touch-action:manipulation;}
+.periodoBanner{background:linear-gradient(135deg,#1e40af,#3b82f6);border-radius:0 0 18px 18px;padding:10px 18px;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.periodoBar{background:rgba(255,255,255,.25);border-radius:50px;height:6px;flex:1;}
+.periodoBarF{height:6px;border-radius:50px;background:rgba(255,255,255,.9);}
+
 .btnpill.sec{background:#f1f5f9;color:#334155;}
 </style></head>
 
@@ -303,7 +307,7 @@ function semsEnMes(y,m){return Math.ceil(new Date(y,m+1,0).getDate()/7);}
 
 // ── STATE ──
 var ST={
-  settings:{presupuesto:4000,semanaInicia:4,metaAhorro:0,notifActivas:false},
+  settings:{presupuesto:4000,semanaInicia:4,metaAhorro:0,notifActivas:false,tipoPeriodo:"semanal",diaPago1:1,diaPago2:15},
   perfiles:{manolo:{nombre:"Manolo",emoji:"👨"},esposa:{nombre:"Esposa",emoji:"👩"}},
   finanzas:{ingresoMensual:0,gastosRecurrentes:[]},
   gastos:{},rollovers:{},
@@ -392,6 +396,73 @@ async function generarResumen(mStr){
   generandoResumen=false;
 }
 
+
+// ── PERÍODO DE PAGO ──
+function calcPeriodoPago(){
+  var tp=ST.settings.tipoPeriodo||"semanal";
+  if(tp==="semanal")return null; // usa lógica normal
+  var hoy=new Date();hoy.setHours(0,0,0,0);
+  var y=hoy.getFullYear(),m=hoy.getMonth(),d=hoy.getDate();
+  var d1=ST.settings.diaPago1||1,d2=ST.settings.diaPago2||15;
+  var ini,fin;
+  if(tp==="quincenal"){
+    // Dos quincenas: día d1 → día d2-1, día d2 → fin de mes
+    var ultimoDia=new Date(y,m+1,0).getDate();
+    if(d>=d2){
+      ini=new Date(y,m,d2);fin=new Date(y,m,ultimoDia,23,59,59,999);
+    }else{
+      ini=new Date(y,m,d1);
+      fin=new Date(y,m,d2-1,23,59,59,999);
+    }
+  }else if(tp==="mensual"){
+    // Periodo mensual que empieza el día d1
+    if(d>=d1){
+      ini=new Date(y,m,d1);
+      var sigM=new Date(y,m+1,d1);
+      fin=new Date(sigM.getTime()-1);
+    }else{
+      ini=new Date(y,m-1,d1);
+      fin=new Date(y,m,d1-1,23,59,59,999);
+    }
+  }else return null;
+  var totalDias=Math.round((fin.getTime()-ini.getTime())/86400000)+1;
+  var diasTransc=Math.max(0,Math.round((hoy.getTime()-ini.getTime())/86400000));
+  var diasRest=Math.max(0,Math.round((fin.getTime()-hoy.getTime())/86400000));
+  var ing=ST.finanzas&&ST.finanzas.ingresoMensual||0;
+  var rec=(ST.finanzas&&ST.finanzas.gastosRecurrentes||[]).reduce(function(s,r){return s+r.monto;},0);
+  // Presupuesto proporcional al período
+  var presBase=ST.settings.presupuesto||4000;
+  var numSems=totalDias/7;
+  var presPeriodo=Math.round(presBase*numSems);
+  return{
+    tipo:tp,ini:ini,fin:fin,hoy:hoy,
+    totalDias:totalDias,diasTransc:diasTransc,diasRest:diasRest,
+    presPeriodo:presPeriodo,numSems:Math.round(numSems*10)/10,
+    pctTransc:Math.min(100,Math.round((diasTransc/Math.max(totalDias,1))*100))
+  };
+}
+function periodoLabel(tp){
+  return tp==="quincenal"?"Quincena":tp==="mensual"?"Mes":"Semana";
+}
+function periodoActualHTML(){
+  var pp=calcPeriodoPago();
+  if(!pp)return "";
+  var fmtFecha=function(d){return d.toLocaleDateString("es-MX",{day:"2-digit",month:"short"});};
+  return '<div class="periodoBanner">'+
+    '<div>'+
+      '<div style="font-size:10px;opacity:.8;text-transform:uppercase;letter-spacing:1px">'+periodoLabel(pp.tipo)+' actual</div>'+
+      '<div style="font-size:13px;font-weight:800;margin-top:2px">'+fmtFecha(pp.ini)+' — '+fmtFecha(pp.fin)+'</div>'+
+    '</div>'+
+    '<div style="flex:1;margin:0 12px">'+
+      '<div class="periodoBar"><div class="periodoBarF" style="width:'+pp.pctTransc+'%"></div></div>'+
+      '<div style="font-size:10px;margin-top:3px;opacity:.8;text-align:center">'+pp.diasTransc+' de '+pp.totalDias+' días</div>'+
+    '</div>'+
+    '<div style="text-align:right">'+
+      '<div style="font-size:10px;opacity:.8">Presupuesto período</div>'+
+      '<div style="font-size:14px;font-weight:900">'+fmt(pp.presPeriodo)+'</div>'+
+    '</div>'+
+  '</div>';
+}
 function pedirNotif(){
   if(!("Notification"in window)){toast("No soportado","#ef4444");return;}
   Notification.requestPermission().then(function(p){if(p==="granted"){ST.settings.notifActivas=true;saveDB();toast("🔔 Activadas");}else toast("Permiso denegado","#ef4444");});
@@ -786,8 +857,7 @@ function renderApp(){
         '<div class="ajrow">'+AJS.map(function(a){return '<button class="aj btn-aj'+(a===ajuste?" on":"")+'" data-a="'+a+'">$'+a+'</button>';}).join("")+'</div>'+
         '<div class="pmrow"><button class="pm pmm" id="bmen">− '+fmt(ajuste)+'</button><button class="pm pmp" id="bmas">+ '+fmt(ajuste)+'</button></div>'+
       '</div>'+
-    '</div>'+
-    '<div id="tabs">'+
+    periodoActualHTML()+'</div>'+'<div id="tabs">'+
       (function(){
         var T=[
           {v:"home",label:"📊 Resumen"},
@@ -873,6 +943,17 @@ function bindAll(todos){
     qa(".btn-saldar",function(b){b.addEventListener("click",function(e){e.stopPropagation();saldarDeuda(b.dataset.id);});});
     var bex=g("btn-export");if(bex)bex.onclick=exportarCSV;
   }
+  // Período de pago config
+  document.querySelectorAll(".btn-tipo-periodo").forEach(function(b){
+    b.onclick=function(){ST.settings.tipoPeriodo=b.dataset.tp;saveDB();toast("💰 Período: "+b.dataset.tp);renderApp();};
+  });
+  var bsp=document.getElementById("btn-save-periodo");
+  if(bsp)bsp.onclick=function(){
+    var d1=parseInt(document.getElementById("inp-dia1")&&document.getElementById("inp-dia1").value)||1;
+    var d2=parseInt(document.getElementById("inp-dia2")&&document.getElementById("inp-dia2").value)||15;
+    ST.settings.diaPago1=d1;ST.settings.diaPago2=d2;
+    saveDB();toast("✅ Período guardado");renderApp();
+  };
   if(vista==="config"){
     qa(".db",function(b){b.onclick=function(){setDia(parseInt(b.dataset.i));};});
     qa(".pesv",function(b){b.onclick=function(){savePerfil(b.dataset.k);};});
@@ -1334,7 +1415,32 @@ function bConfig(){
       '<div style="flex:1"><div style="font-size:11px;font-weight:800;color:'+COL[k]+';text-transform:uppercase;margin-bottom:6px">'+k+'</div>'+
       '<input class="peni" id="pn-'+k+'" value="'+p[k].nombre+'"/>'+
       '<button class="pesv" data-k="'+k+'" style="background:'+COL[k]+'">Guardar ✓</button></div></div>';}).join("")+'</div></div>'+
-  '<div class="ss"><div class="sst">📅 Inicio de semana</div><div class="scard">'+
+  '<div class="ss"><div class="sst">📅 Período de pago</div><div class="scard">'+
+    '<div style="font-size:12px;color:#64748b;margin-bottom:12px">¿Cómo reciben su ingreso?</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'+
+      ['semanal','quincenal','mensual'].map(function(tp){
+        var lbl=tp==="semanal"?"📅 Semanal":tp==="quincenal"?"💰 Quincenal":"🗓️ Mensual";
+        var on=(ST.settings.tipoPeriodo||"semanal")===tp;
+        return '<button class="btn-tipo-periodo" data-tp="'+tp+'" style="padding:10px 4px;border:2px solid '+(on?"var(--uc)":"#e2e8f0")+';border-radius:12px;background:'+(on?"var(--ul)":"#fff")+';cursor:pointer;font-size:12px;font-weight:'+(on?"900":"600")+';font-family:inherit;touch-action:manipulation;color:'+(on?"var(--uc)":"#374151")+'">'+lbl+'</button>';
+      }).join("")+
+    '</div>'+
+    ((ST.settings.tipoPeriodo||"semanal")==="quincenal"?
+      '<div style="font-size:12px;color:#374151;font-weight:700;margin-bottom:8px">Días de quincena</div>'+
+      '<div style="display:flex;gap:10px;align-items:center">'+
+        '<div style="flex:1"><div style="font-size:11px;color:#64748b;margin-bottom:4px">Primera quincena (día)</div>'+
+        '<input type="number" id="inp-dia1" min="1" max="28" value="'+(ST.settings.diaPago1||1)+'" style="width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:10px;font-size:16px;text-align:center;font-family:inherit;outline:none;background:#f8fafc"/></div>'+
+        '<div style="font-size:20px;font-weight:900;color:#94a3b8;align-self:flex-end;padding-bottom:8px">→</div>'+
+        '<div style="flex:1"><div style="font-size:11px;color:#64748b;margin-bottom:4px">Segunda quincena (día)</div>'+
+        '<input type="number" id="inp-dia2" min="1" max="28" value="'+(ST.settings.diaPago2||15)+'" style="width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:10px;font-size:16px;text-align:center;font-family:inherit;outline:none;background:#f8fafc"/></div>'+
+      '</div>'+
+      '<button id="btn-save-periodo" style="width:100%;margin-top:12px;padding:11px;background:var(--uc);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">Guardar período ✓</button>'
+    : (ST.settings.tipoPeriodo==="mensual"?
+      '<div style="font-size:12px;color:#374151;font-weight:700;margin-bottom:8px">¿Qué día del mes cobran?</div>'+
+      '<input type="number" id="inp-dia1" min="1" max="28" value="'+(ST.settings.diaPago1||1)+'" style="width:100%;border:2px solid #e2e8f0;border-radius:10px;padding:12px;font-size:18px;text-align:center;font-family:inherit;outline:none;background:#f8fafc"/>'+
+      '<button id="btn-save-periodo" style="width:100%;margin-top:12px;padding:11px;background:var(--uc);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">Guardar período ✓</button>'
+    : '<div style="font-size:12px;color:#10b981;font-weight:700;background:#f0fdf4;border-radius:10px;padding:10px;text-align:center">✅ Usando presupuesto semanal — sin cambios necesarios</div>'
+    ))+
+  '</div></div>'+'<div class="ss"><div class="sst">📅 Inicio de semana</div><div class="scard">'+
     '<p style="font-size:13px;color:#64748b">Actualmente: <strong>'+DIAS[dI]+'</strong></p>'+
     '<div class="dg">'+DIAS.map(function(d,i){return '<button class="db'+(i===dI?" on":"")+'\" data-i="'+i+'">'+d+'</button>';}).join("")+'</div></div></div>'+
   '<div class="ss"><div class="sst">🎯 Meta de ahorro</div><div class="scard">'+
