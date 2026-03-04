@@ -260,6 +260,11 @@ input:focus{border-color:var(--uc);background:#fff;}
 
 /* Section titles inside views */
 .section-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-secondary);margin:16px 0 10px;display:flex;align-items:center;gap:6px;}
+
+/* Profile registration */
+.perfil-emoji-btn:active{transform:scale(.9);}
+.perfil-rol-btn{transition:all .15s !important;}
+.perfil-rol-btn:active{transform:scale(.96) !important;}
 </style></head>
 
 <body>
@@ -325,6 +330,7 @@ input:focus{border-color:var(--uc);background:#fff;}
     <div id="join-error" style="color:#ef4444;font-size:13px;font-weight:700;margin-top:8px;display:none">Código inválido. Verifica e intenta de nuevo.</div>
   </div>
 
+  <!-- SCREEN: ELEGIR ROL (legacy, hidden) -->
   <div id="scr-rol" class="auth-screen">
     <div class="auth-logo">👋</div>
     <div class="auth-title">¿Quién eres tú?</div>
@@ -338,6 +344,46 @@ input:focus{border-color:var(--uc);background:#fff;}
         <span class="rol-emoji" id="rol1-emoji">👩</span>
         <div class="rol-name" id="rol1-name">Perfil 2</div>
       </button>
+    </div>
+  </div>
+
+  <!-- SCREEN: PROFILE REGISTRATION -->
+  <div id="scr-perfil" class="auth-screen">
+    <div class="auth-logo">🙋</div>
+    <div class="auth-title">Configura tu perfil</div>
+    <div class="auth-sub" id="perfil-sub">Elige cómo aparecerás en la app.<br>Tu pareja verá tu nombre y avatar.</div>
+
+    <div style="width:100%;max-width:340px">
+      <!-- Role selection -->
+      <div style="font-size:11px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">¿Cuál eres tú?</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px" id="perfil-roles">
+        <button class="rol-card perfil-rol-btn" data-rol="manolo" id="perfil-rol-manolo" style="border-color:var(--uc);background:var(--ul)">
+          <span class="rol-emoji" id="perfil-rol-emoji-manolo">👨</span>
+          <div class="rol-name">Persona 1</div>
+          <div id="perfil-rol-taken-manolo" style="font-size:10px;color:#ef4444;font-weight:700;margin-top:4px;display:none">🔒 Ocupado</div>
+        </button>
+        <button class="rol-card perfil-rol-btn" data-rol="esposa" id="perfil-rol-esposa">
+          <span class="rol-emoji" id="perfil-rol-emoji-esposa">👩</span>
+          <div class="rol-name">Persona 2</div>
+          <div id="perfil-rol-taken-esposa" style="font-size:10px;color:#ef4444;font-weight:700;margin-top:4px;display:none">🔒 Ocupado</div>
+        </button>
+      </div>
+
+      <!-- Name input -->
+      <div style="font-size:11px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Tu nombre</div>
+      <input type="text" id="perfil-nombre" placeholder="Ej. Manolo, Ana, Amor..." 
+        style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;font-size:16px;font-weight:700;font-family:inherit;outline:none;background:var(--surface);margin-bottom:16px;text-align:center"/>
+
+      <!-- Emoji picker -->
+      <div style="font-size:11px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Tu avatar</div>
+      <div id="perfil-emojis" style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:20px">
+      </div>
+
+      <!-- Confirm -->
+      <button class="btn-auth-primary" id="btn-perfil-guardar" style="max-width:100%" disabled>
+        ✅ Guardar y entrar
+      </button>
+      <div id="perfil-error" style="color:#ef4444;font-size:12px;font-weight:700;margin-top:8px;display:none;text-align:center"></div>
     </div>
   </div>
 </div>
@@ -439,12 +485,23 @@ auth.onAuthStateChanged(function(user){
       if(savedRol){
         cargarEspacio(sid,savedRol);
       } else {
-        db.ref("espacios/"+sid+"/miembros/"+user.uid).once("value",function(msnap){
-          if(msnap.exists()&&msnap.val()){
-            db.ref("usuarios/"+user.uid+"/rol").set(msnap.val());
-            cargarEspacio(sid,msnap.val());
+        // No role saved — check what's taken and show profile registration
+        db.ref("espacios/"+sid+"/miembros").once("value",function(msnap){
+          var miembros=msnap.val()||{};
+          // Check if this user already has a role assigned in miembros
+          if(miembros[user.uid]){
+            // Save it and continue
+            db.ref("usuarios/"+user.uid+"/rol").set(miembros[user.uid]);
+            cargarEspacio(sid,miembros[user.uid]);
           } else {
-            mostrarRoles(sid);
+            // Find taken role by other members
+            var takenRol=null;
+            Object.keys(miembros).forEach(function(uid){
+              if(uid!==user.uid)takenRol=miembros[uid];
+            });
+            _pendingSid=sid;
+            _pendingTakenRol=takenRol;
+            mostrarPerfilRegistro(sid,takenRol);
           }
         });
       }
@@ -467,20 +524,18 @@ document.getElementById("btn-google-login").onclick=function(){
   });
 };
 
-var _pendingSid=null, _pendingRol=null;
+var _pendingSid=null, _pendingRol=null, _pendingTakenRol=null;
 document.getElementById("btn-crear-espacio").onclick=function(){
   var user=auth.currentUser;if(!user)return;
   var code=genCode();
   var sid=db.ref("espacios").push().key;
-  var rol="manolo";
-  _pendingSid=sid; _pendingRol=rol;
+  _pendingSid=sid; _pendingRol=null; _pendingTakenRol=null;
   var updates={};
-  updates["espacios/"+sid+"/miembros/"+user.uid]=rol;
   updates["espacios/"+sid+"/codigoInvitacion"]=code;
   updates["espacios/"+sid+"/creadoPor"]=user.uid;
   updates["espacios/"+sid+"/creadoEn"]=Date.now();
   updates["codigos/"+code]=sid;
-  updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||"",rol:rol};
+  updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||""};
   db.ref().update(updates,function(err){
     if(err){alert("Error creando espacio: "+err.message);return;}
     document.getElementById("code-value").textContent=code;
@@ -496,18 +551,19 @@ document.getElementById("btn-copiar-codigo").onclick=function(){
 };
 
 document.getElementById("btn-continuar-sin-pareja").onclick=function(){
-  var sid=_pendingSid,rol=_pendingRol||"manolo";
-  if(!sid){
+  if(!_pendingSid){
     var user=auth.currentUser;if(!user)return;
     db.ref("usuarios/"+user.uid).once("value",function(snap){
       var d=snap.val()||{};
-      sid=d.espacioId;rol=d.rol||"manolo";
-      if(!sid){alert("Error: no se encontró el espacio.");return;}
-      _doEntrar(sid,rol);
+      _pendingSid=d.espacioId;
+      if(!_pendingSid){alert("Error: no se encontró el espacio.");return;}
+      _pendingTakenRol=null;
+      mostrarPerfilRegistro(_pendingSid,null);
     });
     return;
   }
-  _doEntrar(sid,rol);
+  _pendingTakenRol=null;
+  mostrarPerfilRegistro(_pendingSid,null);
 };
 
 function _doEntrar(sid,rol){
@@ -561,19 +617,22 @@ document.getElementById("btn-confirmar-join").onclick=function(){
       var uids=Object.keys(miembros);
       if(uids.length>=2&&!miembros[user.uid]){alert("Este espacio ya tiene 2 integrantes.");return;}
       if(miembros[user.uid]){
+        // Already a member — go straight in
         var updates={};
         updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||""};
         db.ref().update(updates,function(){cargarEspacio(sid,miembros[user.uid]);});
         return;
       }
-      var rolExistente=uids.length>0?Object.values(miembros)[0]:null;
-      var rolNuevo=rolExistente==="manolo"?"esposa":"manolo";
+      // New member — save space ID, then show profile registration
+      _pendingSid=sid;
+      // Determine which role is already taken
+      var takenRol=uids.length>0?Object.values(miembros)[0]:null;
+      _pendingTakenRol=takenRol;
       var updates={};
-      updates["espacios/"+sid+"/miembros/"+user.uid]=rolNuevo;
       updates["usuarios/"+user.uid]={espacioId:sid,email:user.email||"",nombre:user.displayName||""};
       db.ref().update(updates,function(err){
         if(err){alert("Error: "+err.message);return;}
-        cargarEspacio(sid,rolNuevo);
+        mostrarPerfilRegistro(sid,takenRol);
       });
     });
   });
@@ -583,27 +642,171 @@ document.getElementById("back-from-codigo").onclick=function(){showScreen("scr-s
 document.getElementById("back-from-join").onclick=function(){showScreen("scr-setup");};
 
 function mostrarRoles(sid){
-  db.ref("espacios/"+sid).once("value",function(espSnap){
-    var perfs=(espSnap.val()||{}).perfiles||{manolo:{emoji:"👨",nombre:"Manolo"},esposa:{emoji:"👩",nombre:"Esposa"}};
-    var roles=["manolo","esposa"];
-    var rolCards=[document.getElementById("btn-rol-0"),document.getElementById("btn-rol-1")];
-    roles.forEach(function(r,i){
-      var perfil=perfs[r]||{emoji:i===0?"👨":"👩",nombre:r};
-      var eEl=document.getElementById("rol"+i+"-emoji");
-      var nEl=document.getElementById("rol"+i+"-name");
-      if(eEl)eEl.textContent=perfil.emoji;
-      if(nEl)nEl.textContent=perfil.nombre;
-      (function(rol){
-        if(rolCards[i])rolCards[i].onclick=function(){
-          var uid=auth.currentUser.uid;
-          var updates={};
-          updates["espacios/"+sid+"/miembros/"+uid]=rol;
-          updates["usuarios/"+uid+"/rol"]=rol;
-          db.ref().update(updates,function(){cargarEspacio(sid,rol);});
-        };
-      })(r);
-    });
-    showScreen("scr-rol");
+  // Legacy: redirect to new profile registration
+  mostrarPerfilRegistro(sid, null);
+}
+
+// ── PROFILE REGISTRATION ──
+var _perfilSelectedRol="manolo";
+var _perfilSelectedEmoji="👨";
+var ALL_EMOJIS_PERFIL=[
+  "👨","👩","🧔","👧","👨‍💼","👩‍💼","🧑","👩‍🦱","🤠","💁‍♀️","😎","🧖‍♀️",
+  "🥷","🌸","👻","🦋","🐻","🐱","🦁","🌺","🐯","👸","🐸","🧚‍♀️",
+  "🎮","🦄","🚀","🌙","⚡","💅","🎀","🐼"
+];
+
+function mostrarPerfilRegistro(sid, takenRol){
+  _pendingSid=sid;
+  _pendingTakenRol=takenRol;
+
+  // Default to the available role
+  if(takenRol==="manolo"){
+    _perfilSelectedRol="esposa";
+    _perfilSelectedEmoji="👩";
+  } else if(takenRol==="esposa"){
+    _perfilSelectedRol="manolo";
+    _perfilSelectedEmoji="👨";
+  } else {
+    _perfilSelectedRol="manolo";
+    _perfilSelectedEmoji="👨";
+  }
+
+  // Pre-fill name from Google account
+  var user=auth.currentUser;
+  var defName=(user&&user.displayName)?user.displayName.split(" ")[0]:"";
+
+  showScreen("scr-perfil");
+
+  // Update subtitle
+  var sub=document.getElementById("perfil-sub");
+  if(sub){
+    if(takenRol){
+      sub.innerHTML="Tu pareja ya eligió el perfil <b>"+(takenRol==="manolo"?"Persona 1":"Persona 2")+"</b>.<br>Configura el tuyo.";
+    } else {
+      sub.innerHTML="Elige cómo aparecerás en la app.<br>Tu pareja verá tu nombre y avatar.";
+    }
+  }
+
+  // Name input
+  var nameInp=document.getElementById("perfil-nombre");
+  if(nameInp)nameInp.value=defName;
+
+  // Render role buttons
+  renderPerfilRoles(takenRol);
+  // Render emoji grid
+  renderPerfilEmojis();
+  // Check if can save
+  checkPerfilReady();
+
+  // Bind role buttons
+  document.querySelectorAll(".perfil-rol-btn").forEach(function(btn){
+    btn.onclick=function(){
+      var rol=btn.dataset.rol;
+      if(takenRol===rol)return; // Can't select taken role
+      _perfilSelectedRol=rol;
+      _perfilSelectedEmoji=rol==="manolo"?"👨":"👩";
+      renderPerfilRoles(takenRol);
+      renderPerfilEmojis();
+      checkPerfilReady();
+    };
+  });
+
+  // Bind name input
+  if(nameInp){
+    nameInp.oninput=function(){checkPerfilReady();};
+  }
+
+  // Bind save button
+  var saveBtn=document.getElementById("btn-perfil-guardar");
+  if(saveBtn)saveBtn.onclick=function(){guardarPerfil();};
+}
+
+function renderPerfilRoles(takenRol){
+  var roles=["manolo","esposa"];
+  roles.forEach(function(rol){
+    var btn=document.getElementById("perfil-rol-"+rol);
+    var takenLabel=document.getElementById("perfil-rol-taken-"+rol);
+    if(!btn)return;
+
+    var isTaken=(takenRol===rol);
+    var isSelected=(_perfilSelectedRol===rol);
+
+    if(isTaken){
+      btn.style.borderColor="#fca5a5";
+      btn.style.background="#fef2f2";
+      btn.style.opacity="0.6";
+      btn.style.cursor="not-allowed";
+      if(takenLabel){takenLabel.style.display="block";}
+    } else if(isSelected){
+      btn.style.borderColor=rol==="manolo"?"#2563EB":"#DB2777";
+      btn.style.background=rol==="manolo"?"#EFF6FF":"#FDF2F8";
+      btn.style.opacity="1";
+      btn.style.cursor="pointer";
+      if(takenLabel){takenLabel.style.display="none";}
+    } else {
+      btn.style.borderColor="transparent";
+      btn.style.background="#fff";
+      btn.style.opacity="1";
+      btn.style.cursor="pointer";
+      if(takenLabel){takenLabel.style.display="none";}
+    }
+  });
+}
+
+function renderPerfilEmojis(){
+  var container=document.getElementById("perfil-emojis");
+  if(!container)return;
+  container.innerHTML=ALL_EMOJIS_PERFIL.map(function(e){
+    var sel=(_perfilSelectedEmoji===e);
+    return '<button class="perfil-emoji-btn" data-e="'+e+'" style="font-size:24px;padding:8px;border-radius:10px;border:1.5px solid '+(sel?"var(--uc)":"transparent")+';background:'+(sel?"var(--ul)":"var(--surface)")+';cursor:pointer;text-align:center;touch-action:manipulation;transition:all .12s;line-height:1">'+e+'</button>';
+  }).join("");
+
+  container.querySelectorAll(".perfil-emoji-btn").forEach(function(btn){
+    btn.onclick=function(){
+      _perfilSelectedEmoji=btn.dataset.e;
+      renderPerfilEmojis();
+    };
+  });
+}
+
+function checkPerfilReady(){
+  var name=(document.getElementById("perfil-nombre")?.value||"").trim();
+  var btn=document.getElementById("btn-perfil-guardar");
+  if(btn)btn.disabled=!name;
+}
+
+function guardarPerfil(){
+  var user=auth.currentUser;if(!user)return;
+  var sid=_pendingSid;if(!sid)return;
+  var rol=_perfilSelectedRol;
+  var nombre=(document.getElementById("perfil-nombre")?.value||"").trim();
+  var emoji=_perfilSelectedEmoji;
+
+  if(!nombre){
+    var errEl=document.getElementById("perfil-error");
+    if(errEl){errEl.textContent="Escribe tu nombre";errEl.style.display="block";}
+    return;
+  }
+
+  var perfilKey=rol; // "manolo" or "esposa"
+  var updates={};
+  updates["espacios/"+sid+"/miembros/"+user.uid]=rol;
+  updates["espacios/"+sid+"/perfiles/"+perfilKey+"/nombre"]=nombre;
+  updates["espacios/"+sid+"/perfiles/"+perfilKey+"/emoji"]=emoji;
+  updates["usuarios/"+user.uid+"/rol"]=rol;
+  updates["usuarios/"+user.uid+"/espacioId"]=sid;
+
+  var saveBtn=document.getElementById("btn-perfil-guardar");
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent="Guardando...";}
+
+  db.ref().update(updates,function(err){
+    if(err){
+      alert("Error guardando perfil: "+err.message);
+      if(saveBtn){saveBtn.disabled=false;saveBtn.textContent="✅ Guardar y entrar";}
+      return;
+    }
+    // Load the space
+    cargarEspacio(sid,rol);
   });
 }
 
