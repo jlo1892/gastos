@@ -383,7 +383,7 @@ textarea:focus{border-color:var(--uc);background:#fff;}
       </svg>
       <div class="auth-brand">Sal<span>do</span></div>
     </div>
-    <div class="auth-title" style="margin-bottom:4px">Tu dinero, en orden</div>
+    <div class="auth-title" style="margin-bottom:4px" id="login-main-title">Tu dinero, en orden</div>
     <div class="auth-sub">Registra, analiza y controla tus<br>finanzas personales o en pareja.</div>
     <div class="auth-methods">
       <button class="btn-google" id="btn-google-login">
@@ -393,7 +393,7 @@ textarea:focus{border-color:var(--uc);background:#fff;}
           <path fill="#FBBC05" d="M10.7 28.6A14.8 14.8 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l8.1-6.2z"/>
           <path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.2 0-11.5-4.2-13.3-9.8l-8.1 6.2C6.7 42.6 14.7 48 24 48z"/>
         </svg>
-        Continuar con Google
+        <span id="lbl-google-login">Continuar con Google</span>
       </button>
       <div class="auth-divider">
         <div class="auth-divider-line"></div>
@@ -564,7 +564,7 @@ var EMOJI_ALL=["🏠","🏡","🏢","🏪","🛋️","🪴","🔑","🛠️","�
 
 // ── LANGUAGE / i18n ──
 var LANG=(function(){try{return localStorage.getItem('saldo_lang')||'es';}catch(e){return'es';}})();
-function setLang(l){LANG=l;try{localStorage.setItem('saldo_lang',l);}catch(e){}document.documentElement.lang=l==='en'?'en':'es';}
+function setLang(l){LANG=l;try{localStorage.setItem('saldo_lang',l);}catch(e){}document.documentElement.lang=l==='en'?'en':'es';toast(l==='en'?'🇺🇸 English selected':'🇲🇽 Español seleccionado','#2563EB');}
 var I18N={
   es:{
     appSub:'Registra, analiza y controla tus<br>finanzas personales o en pareja.',
@@ -701,13 +701,21 @@ document.getElementById("btn-microsoft-login").onclick=function(){
 };
 function applyLangToLogin(){
   var l=I18N[LANG]||I18N.es;
+  // Login screen elements
+  var title=document.getElementById("login-main-title");
+  if(title)title.textContent=l.loginTitle;
   var sub=document.querySelector("#scr-login .auth-sub");
   if(sub)sub.innerHTML=l.appSub;
   var hint=document.getElementById("lbl-login-hint");
   if(hint)hint.textContent=l.loginHint;
+  var gl=document.getElementById("lbl-google-login");
+  if(gl)gl.textContent=l.btnGoogle;
   var ms=document.getElementById("lbl-ms-login");if(ms)ms.textContent=l.btnMicrosoft;
-  var el=document.getElementById("lbl-email-login");if(el)el.textContent=l.btnEmail;
-  var es=document.getElementById("lbl-email-signup");if(es)es.textContent=l.btnSignup;
+  var em=document.getElementById("lbl-email-login");if(em)em.textContent=l.btnEmail;
+  var su=document.getElementById("lbl-email-signup");if(su)su.textContent=l.btnSignup;
+  // Onboarding skip button
+  var sk=document.getElementById("onb-skip");if(sk)sk.textContent=l.onbSkip||"Saltar →";
+  // Highlight active lang button
   var esBtn=document.getElementById("lang-btn-es"),enBtn=document.getElementById("lang-btn-en");
   if(esBtn){esBtn.style.background=LANG==='es'?'#2563EB':'#f1f5f9';esBtn.style.color=LANG==='es'?'#fff':'#475569';}
   if(enBtn){enBtn.style.background=LANG==='en'?'#2563EB':'#f1f5f9';enBtn.style.color=LANG==='en'?'#fff':'#475569';}
@@ -1329,7 +1337,7 @@ function bHome(sem,todos,pres,tot,disp,roll){
 
   // Últimos gastos
   var ult=sem.slice(0,5);
-  var ultHtml='<div class="ss"><div class="sst">Últimos gastos esta semana</div>'+(sem.length?'<div class="scard">'+ult.map(function(gx){return buildGastoRow(gx,p);}).join("")+'</div><button id="btn-ver-hist" style="width:100%;background:none;border:none;color:var(--uc);font-size:13px;font-weight:800;padding:8px;cursor:pointer;font-family:inherit;margin-top:4px">Ver historial completo →</button>':'<div class="empty"><div style="font-size:48px">🌱</div><div>Sin gastos esta semana</div></div>')+'</div>';
+  var ultHtml='<div class="ss"><div class="sst">Últimos gastos esta semana</div>'+(sem.length?'<div class="scard">'+ult.map(function(gx){return buildGastoRow(gx,p);}).join("")+'</div><button id="btn-ver-hist" style="width:100%;background:none;border:none;color:var(--uc);font-size:13px;font-weight:800;padding:8px;cursor:pointer;font-family:inherit;margin-top:4px">Ver historial completo →</button>':'<div class="empty"><div style="font-size:48px">🌱</div><div>'+(LANG==="en"?"No expenses this week":"Sin gastos esta semana")+"</div></div>")+'</div>';
 
   // Deudas activas
   var deudasActivas=(ST.deudas||[]).filter(function(d){return d.activa;});
@@ -1374,19 +1382,19 @@ function bAgregar(){
   var frec=(ST.frecuentes||[]).filter(function(f){if(!f.auto)return true;return !f.ultimoUso||((Date.now()-f.ultimoUso)<3*86400000);}),cats=allCats();
   var frecHtml=frec.length?'<div class="frecg">'+frec.map(function(f,i){return'<button class="frecb" data-i="'+i+'"><span>'+escapeHtml(f.desc)+'</span><span style="color:var(--uc);font-weight:900;margin-left:4px">'+fmt(f.monto)+'</span></button>';}).join("")+'</div>':"";
   var catHtml='<div class="cg">'+cats.map(function(c){return'<button class="cb btn-cat '+(cat===c.id?"on":"")+'\" data-c="'+c.id+'"><span>'+c.i+'</span>'+escapeHtml(c.l)+'</button>';}).join("")+'</div>';
-  return '<div class="fcard"><div style="font-size:18px;font-weight:900;margin-bottom:16px">➕ Registrar gasto</div>'
+  return '<div class="fcard"><div style="font-size:18px;font-weight:900;margin-bottom:16px">'+(LANG==="en"?"➕ Record expense":"➕ Registrar gasto")
     +(frec.length?'<div><div class="flbl" style="margin-bottom:6px">⚡ Accesos rápidos</div>'+frecHtml+'</div>':"")
-    +'<div class="flbl" style="margin-top:12px">💵 Monto</div>'
+    +'<div class="flbl" style="margin-top:12px">'+(LANG==="en"?"💵 Amount":"💵 Monto")+"</div>"
     +'<input id="im" type="number" inputmode="decimal" placeholder="0.00" class="inpm"/>'
-    +'<div class="flbl" style="margin-top:12px">📝 Descripción</div>'
+    +'<div class="flbl" style="margin-top:12px">'+(LANG==="en"?"📝 Description":"📝 Descripción")+"</div>"
     +'<input id="id2" type="text" placeholder="¿En qué gastaron?"/>'
-    +'<div class="flbl" style="margin-top:14px">🏷️ Categoría</div>'
+    +'<div class="flbl" style="margin-top:14px">'+(LANG==="en"?"🏷️ Category":"🏷️ Categoría")+"</div>"
     +catHtml
     +'<div id="split-row" class="splitrow '+(splitActivo?"on":"")+'"><div><div style="font-size:14px;font-weight:700">Gasto compartido</div><div style="font-size:12px;color:#64748b;margin-top:2px">Dividir entre los dos</div></div><div class="stgl '+(splitActivo?"on":"")+'"></div></div>'
     +'<div id="nota-row" class="splitrow '+(notaActiva?"on":"")+'"><div><div style="font-size:14px;font-weight:700">Agregar nota</div><div style="font-size:12px;color:#64748b;margin-top:2px">Comentario adicional</div></div><div class="stgl '+(notaActiva?"on":"")+'"></div></div>'
     +(notaActiva?'<textarea id="nota-inp" placeholder="Escribe una nota..."></textarea>':"")
     +'<div id="inv-row" class="splitrow '+(esInvitacion?"on":"")+'"><div><div style="font-size:14px;font-weight:700">Solicitar cobro</div><div style="font-size:12px;color:#64748b;margin-top:2px">Enviar solicitud al otro usuario</div></div><div class="stgl '+(esInvitacion?"on":"")+'"></div></div>'
-    +'<button class="ocrbtn '+(ocrLoading?"loading":"")+'\" id="ocrbtn"><span>'+(ocrLoading?"⏳ Leyendo ticket...":"📷 Escanear ticket (OCR)")+'</span></button>'
+    +'<button class="ocrbtn '+(ocrLoading?"loading":"")+'\" id="ocrbtn"><span>'+(ocrLoading?(LANG==="en"?"⏳ Reading receipt...":"⏳ Leyendo ticket..."):(LANG==="en"?"📷 Scan receipt (OCR)":"📷 Escanear ticket (OCR)"))+'</span></button>'
     +'<button class="btng" id="bg" disabled>Registrar gasto</button></div>';
 }
 
@@ -1396,9 +1404,9 @@ function bHistorial(todos){
   var totalFiltrado=filtered.reduce(function(s,g){return s+g.monto;},0);
   var calToggleBtn='<button id="btn-cal-toggle" style="background:'+(histVistaCalendario?'var(--uc)':'#f1f5f9')+';color:'+(histVistaCalendario?'#fff':'#64748b')+';border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">'+(histVistaCalendario?'📋 Lista':'📅 Calendario')+'</button>';
   return '<div>'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:900">📅 Historial</div><div style="display:flex;align-items:center;gap:8px">'+(filtered.length?'<div style="font-size:12px;font-weight:800;color:#64748b">'+filtered.length+' mov.</div>':'')+calToggleBtn+'</div></div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:900">'+(LANG==="en"?"📅 History":"📅 Historial")+'</div><div style="display:flex;align-items:center;gap:8px">'+(filtered.length?'<div style="font-size:12px;font-weight:800;color:#64748b">'+filtered.length+' mov.</div>':'')+calToggleBtn+'</div></div>'
     +'<div class="hist-filter-bar">'
-    +'<input id="hist-search" type="text" placeholder="🔍 Buscar por descripción o categoría..." value="'+escapeHtml(histBusqueda)+'" style="margin-bottom:12px;font-size:14px"/>'
+    +'<input id="hist-search" type="text" placeholder="'+(LANG==="en"?"🔍 Search..":"🔍 Buscar..")+'" value="'+escapeHtml(histBusqueda)+'" style="margin-bottom:12px;font-size:14px"/>'
     +'<div class="filter-presets">'
     +'<button class="preset-btn '+(histFiltroPreset==="hoy"?"on":"")+'\" data-pre="hoy">Hoy</button>'
     +'<button class="preset-btn '+(histFiltroPreset==="semana"?"on":"")+'\" data-pre="semana">Esta semana</button>'
@@ -1581,8 +1589,8 @@ function bConfig(){
     +(custCats.length?'<div style="margin-top:12px">'+custCats.map(function(c,i){return'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:24px">'+c.i+'</span><span style="flex:1;font-size:14px;font-weight:700">'+escapeHtml(c.l)+'</span><button class="btn-del-catcustom" data-i="'+i+'" style="background:#fee2e2;border:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:14px">🗑️</button></div>';}).join("")+'</div>':"")
     +'</div></div>'
     +'<div class="ss"><div class="sst">Idioma / Language</div><div class="scard"><div class="sr"><div style="font-size:14px;font-weight:700">🌐 Idioma de la app</div><div style="display:flex;gap:8px;margin-top:8px">'
-    +'<button id="lang-es-cfg" onclick="setLang(\'es\');toast(\'🇲🇽 Español\');renderApp();" style="background:'+(LANG==='es'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='es'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇲🇽 Español</button>'
-    +'<button id="lang-en-cfg" onclick="setLang(\'en\');toast(\'🇺🇸 English\');renderApp();" style="background:'+(LANG==='en'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='en'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇺🇸 English</button>'
+    +'<button id="lang-es-cfg" onclick="setLang(\'es\');renderApp();" style="background:'+(LANG==='es'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='es'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇲🇽 Español</button>'
+    +'<button id="lang-en-cfg" onclick="setLang(\'en\');renderApp();" style="background:'+(LANG==='en'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='en'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇺🇸 English</button>'
     +'</div></div></div></div>'
     +'<div class="ss"><div class="sst">Notificaciones</div><div class="scard"><div class="sr"><div><div style="font-size:14px;font-weight:700">🔔 Recordatorios diarios</div><div style="font-size:12px;color:#64748b;margin-top:2px">Avisos para registrar tus gastos</div></div><button id="btn-notif" class="btnpill '+(s.notifActivas?"":"sec")+'">'+(s.notifActivas?"Activadas":"Activar")+'</button></div></div></div>'
     +'</div>';
