@@ -1696,7 +1696,7 @@ function exportarCSV(){
 function viewTicket(id){
   var gx=ST.gastos[id];if(!gx||!gx.ticketThumb){toast("Sin foto de ticket","#64748b");return;}
   var mo=document.createElement("div");mo.className="mo";mo.id="mo-ticket";
-  mo.innerHTML='<div class="mobox"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:15px;font-weight:900">📷 Ticket: '+escapeHtml(gx.descripcion||"")+'</div><button onclick="document.getElementById('mo-ticket').remove()" style="background:#f1f5f9;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;font-weight:700">✕</button></div><img src="'+gx.ticketThumb+'" class="ticket-preview" alt="Ticket"/></div>';
+  mo.innerHTML='<div class="mobox"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="font-size:15px;font-weight:900">📷 Ticket: '+escapeHtml(gx.descripcion||"")+'</div><button onclick="this.closest(\'.mo\').remove()" style="background:#f1f5f9;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px;font-weight:700">✕</button></div><img src="'+gx.ticketThumb+'" class="ticket-preview" alt="Ticket"/></div>';
   document.body.appendChild(mo);
 }
 
