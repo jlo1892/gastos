@@ -557,6 +557,8 @@ var EMOJIS={manolo:["👨","🧔","👦","👨‍💼","🧑","🤠","😎","�
 var COL={manolo:"#2563EB",esposa:"#DB2777"};
 var CATS=[{id:"super",l:"Súper",i:"🛒",c:"#3b82f6"},{id:"renta",l:"Renta",i:"🏠",c:"#8b5cf6"},{id:"comida",l:"Comida",i:"🍽️",c:"#f59e0b"},{id:"trans",l:"Transporte",i:"🚗",c:"#10b981"},{id:"salud",l:"Salud",i:"💊",c:"#ef4444"},{id:"ocio",l:"Ocio",i:"🎉",c:"#ec4899"},{id:"ropa",l:"Ropa",i:"👕",c:"#f97316"},{id:"otro",l:"Otro",i:"📦",c:"#94a3b8"}];
 var DIAS=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+function getDias(){return(t('days')||DIAS);}
+function getMeses(){return(t('months')||MESES);}
 var MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 var AJS=[100,200,500,1000];
 var REACTS=["😱","👀","🤔","😅","🙌","❤️"];
@@ -565,62 +567,431 @@ var EMOJI_ALL=["🏠","🏡","🏢","🏪","🛋️","🪴","🔑","🛠️","�
 // ── LANGUAGE / i18n ──
 var LANG=(function(){try{return localStorage.getItem('saldo_lang')||'es';}catch(e){return'es';}})();
 function setLang(l){LANG=l;try{localStorage.setItem('saldo_lang',l);}catch(e){}document.documentElement.lang=l==='en'?'en':'es';toast(l==='en'?'🇺🇸 English selected':'🇲🇽 Español seleccionado','#2563EB');}
-var I18N={
-  es:{
-    appSub:'Registra, analiza y controla tus<br>finanzas personales o en pareja.',
-    btnGoogle:'Continuar con Google',btnEmail:'Iniciar sesión con email',btnSignup:'Crear cuenta gratis',
-    btnMicrosoft:'Continuar con Microsoft',
-    loginTitle:'Tu dinero, en orden',loginHint:'🔒 Tus datos son privados y seguros',
-    tabs:['📊 Resumen','✨ Insights','➕ Agregar','📅 Historial','📈 Análisis','💰 Finanzas','⚙️ Ajustes'],
-    addTitle:'➕ Registrar gasto',addMonto:'💵 Monto',addDesc:'📝 Descripción',addCat:'🏷️ Categoría',
-    addShared:'Gasto compartido',addSharedSub:'Dividir entre los dos',addNote:'Agregar nota',addNoteSub:'Comentario adicional',
-    addRequest:'Solicitar cobro',addRequestSub:'Enviar solicitud al otro usuario',
-    addOCR:'📷 Escanear ticket (OCR)',addOCRloading:'⏳ Leyendo ticket...',
-    addBtn:'Registrar gasto',addQuick:'⚡ Accesos rápidos',
-    addNewCat:'+ Nueva categoría',addNewCatName:'Nombre',addNewCatSave:'Guardar',addNewCatCancel:'Cancelar',
-    histTitle:'📅 Historial',histSearch:'🔍 Buscar por descripción o categoría...',
-    histPresets:['Hoy','Esta semana','Este mes'],histFrom:'Desde',histTo:'Hasta',
-    histCalToggle:'📅 Vista calendario',histListToggle:'📋 Vista lista',
-    analisTitle:'📈 Análisis',
-    insTitle:'✨ Insights financieros',
-    finTitle:'💰 Finanzas',
-    cfgTitle:'⚙️ Ajustes',
-    onbSkip:'Saltar →',onbNext:'Continuar →',onbBack:'← Atrás',onbStart:'Empezar →',
-    onbStepTitles:['¿Cómo usarás Saldo?','¿Cómo te llamas?','Tu ingreso mensual','Gastos fijos','¿Cómo divides el mes?','Conoce Saldo','¡Todo listo!'],
-    secTourTitle:'Conoce las secciones',
-    langLabel:'Idioma / Language'
-  },
-  en:{
-    appSub:'Track, analyze, and control your<br>personal or shared finances.',
-    btnGoogle:'Continue with Google',btnEmail:'Sign in with email',btnSignup:'Create free account',
-    btnMicrosoft:'Continue with Microsoft',
-    loginTitle:'Your money, in order',loginHint:'🔒 Your data is private and secure',
-    tabs:['📊 Summary','✨ Insights','➕ Add','📅 History','📈 Analysis','💰 Finances','⚙️ Settings'],
-    addTitle:'➕ Record expense',addMonto:'💵 Amount',addDesc:'📝 Description',addCat:'🏷️ Category',
-    addShared:'Shared expense',addSharedSub:'Split between both',addNote:'Add note',addNoteSub:'Extra comment',
-    addRequest:'Request payment',addRequestSub:'Send request to other user',
-    addOCR:'📷 Scan receipt (OCR)',addOCRloading:'⏳ Reading receipt...',
-    addBtn:'Record expense',addQuick:'⚡ Quick access',
-    addNewCat:'+ New category',addNewCatName:'Name',addNewCatSave:'Save',addNewCatCancel:'Cancel',
-    histTitle:'📅 History',histSearch:'🔍 Search by description or category...',
-    histPresets:['Today','This week','This month'],histFrom:'From',histTo:'To',
-    histCalToggle:'📅 Calendar view',histListToggle:'📋 List view',
-    analisTitle:'📈 Analysis',
-    insTitle:'✨ Financial insights',
-    finTitle:'💰 Finances',
-    cfgTitle:'⚙️ Settings',
-    onbSkip:'Skip →',onbNext:'Continue →',onbBack:'← Back',onbStart:'Get started →',
-    onbStepTitles:['How will you use Saldo?','What\'s your name?','Your monthly income','Fixed expenses','How do you divide the month?','Meet Saldo','All set!'],
-    secTourTitle:'Meet the sections',
-    langLabel:'Idioma / Language'
-  }
-};
-function t(k){return(I18N[LANG]||I18N.es)[k]||(I18N.es[k]||k);}
 
+var TX={
+es:{
+  /* Login */
+  loginTitle:'Tu dinero, en orden',
+  loginSub:'Registra, analiza y controla tus<br>finanzas personales o en pareja.',
+  loginHint:'🔒 Tus datos son privados y seguros',
+  btnGoogle:'Continuar con Google',
+  btnMicrosoft:'Continuar con Microsoft',
+  btnEmail:'Iniciar sesión con email',
+  btnSignup:'Crear cuenta gratis',
+
+  /* Tabs */
+  tabHome:'📊 Resumen',tabInsights:'✨ Insights',tabAgregar:'➕ Agregar',
+  tabHistorial:'📅 Historial',tabAnalisis:'📈 Análisis',tabFinanzas:'💰 Finanzas',tabConfig:'⚙️ Ajustes',
+
+  /* Onboarding */
+  onbSkip:'Saltar →',onbNext:'Continuar →',onbBack:'← Atrás',onbStart:'Empezar →',
+
+  /* Home */
+  homeWeek:'Semana actual',homeAvail:'💰 Disponible',homeOver:'⚠️ Te pasaste por',
+  homeSpent:'Gastado',homeBudget:'Presupuesto',homeNewWeek:'🆕 Nueva semana',
+  homeSavWeek:'🌱 Ahorro esta semana',homeSpentLabel:'Gastado',homeThisMonth:'Este mes',
+  homeAccumulated:'Total acumulado',homeEstMonth:'Estimado fin mes',
+  homeSavedPrev:'✨ Llevan',homeSavedPrev2:'ahorrado en semanas anteriores',
+  homeToday:'Hoy',homeRemain:'Restan',homeDaysLeft:'días en la semana',homeOver2:'Te pasaste hoy en',
+  homeLastExp:'Últimos gastos esta semana',homeNoExp:'Sin gastos esta semana',
+  homeViewAll:t('homeViewAll'),homeGoInsights:t('homeGoInsights'),
+  homeDebts:'Deudas activas',homeDebtTotal:'Saldo total',homeDebtMonthly:'Pago mensual',
+  homeViewFin:'Ver todas en Finanzas →',homeAIAnalysis:t('homeAIAnalysis'),
+  homeRollover:'¡Nueva semana! Se añadió',homeRollover2:'de saldo anterior. Tu presupuesto aumentó a',
+  homeAdjBudget:'Ajustar presupuesto',
+  homeWeeklyGoal:'Meta semanal de ahorro',
+  homeWeeklyTarget:'Guía: gasta ~',homeWeeklyTargetDay:'por día para cerrar dentro del presupuesto',
+  homeExceeded:'⚠️ Ya excedieron el presupuesto mensual en',
+  /* Invitaciones */
+  invTitle:'te pide',invAccept:'✓ Aceptar',invReject:'✗ Rechazar',
+
+  /* Agregar */
+  addTitle:'➕ Registrar gasto',addQuick:'⚡ Accesos rápidos',
+  addMonto:'💵 Monto',addDesc:'📝 Descripción',addCat:'🏷️ Categoría',
+  addShared:'Gasto compartido',addSharedSub:'Dividir entre los dos',
+  addNote:'Agregar nota',addNoteSub:'Comentario adicional',addNotePlaceholder:'Escribe una nota...',
+  addRequest:'Solicitar cobro',addRequestSub:'Enviar solicitud al otro usuario',
+  addOCR:'📷 Escanear ticket (OCR)',addOCRloading:'⏳ Leyendo ticket...',
+  addBtn:'Registrar gasto',addNewCat:'+ Nueva categoría',
+  addNewCatLabel:'Nueva categoría',addNewCatPlaceholder:'Nombre',
+  addNewCatSave:'Guardar',addNewCatCancel:'✕',
+  addMontoPlaceholder:'0.00',addDescPlaceholder:'¿En qué gastaron?',
+
+  /* Historial */
+  histTitle:'📅 Historial',histMov:'mov.',
+  histSearch:'🔍 Buscar...',histNoResults:'Sin resultados para ese filtro',
+  histFrom:'Desde',histTo:'Hasta',histCustomRange:'Rango de fechas personalizado',
+  histPreset0:'Hoy',histPreset1:'Esta semana',histPreset2:'Este mes',
+  histCal:'📅 Calendario',histList:'📋 Lista',
+  histCalTitle:'Toca un día para filtrar',
+  histCalDays:'D,L,M,X,J,V,S',
+
+  /* Insights */
+  insTitle:'✨ Insights financieros',
+  insDesc:'Aquí encontrarás análisis profundos sobre sus hábitos, proyecciones y herramientas para tomar mejores decisiones juntos.',
+  insProyTag:'📆 PROYECCIÓN',insProyTitle:'¿Cómo vamos a cerrar el mes?',
+  insProyDesc:'Con {n} días de datos, calculamos cuánto van a gastar en total si siguen a este ritmo.',
+  insProySpent:'Gasto proyectado',insProyBudget:'Presupuesto mes',
+  insProyUnder:'✅ Van {n} debajo del presupuesto',insProyOver:'⚠️ Van {n} arriba del presupuesto',
+  insProyGuide:'Guía: gasta ~{n} por día para cerrar dentro del presupuesto',
+  insProyExceeded:'⚠️ Ya excedieron el presupuesto mensual en {n}',
+  insProyOk:'✅ Mes cerrado dentro del presupuesto',insProyFail:'⚠️ Mes cerrado arriba del presupuesto',
+  insPatTag:'🧠 PATRONES',insPatTitle:'Qué dicen sus hábitos de gasto',
+  insPatDesc:'Analizamos sus movimientos para detectar tendencias que pueden pasar desapercibidas.',
+  insPatUp:'va subiendo:',insPatPrev:'vs mes pasado.',
+  insPatNone:'📌 Ninguna categoría está disparada vs el mes pasado. ¡Buen control!',
+  insPatDay:'🗓️ El día más caro suele ser',insPatDayAvg:'Ojo ese día.',
+  insPatBig:'⚡ Gasto más grande en 30 días:',insPatBigIn:'en',
+  insSimTag:'🧪 SIMULADOR',insSimTitle:'¿Qué pasa si gastamos menos en...?',
+  insSimDesc:'Elige una categoría y simula cuánto ahorrarían si redujeran ese gasto. Útil para tomar decisiones conscientes.',
+  insSimCat:'Categoría',insSimReduce:'Reducir',
+  insGameTag:'🎮 RACHA',insGameTitle:'¿Cómo van esta semana?',
+  insGameDesc:'Tu progreso hacia la meta de ahorro semanal. Mantener la racha es lo que construye buenos hábitos financieros.',
+  insGameStreak:'Racha:',insGameWeeks:'sem.',insGameNoMeta:t('insGameNoMeta'),
+  insScoreTag:'⭐ PUNTAJE',insScoreTitle:'Score financiero semanal',
+  insScoreDesc:'Un número del 0-100 que resume qué tan bien están controlando sus finanzas esta semana.',
+  insScoreParts:['🧾 Presupuesto','🎯 Ahorro','⚖️ Balance','📉 Tendencia'],
+  insScorePartDescs:['¿Se mantuvieron dentro del límite semanal?','¿Lograron guardar algo esta semana?','¿Gastan de forma equitativa entre los dos?','¿Están gastando menos que la semana pasada?'],
+  insScoreTip1:'💡 Para mejorar: el mayor impacto está en no pasarse del presupuesto semanal.',
+  insScoreTip2:'💡 Para mejorar: intenten cerrar las semanas con saldo positivo.',
+  insScoreTip3:'💡 Para mejorar: el gasto está desbalanceado entre los dos.',
+  insScoreTip4:'💡 Para mejorar: esta semana gastan más que la pasada.',
+  insScoreTip5:'✅ Score muy sólido. Sigan así para mantenerlo arriba.',
+  insNoData:t('insNoData'),
+
+  /* Análisis */
+  analTitle:'📈 Análisis',
+  analTotalSpent:'Total gastado en',
+  analVsPrev:'vs mes anterior',
+  analBudgetOk:'✅ Dentro del presupuesto',analBudgetOver:'⚠️ {n} arriba del presupuesto',
+  analFlowTitle:'💰 Flujo del mes',
+  analIncome:'Ingreso mensual',analFixed:'Gastos fijos',analVariable:'Gastos variables',
+  analFree:'Libre real',analCommitted:'Ingreso comprometido:',
+  analFixedMonth:'📋 Gastos fijos del mes',analFixedPending:'pendiente',
+  analFixedAllPaid:'Todo pagado ✓',
+  analAlertOver:'Presupuesto excedido en {n}',analAlertOverSub:'Revisa qué categoría lo generó y ajusta la siguiente semana.',
+  analAlertTrend:'Gasto {n}% mayor que {m}',analAlertTrendSub:'Tendencia al alza. Identifica qué cambió.',
+  analAlertCat:'{cat} concentra más del 50% del gasto',analAlertCatSub:'Considera si hay oportunidad de reducirlo.',
+  analAlertFree:'Menos del 10% del ingreso libre',analAlertFreeSub:'Considera reducir gastos variables o ajustar el presupuesto.',
+  analCatTitle:'Desglose por categoría',
+  analUserTitle:'Por integrante',analUserPct:t('analUserPct'),
+  analDowTitle:'Patrón por día de la semana',analDowSub:'Promedio de gasto por día (últimos 30 días)',
+  analDowNote:'🔴 Día con mayor gasto promedio',
+  analCatPie:'🥧 Por categoría',analWeekBar:'📊 Semana a semana',
+  analNoData:'Sin gastos en',
+  analTrendUp:'▲ +',analTrendDown:'▼ ',analTrendFlat:'→ ',
+
+  /* Finanzas */
+  finTitle:'💰 Finanzas',
+  finIncomeTitle:'💼 Ingreso mensual',finIncomeLabel:'Ingreso mensual total',finIncomePlaceholder:'0',
+  finSave:'Guardar',finApplyBudget:'Aplicar presupuesto sugerido:',
+  finFixedTitle:'📋 Gastos fijos mensuales',
+  finFixedDesc:'Renta, servicios, suscripciones — lo que pagas cada mes aunque cambie el monto.',
+  finFixedPaid:'✅ Pagado',finFixedPending:'⏳ Pendiente',
+  finFixedPaidTotal:'Pagado',finFixedPendingTotal:'Pendiente',
+  finPay:'Pagar',finPaid:'✓ Pagado',
+  finAddFixed:'+ Agregar gasto fijo',finFixedNone:t('finFixedNone'),
+  finFixedName:'Nombre del gasto fijo:',finFixedAmount:'Monto mensual:',
+  finFrecTitle:'⚡ Accesos rápidos',finFrecDesc:'Atajos para tus gastos más comunes.',
+  finFrecAdd:'+ Agregar acceso rápido',finFrecDesc2:'Descripción del gasto frecuente:',finFrecAmount:'Monto:',
+  finDebtTitle:'💳 Deudas',finDebtDesc:'Saldo total',finDebtMonthly:'Pago mensual',
+  finDebtActive:'activa',finDebtActives:'activas',
+  finDebtAdd:'+ Agregar deuda',finDebtPause:'⏸️ Pausar',finDebtResume:'▶ Activar',
+  finExport:'📥 Exportar CSV',
+  finPeriodTitle:'📅 Período personalizado',
+  finPeriodSave:'Guardar período',finPeriodClear:'Limpiar',
+  finResumenTitle:'🤖 Generar análisis con IA',finResumenBtn:'Generar análisis',
+  finCurPeriod:t('finCurPeriod'),
+
+  /* Config */
+  cfgTitle:'⚙️ Ajustes',
+  cfgProfileTitle:'👤 Perfiles',cfgProfileSave:'Guardar',cfgProfileEmoji:'Cambiar emoji',
+  cfgWeekTitle:'📅 Semana inicia el',cfgWeekDays:'Dom,Lun,Mar,Mié,Jue,Vie,Sáb',
+  cfgBudgetTitle:'💰 Presupuesto semanal',
+  cfgGoalTitle:'🎯 Meta de ahorro semanal',cfgGoalPlaceholder:'0',cfgGoalSave:'Guardar meta',
+  cfgCatTitle:'🏷️ Categorías personalizadas',cfgCatPlaceholder:'Nombre de la categoría',cfgCatAdd:t('cfgCatAdd'),
+  cfgNotifTitle:'Notificaciones',cfgNotifLabel:'🔔 Recordatorios diarios',
+  cfgNotifSub:'Avisos para registrar tus gastos',cfgNotifOn:'Activadas',cfgNotifOff:'Activar',
+  cfgSpaceTitle:'🔗 Tu espacio',cfgSpaceCode:'Código de espacio',cfgSpaceCopy:'📋 Copiar código',
+  cfgLangTitle:'Idioma / Language',
+
+  /* Shared / modals */
+  modalEditTitle:t('modalEditTitle'),modalEditSave:'Guardar cambios',
+  modalReactTitle:t('modalReactTitle'),modalEmojiTitle:t('modalEmojiTitle'),
+  modalClose:'✕',
+
+  /* Actions */
+  toastRecorded:'✅ Gasto registrado!',toastDeleted:'🗑️ Eliminado',toastUpdated:'✅ Gasto actualizado',
+  toastSaved:'💾 Guardado',toastBudgetUpdated:'✅ Presupuesto actualizado a',
+  toastMetaSaved:'🎯 Meta guardada',toastCatAdded:'✅ Categoría agregada',
+  toastCatDeleted:'🗑️ Eliminada',toastPaidOn:'✅ Marcado como pagado',toastPaidOff:'↩️ Desmarcado',
+  toastGoal:'💚',toastOver:'🔴',
+  confirmDelete:'¿Eliminar este gasto?',confirmDelFixed:'¿Eliminar este gasto fijo?',confirmDelFrec:'¿Eliminar?',
+  confirmDelDebt:'¿Eliminar esta deuda?',confirmDelCat:'¿Eliminar categoría?',
+
+  /* Empty states */
+  emptyInsights:t('insNoData'),
+  emptyHistorial:'Sin resultados para ese filtro',
+  emptyHome:'Sin gastos esta semana',
+
+  /* Days/Months */
+  days:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+  months:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+
+  /* Score labels */
+  scoreExcellent:'Excelente 🌟',scoreGreat:'Muy bien 💪',scoreGood:'Bien 👍',scoreImprove:'A mejorar 📈',
+
+  /* Gamification */
+  gameGoal:'🏆 Meta lograda',gameAlmost:'🔥 Casi llegan',gameGood:'💪 En buen ritmo',
+  gameOk:'🙂 Arrancando',gameCold:'🧊 A calentar motores',
+  gameGoalDesc:'¡Se ganaron el badge esta semana! Excelente control.',
+  gameAlmostDesc:'Van muy cerca. Un pequeño ajuste y cierran la meta.',
+  gameGoodDesc:'Buen control. Eviten fugas de último momento.',
+  gameOkDesc:'Aún hay margen. Ojo con los gastos impulsivos.',
+  gameColdDesc:'Esta semana pide un plan. Pueden lograrlo.',
+
+  /* Debts */
+  debtTypes:{tarjeta:'💳',prestamo:'🏦',diferido:'🗓️',otro:'📋'},
+  debtTypeProm:'Tipo de deuda:\n• tarjeta\n• prestamo\n• diferido\n• otro',
+  debtNameProm:'Nombre (ej: Tarjeta Banamex, HSBC):',
+  debtBalanceProm:'Saldo actual (total que debes):',
+  debtPaymentProm:'Pago mensual mínimo:',
+  debtCutProm:'Día del mes de corte/pago (1-31):',
+
+  /* OCR */
+  ocrDetected:'📷 {n} detectado',ocrNoAmount:'Ticket guardado sin monto detectado. Ingrésalo manualmente.',
+  ocrFail:'Ticket guardado. Ingresa monto y descripción.',
+
+  /* Notifications */
+  notifGranted:'🔔 Notificaciones activadas',notifDenied:'❌ Permiso denegado',
+  notifUnsupported:'Tu navegador no soporta notificaciones',
+
+  /* Rollover */
+  rolloverMsg:'¡Nueva semana! Se añadió {n} de saldo anterior',
+  rolloverBudget:'Tu presupuesto aumentó a',
+
+  /* CSV */
+  csvExported:'📥 CSV exportado (gastos + fijos)',
+  csvType:'TIPO',csvDate:'Fecha',csvUser:'Usuario',csvAmount:'Monto',
+  csvDesc:'Descripción',csvCat:'Categoría',csvSplit:'Split',csvTicket:'Ticket',
+  csvFixed:'Fijo',csvBaseAmt:'Monto base',csvAdjAmt:'Monto ajustado mes',csvStatus:'Estado',
+  csvPaid:'Pagado',csvPending:'Pendiente',csvSection:'── GASTOS FIJOS',csvOf:'──',
+},
+
+en:{
+  /* Login */
+  loginTitle:'Your money, in order',
+  loginSub:'Track, analyze, and control your<br>personal or shared finances.',
+  loginHint:'🔒 Your data is private and secure',
+  btnGoogle:'Continue with Google',
+  btnMicrosoft:'Continue with Microsoft',
+  btnEmail:'Sign in with email',
+  btnSignup:'Create free account',
+
+  /* Tabs */
+  tabHome:'📊 Summary',tabInsights:'✨ Insights',tabAgregar:'➕ Add',
+  tabHistorial:'📅 History',tabAnalisis:'📈 Analysis',tabFinanzas:'💰 Finances',tabConfig:'⚙️ Settings',
+
+  /* Onboarding */
+  onbSkip:'Skip →',onbNext:'Continue →',onbBack:'← Back',onbStart:'Get started →',
+
+  /* Home */
+  homeWeek:'Current week',homeAvail:'💰 Available',homeOver:'⚠️ Over by',
+  homeSpent:'Spent',homeBudget:'Budget',homeNewWeek:'🆕 New week',
+  homeSavWeek:'🌱 Savings this week',homeSpentLabel:'Spent',homeThisMonth:'This month',
+  homeAccumulated:'Total accumulated',homeEstMonth:'Estimated month end',
+  homeSavedPrev:'✨ You\'ve saved',homeSavedPrev2:'in previous weeks',
+  homeToday:'Today',homeRemain:'Remaining',homeDaysLeft:'days in the week',homeOver2:'Over today by',
+  homeLastExp:'Latest expenses this week',homeNoExp:'No expenses this week',
+  homeViewAll:'View full history →',homeGoInsights:'✨ View detailed analysis & Insights →',
+  homeDebts:'Active debts',homeDebtTotal:'Total balance',homeDebtMonthly:'Monthly payment',
+  homeViewFin:'View all in Finances →',homeAIAnalysis:'🤖 AI monthly analysis',
+  homeRollover:'New week! Added',homeRollover2:'from previous balance. Your budget increased to',
+  homeAdjBudget:'Adjust budget',
+  homeWeeklyGoal:'Weekly savings goal',
+  homeWeeklyTarget:'Guide: spend ~',homeWeeklyTargetDay:'per day to stay within budget',
+  homeExceeded:'⚠️ Monthly budget exceeded by',
+  /* Invitaciones */
+  invTitle:'requests',invAccept:'✓ Accept',invReject:'✗ Reject',
+
+  /* Agregar */
+  addTitle:'➕ Record expense',addQuick:'⚡ Quick access',
+  addMonto:'💵 Amount',addDesc:'📝 Description',addCat:'🏷️ Category',
+  addShared:'Shared expense',addSharedSub:'Split between both',
+  addNote:'Add note',addNoteSub:'Extra comment',addNotePlaceholder:'Write a note...',
+  addRequest:'Request payment',addRequestSub:'Send request to other user',
+  addOCR:'📷 Scan receipt (OCR)',addOCRloading:'⏳ Reading receipt...',
+  addBtn:'Record expense',addNewCat:'+ New category',
+  addNewCatLabel:'New category',addNewCatPlaceholder:'Name',
+  addNewCatSave:'Save',addNewCatCancel:'✕',
+  addMontoPlaceholder:'0.00',addDescPlaceholder:'What did you spend on?',
+
+  /* Historial */
+  histTitle:'📅 History',histMov:'items',
+  histSearch:'🔍 Search...',histNoResults:'No results for that filter',
+  histFrom:'From',histTo:'To',histCustomRange:'Custom date range',
+  histPreset0:'Today',histPreset1:'This week',histPreset2:'This month',
+  histCal:'📅 Calendar',histList:'📋 List',
+  histCalTitle:'Tap a day to filter',
+  histCalDays:'Su,Mo,Tu,We,Th,Fr,Sa',
+
+  /* Insights */
+  insTitle:'✨ Financial insights',
+  insDesc:'Deep analysis of your spending habits, projections, and tools to make better financial decisions together.',
+  insProyTag:'📆 PROJECTION',insProyTitle:'How will we close the month?',
+  insProyDesc:'With {n} days of data, we calculate your projected total at this pace.',
+  insProySpent:'Projected spend',insProyBudget:'Monthly budget',
+  insProyUnder:'✅ {n} under budget',insProyOver:'⚠️ {n} over budget',
+  insProyGuide:'Guide: spend ~{n} per day to stay within budget',
+  insProyExceeded:'⚠️ Monthly budget already exceeded by {n}',
+  insProyOk:'✅ Month closed within budget',insProyFail:'⚠️ Month closed over budget',
+  insPatTag:'🧠 PATTERNS',insPatTitle:'What your spending habits reveal',
+  insPatDesc:'We analyze your transactions to surface trends that can easily go unnoticed.',
+  insPatUp:'is rising:',insPatPrev:'vs last month.',
+  insPatNone:'📌 No category is spiking vs last month. Great control!',
+  insPatDay:'🗓️ Most expensive day is usually',insPatDayAvg:'Watch that day.',
+  insPatBig:'⚡ Biggest expense in 30 days:',insPatBigIn:'in',
+  insSimTag:'🧪 SIMULATOR',insSimTitle:'What if we spend less on...?',
+  insSimDesc:'Pick a category and simulate how much you\'d save by reducing that expense. Great for conscious decisions.',
+  insSimCat:'Category',insSimReduce:'Reduce by',
+  insGameTag:'🎮 STREAK',insGameTitle:'How are you doing this week?',
+  insGameDesc:'Your progress toward the weekly savings goal. Keeping the streak is what builds good financial habits.',
+  insGameStreak:'Streak:',insGameWeeks:'wk.',insGameNoMeta:'💡 Set a savings goal in Settings to track your streak.',
+  insScoreTag:'⭐ SCORE',insScoreTitle:'Weekly financial score',
+  insScoreDesc:'A 0-100 number summarizing how well you\'re managing finances this week.',
+  insScoreParts:['🧾 Budget','🎯 Savings','⚖️ Balance','📉 Trend'],
+  insScorePartDescs:['Did you stay within the weekly limit?','Did you save anything this week?','Is spending equitably shared?','Are you spending less than last week?'],
+  insScoreTip1:'💡 To improve: the biggest impact is staying within your weekly budget.',
+  insScoreTip2:'💡 To improve: try to close weeks with a positive balance.',
+  insScoreTip3:'💡 To improve: spending is unbalanced between you two.',
+  insScoreTip4:'💡 To improve: you\'re spending more than last week.',
+  insScoreTip5:'✅ Very solid score. Keep it up!',
+  insNoData:'Add expenses to see your Insights',
+
+  /* Análisis */
+  analTitle:'📈 Analysis',
+  analTotalSpent:'Total spent in',
+  analVsPrev:'vs previous month',
+  analBudgetOk:'✅ Within budget',analBudgetOver:'⚠️ {n} over budget',
+  analFlowTitle:'💰 Monthly cashflow',
+  analIncome:'Monthly income',analFixed:'Fixed expenses',analVariable:'Variable expenses',
+  analFree:'Real free cash',analCommitted:'Income committed:',
+  analFixedMonth:'📋 Fixed expenses this month',analFixedPending:'pending',
+  analFixedAllPaid:'All paid ✓',
+  analAlertOver:'Budget exceeded by {n}',analAlertOverSub:'Check which category caused it and adjust next week.',
+  analAlertTrend:'{n}% more spending than {m}',analAlertTrendSub:'Upward trend. Identify what changed.',
+  analAlertCat:'{cat} accounts for over 50% of spending',analAlertCatSub:'Consider if there\'s an opportunity to reduce it.',
+  analAlertFree:'Less than 10% of income is free',analAlertFreeSub:'Consider reducing variable expenses or adjusting the budget.',
+  analCatTitle:'Category breakdown',
+  analUserTitle:'By member',analUserPct:'% of total',
+  analDowTitle:'Day-of-week pattern',analDowSub:'Average spending per day (last 30 days)',
+  analDowNote:'🔴 Day with highest average spending',
+  analCatPie:'🥧 By category',analWeekBar:'📊 Week by week',
+  analNoData:'No expenses in',
+  analTrendUp:'▲ +',analTrendDown:'▼ ',analTrendFlat:'→ ',
+
+  /* Finanzas */
+  finTitle:'💰 Finances',
+  finIncomeTitle:'💼 Monthly income',finIncomeLabel:'Total monthly income',finIncomePlaceholder:'0',
+  finSave:'Save',finApplyBudget:'Apply suggested budget:',
+  finFixedTitle:'📋 Fixed monthly expenses',
+  finFixedDesc:'Rent, utilities, subscriptions — what you pay every month even if the amount changes.',
+  finFixedPaid:'✅ Paid',finFixedPending:'⏳ Pending',
+  finFixedPaidTotal:'Paid',finFixedPendingTotal:'Pending',
+  finPay:'Pay',finPaid:'✓ Paid',
+  finAddFixed:'+ Add fixed expense',finFixedNone:'No fixed expenses registered',
+  finFixedName:'Fixed expense name:',finFixedAmount:'Monthly amount:',
+  finFrecTitle:'⚡ Quick access',finFrecDesc:'Shortcuts for your most common expenses.',
+  finFrecAdd:'+ Add quick access',finFrecDesc2:'Description of frequent expense:',finFrecAmount:'Amount:',
+  finDebtTitle:'💳 Debts',finDebtDesc:'Total balance',finDebtMonthly:'Monthly payment',
+  finDebtActive:'active',finDebtActives:'active',
+  finDebtAdd:'+ Add debt',finDebtPause:'⏸️ Pause',finDebtResume:'▶ Activate',
+  finExport:'📥 Export CSV',
+  finPeriodTitle:'📅 Custom period',
+  finPeriodSave:'Save period',finPeriodClear:'Clear',
+  finResumenTitle:'🤖 Generate AI analysis',finResumenBtn:'Generate analysis',
+  finCurPeriod:'Current period',
+
+  /* Config */
+  cfgTitle:'⚙️ Settings',
+  cfgProfileTitle:'👤 Profiles',cfgProfileSave:'Save',cfgProfileEmoji:'Change emoji',
+  cfgWeekTitle:'📅 Week starts on',cfgWeekDays:'Sun,Mon,Tue,Wed,Thu,Fri,Sat',
+  cfgBudgetTitle:'💰 Weekly budget',
+  cfgGoalTitle:'🎯 Weekly savings goal',cfgGoalPlaceholder:'0',cfgGoalSave:'Save goal',
+  cfgCatTitle:'🏷️ Custom categories',cfgCatPlaceholder:'Category name',cfgCatAdd:'+ Add category',
+  cfgNotifTitle:'Notifications',cfgNotifLabel:'🔔 Daily reminders',
+  cfgNotifSub:'Reminders to log your expenses',cfgNotifOn:'Enabled',cfgNotifOff:'Enable',
+  cfgSpaceTitle:'🔗 Your space',cfgSpaceCode:'Space code',cfgSpaceCopy:'📋 Copy code',
+  cfgLangTitle:'Idioma / Language',
+
+  /* Shared / modals */
+  modalEditTitle:'✏️ Edit expense',modalEditSave:'Save changes',
+  modalReactTitle:'😊 React',modalEmojiTitle:'Choose emoji',
+  modalClose:'✕',
+
+  /* Actions */
+  toastRecorded:'✅ Expense recorded!',toastDeleted:'🗑️ Deleted',toastUpdated:'✅ Expense updated',
+  toastSaved:'💾 Saved',toastBudgetUpdated:'✅ Budget updated to',
+  toastMetaSaved:'🎯 Goal saved',toastCatAdded:'✅ Category added',
+  toastCatDeleted:'🗑️ Deleted',toastPaidOn:'✅ Marked as paid',toastPaidOff:'↩️ Unmarked',
+  toastGoal:'💚',toastOver:'🔴',
+  confirmDelete:'Delete this expense?',confirmDelFixed:'Delete this fixed expense?',confirmDelFrec:'Delete?',
+  confirmDelDebt:'Delete this debt?',confirmDelCat:'Delete category?',
+
+  /* Empty states */
+  emptyInsights:'Add expenses to see your Insights',
+  emptyHistorial:'No results for that filter',
+  emptyHome:'No expenses this week',
+
+  /* Days/Months */
+  days:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+  months:['January','February','March','April','May','June','July','August','September','October','November','December'],
+
+  /* Score labels */
+  scoreExcellent:'Excellent 🌟',scoreGreat:'Very good 💪',scoreGood:'Good 👍',scoreImprove:'Needs work 📈',
+
+  /* Gamification */
+  gameGoal:'🏆 Goal reached',gameAlmost:'🔥 Almost there',gameGood:'💪 Good pace',
+  gameOk:'🙂 Getting started',gameCold:'🧊 Warm up needed',
+  gameGoalDesc:'You earned the badge this week! Excellent control.',
+  gameAlmostDesc:'Very close. A small adjustment and you\'ll hit the goal.',
+  gameGoodDesc:'Good control. Avoid last-minute leaks.',
+  gameOkDesc:'There\'s still margin. Watch for impulse spending.',
+  gameColdDesc:'This week needs a plan. You can do it.',
+
+  /* Debts */
+  debtTypes:{tarjeta:'💳',prestamo:'🏦',diferido:'🗓️',otro:'📋'},
+  debtTypeProm:'Debt type:\n• credit card\n• loan\n• deferred\n• other',
+  debtNameProm:'Name (e.g.: Visa, Chase):',
+  debtBalanceProm:'Current balance (total owed):',
+  debtPaymentProm:'Minimum monthly payment:',
+  debtCutProm:'Day of month for payment (1-31):',
+
+  /* OCR */
+  ocrDetected:'📷 {n} detected',ocrNoAmount:'Receipt saved without detected amount. Enter manually.',
+  ocrFail:'Receipt saved. Enter amount and description.',
+
+  /* Notifications */
+  notifGranted:'🔔 Notifications enabled',notifDenied:'❌ Permission denied',
+  notifUnsupported:'Your browser doesn\'t support notifications',
+
+  /* Rollover */
+  rolloverMsg:'New week! Added {n} from previous balance',
+  rolloverBudget:'Your budget increased to',
+
+  /* CSV */
+  csvExported:'📥 CSV exported (expenses + fixed)',
+  csvType:'TYPE',csvDate:'Date',csvUser:'User',csvAmount:'Amount',
+  csvDesc:'Description',csvCat:'Category',csvSplit:'Split',csvTicket:'Receipt',
+  csvFixed:'Fixed',csvBaseAmt:'Base amount',csvAdjAmt:'Adjusted this month',csvStatus:'Status',
+  csvPaid:'Paid',csvPending:'Pending',csvSection:'── FIXED EXPENSES',csvOf:'──',
+}
+};
+function t(k){return(TX[LANG]||TX.es)[k]||(TX.es[k]||k);}
 function allCats(){return CATS.concat((ST.categorias||[]).map(function(c){return{id:c.id,l:c.l,i:c.i,c:c.c||"#64748b"};}));}
 var fmt=function(n){return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN",minimumFractionDigits:0}).format(n);};
-var fmtD=function(iso){return new Date(iso).toLocaleDateString("es-MX",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});};
-var fmtR=function(a,b){return a.toLocaleDateString("es-MX",{day:"2-digit",month:"short"})+" – "+b.toLocaleDateString("es-MX",{day:"2-digit",month:"short"});};
+var fmtD=function(iso){var loc=LANG==="en"?"en-US":"es-MX";return new Date(iso).toLocaleDateString(loc,{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});};
+var fmtR=function(a,b){var loc=LANG==="en"?"en-US":"es-MX";return a.toLocaleDateString(loc,{day:"2-digit",month:"short"})+" – "+b.toLocaleDateString(loc,{day:"2-digit",month:"short"});};
 function iniSem(dI,off){off=off||0;var h=new Date();var d=h.getDay()-dI;if(d<0)d+=7;var i=new Date(h);i.setDate(h.getDate()-d-(off*7));i.setHours(0,0,0,0);return i;}
 function finSem(i){var f=new Date(i);f.setDate(i.getDate()+6);f.setHours(23,59,59,999);return f;}
 function keyI(i){return i.toISOString().split("T")[0];}
@@ -644,7 +1015,7 @@ var newCatInlineOpen=false,newCatInlineEmoji="📦",newCatInlineName="";
 
 function getPagadoKey(){return"pagadoFijos_"+(spaceId||"local")+"_"+mesKey();}
 function getPagadoState(){try{return JSON.parse(localStorage.getItem(getPagadoKey())||"{}");} catch(e){return{};}}
-function togglePagado(nombre){var s=getPagadoState();s[nombre]=!s[nombre];localStorage.setItem(getPagadoKey(),JSON.stringify(s));toast(s[nombre]?"✅ Marcado como pagado":"↩️ Desmarcado","#10b981");renderApp();}
+function togglePagado(nombre){var s=getPagadoState();s[nombre]=!s[nombre];localStorage.setItem(getPagadoKey(),JSON.stringify(s));toast(s[nombre]?t('toastPaidOn'):t('toastPaidOff'),"#10b981");renderApp();}
 function getEmojiRecientes(){try{return JSON.parse(localStorage.getItem("emojiRecientes")||"[]");}catch(e){return[];}}
 function saveEmojiReciente(e){var r=getEmojiRecientes();r=([e].concat(r.filter(function(x){return x!==e;}))).slice(0,16);localStorage.setItem("emojiRecientes",JSON.stringify(r));}
 
@@ -700,12 +1071,11 @@ document.getElementById("btn-microsoft-login").onclick=function(){
     });
 };
 function applyLangToLogin(){
-  var l=I18N[LANG]||I18N.es;
-  // Login screen elements
+  var l=TX[LANG]||TX.es;
   var title=document.getElementById("login-main-title");
   if(title)title.textContent=l.loginTitle;
   var sub=document.querySelector("#scr-login .auth-sub");
-  if(sub)sub.innerHTML=l.appSub;
+  if(sub)sub.innerHTML=l.loginSub;
   var hint=document.getElementById("lbl-login-hint");
   if(hint)hint.textContent=l.loginHint;
   var gl=document.getElementById("lbl-google-login");
@@ -713,9 +1083,7 @@ function applyLangToLogin(){
   var ms=document.getElementById("lbl-ms-login");if(ms)ms.textContent=l.btnMicrosoft;
   var em=document.getElementById("lbl-email-login");if(em)em.textContent=l.btnEmail;
   var su=document.getElementById("lbl-email-signup");if(su)su.textContent=l.btnSignup;
-  // Onboarding skip button
-  var sk=document.getElementById("onb-skip");if(sk)sk.textContent=l.onbSkip||"Saltar →";
-  // Highlight active lang button
+  var sk=document.getElementById("onb-skip");if(sk)sk.textContent=l.onbSkip;
   var esBtn=document.getElementById("lang-btn-es"),enBtn=document.getElementById("lang-btn-en");
   if(esBtn){esBtn.style.background=LANG==='es'?'#2563EB':'#f1f5f9';esBtn.style.color=LANG==='es'?'#fff':'#475569';}
   if(enBtn){enBtn.style.background=LANG==='en'?'#2563EB':'#f1f5f9';enBtn.style.color=LANG==='en'?'#fff':'#475569';}
@@ -966,7 +1334,7 @@ function calcScore(pres,tot,meta,mT,eT,totPas){
   var sT=totPas>0?(tot<=totPas?20:20*(1-Math.min((tot-totPas)/totPas,1))):12;
   return{total:Math.round(sB+sS+sBal+sT),parts:{presupuesto:Math.round(sB),ahorro:Math.round(sS),balance:Math.round(sBal),tendencia:Math.round(sT)}};
 }
-function scoreLabel(s){if(s>=85)return"Excelente 🌟";if(s>=70)return"Muy bien 💪";if(s>=55)return"Bien 👍";return"A mejorar 📈";}
+function scoreLabel(s){if(s>=85)return t('scoreExcellent');if(s>=70)return t('scoreGreat');if(s>=55)return t('scoreGood');return t('scoreImprove');}
 function scoreColor(s){if(s>=85)return"#10b981";if(s>=70)return"#0ea5e9";if(s>=55)return"#f59e0b";return"#ef4444";}
 
 // ── INSIGHTS BUILDER BLOCKS ──
@@ -975,8 +1343,8 @@ function insProyeccion(todos){
   var bud=monthlyBudgetForDays(st.dim),diff=bud-st.projTotal,ok=diff>=0;
   var col=ok?"#10b981":"#ef4444";
   var rem=bud-st.total,rec=st.daysLeft?Math.round(rem/st.daysLeft):rem;
-  var msg=st.daysLeft?(rec<0?"⚠️ Ya excedieron el presupuesto mensual en "+fmt(Math.abs(rem)):"Guía: gasta ~"+fmt(rec)+" por día para cerrar dentro del presupuesto"):(ok?"✅ Mes cerrado dentro del presupuesto":"⚠️ Mes cerrado arriba del presupuesto");
-  return'<div class="ins-section"><div class="ins-head"><span class="ins-tag" style="background:#dbeafe;color:#1d4ed8">📆 PROYECCIÓN</span><div class="ins-title">¿Cómo vamos a cerrar el mes?</div><div class="ins-desc">Con '+st.daysElapsed+' días de datos, calculamos cuánto van a gastar en total si siguen a este ritmo.</div></div><div class="ins-body"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div><div style="font-size:11px;color:#64748b;font-weight:700">Gasto proyectado</div><div style="font-size:32px;font-weight:900;color:'+col+'">'+fmt(st.projTotal)+'</div></div><div style="text-align:right"><div style="font-size:11px;color:#64748b;font-weight:700">Presupuesto mes</div><div style="font-size:20px;font-weight:900;color:#374151">'+fmt(bud)+'</div></div></div><div style="background:#f1f5f9;border-radius:50px;height:8px;overflow:hidden;margin-bottom:10px"><div style="height:8px;border-radius:50px;background:'+col+';width:'+Math.min(100,Math.round((st.projTotal/Math.max(bud,1))*100))+'%"></div></div><div style="font-size:13px;font-weight:800;color:'+col+';margin-bottom:4px">'+(ok?"✅ Van "+fmt(diff)+" debajo del presupuesto":"⚠️ Van "+fmt(Math.abs(diff))+" arriba del presupuesto")+'</div><div style="font-size:12px;color:#64748b">'+msg+'</div></div></div>';
+  var msg=st.daysLeft?(rec<0?t('insProyExceeded').replace('{n}',fmt(Math.abs(rem))):t('insProyGuide').replace('{n}',fmt(rec))):(ok?t('insProyOk'):t('insProyFail'));
+  return'<div class="ins-section"><div class="ins-head"><span class="ins-tag" style="background:#dbeafe;color:#1d4ed8">📆 PROYECCIÓN</span><div class="ins-title">¿Cómo vamos a cerrar el mes?</div><div class="ins-desc">Con '+st.daysElapsed+' días de datos, calculamos cuánto van a gastar en total si siguen a este ritmo.</div></div><div class="ins-body"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px"><div><div style="font-size:11px;color:#64748b;font-weight:700">Gasto proyectado</div><div style="font-size:32px;font-weight:900;color:'+col+'">'+fmt(st.projTotal)+'</div></div><div style="text-align:right"><div style="font-size:11px;color:#64748b;font-weight:700">Presupuesto mes</div><div style="font-size:20px;font-weight:900;color:#374151">'+fmt(bud)+'</div></div></div><div style="background:#f1f5f9;border-radius:50px;height:8px;overflow:hidden;margin-bottom:10px"><div style="height:8px;border-radius:50px;background:'+col+';width:'+Math.min(100,Math.round((st.projTotal/Math.max(bud,1))*100))+'%"></div></div><div style="font-size:13px;font-weight:800;color:'+col+';margin-bottom:4px">'+(ok?t('insProyUnder').replace('{n}',fmt(diff)):t('insProyOver').replace('{n}',fmt(Math.abs(diff))))+'</div><div style="font-size:12px;color:#64748b">'+msg+'</div></div></div>';
 }
 
 function insPatrones(todos){
@@ -989,10 +1357,10 @@ function insPatrones(todos){
   var end=new Date();end.setHours(23,59,59,999);var start=new Date(end.getTime()-30*86400000);start.setHours(0,0,0,0);
   var big=null;todos.forEach(function(g){var d=new Date(g.fecha);if(!(d>=start&&d<=end))return;if(!big||g.monto>big.monto)big=g;});
   var li=[];
-  if(bestCat&&bestDelta>0){var base=b.byCat[bestCat.id]||0,pct2=base>0?Math.round(bestDelta/base*100):null;li.push("📌 <b>"+bestCat.i+" "+bestCat.l+"</b> va subiendo: "+fmt(bestDelta)+(pct2?" ("+pct2+"%)":"")+" vs mes pasado.");}
-  else{li.push("📌 Ninguna categoría está disparada vs el mes pasado. ¡Buen control!");}
-  if(dw.bestAvg>0){li.push("🗓️ El día más caro suele ser <b>"+DIAS[dw.bestDow]+"</b> (~"+fmt(Math.round(dw.bestAvg))+"). Ojo ese día.");}
-  if(big){var cx=CATS.find(function(x){return x.id===big.categoria;})||{i:"📦",l:"Otro"};li.push("⚡ Gasto más grande en 30 días: <b>"+fmt(big.monto)+"</b> en "+cx.i+" "+cx.l+' ("'+escapeHtml((big.descripcion||"").slice(0,40))+'").');}
+  if(bestCat&&bestDelta>0){var base=b.byCat[bestCat.id]||0,pct2=base>0?Math.round(bestDelta/base*100):null;li.push("📌 <b>"+bestCat.i+" "+bestCat.l+"</b> va subiendo: "+fmt(bestDelta)+(pct2?" ("+pct2+"%)":"")+' '+t('insPatPrev'));}
+  else{li.push(t('insPatNone'));}
+  if(dw.bestAvg>0){li.push(t('insPatDay')+' <b>'+getDias()[dw.bestDow]+'</b> (~'+fmt(Math.round(dw.bestAvg))+'). '+t('insPatDayAvg'));}
+  if(big){var cx=CATS.find(function(x){return x.id===big.categoria;})||{i:"📦",l:"Otro"};li.push(t('insPatBig')+' <b>'+fmt(big.monto)+'</b> '+t('insPatBigIn')+' '+cx.i+" "+cx.l+' ("'+escapeHtml((big.descripcion||"").slice(0,40))+'").');}
   return'<div class="ins-section"><div class="ins-head"><span class="ins-tag" style="background:#f0fdf4;color:#166534">🧠 PATRONES</span><div class="ins-title">Qué dicen sus hábitos de gasto</div><div class="ins-desc">Analizamos sus movimientos para detectar tendencias que pueden pasar desapercibidas.</div></div><div class="ins-body"><div style="font-size:13px;line-height:1.9;color:#374151">'+li.map(function(x){return"<div>• "+x+"</div>";}).join("")+'</div></div></div>';
 }
 
@@ -1007,7 +1375,7 @@ function insWhatIf(todos){
 
 function insGamificacion(semGastos,todos,pres,tot){
   var meta=ST.settings.metaAhorro||0,ah=Math.max(0,pres-tot),prog=meta>0?Math.min(ah/meta,1):Math.min((pres-tot)/Math.max(pres,1),1);
-  var lvl=prog>=1?{t:"🏆 Meta lograda",d:"¡Se ganaron el badge esta semana! Excelente control."}:prog>=0.75?{t:"🔥 Casi llegan",d:"Van muy cerca. Un pequeño ajuste y cierran la meta."}:prog>=0.5?{t:"💪 En buen ritmo",d:"Buen control. Eviten fugas de último momento."}:prog>=0.25?{t:"🙂 Arrancando",d:"Aún hay margen. Ojo con los gastos impulsivos."}:{t:"🧊 A calentar motores",d:"Esta semana pide un plan. Pueden lograrlo."};
+  var lvl=prog>=1?{t:t('gameGoal'),d:t('gameGoalDesc')}:prog>=0.75?{t:t('gameAlmost'),d:t('gameAlmostDesc')}:prog>=0.5?{t:t('gameGood'),d:t('gameGoodDesc')}:prog>=0.25?{t:t('gameOk'),d:t('gameOkDesc')}:{t:t('gameCold'),d:t('gameColdDesc')};
   var streak=0;
   if(meta>0){var dI2=ST.settings.semanaInicia||4;for(var off=1;off<=12;off++){var i=iniSem(dI2,off),f2=finSem(i),t2=Object.values(ST.gastos||{}).filter(function(g){var d=new Date(g.fecha);return d>=i&&d<=f2;}).reduce(function(s,g){return s+g.monto;},0);if(Math.max(0,(ST.settings.presupuesto||0)-t2)>=meta){streak++;}else break;}}
   return'<div class="ins-section"><div class="ins-head"><span class="ins-tag" style="background:#faf5ff;color:#6d28d9">🎮 RACHA</span><div class="ins-title">¿Cómo van esta semana?</div><div class="ins-desc">Tu progreso hacia la meta de ahorro semanal. Mantener la racha es lo que construye buenos hábitos financieros.</div></div><div class="ins-body"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><div style="font-size:15px;font-weight:800">'+lvl.t+'</div>'+(meta>0?'<div style="font-size:12px;color:#64748b">Racha: <b>'+streak+' sem.</b></div>':'')+'</div><div style="background:#f1f5f9;border-radius:50px;height:10px;overflow:hidden;margin-bottom:8px"><div style="background:linear-gradient(90deg,#8b5cf6,#ec4899);height:10px;border-radius:50px;width:'+Math.round(prog*100)+'%"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-bottom:10px"><span>0</span>'+(meta>0?'<span>Meta: '+fmt(meta)+'</span>':'<span>'+Math.round(prog*100)+'%</span>')+'</div><div style="font-size:13px;color:#374151">'+lvl.d+'</div>'+(meta===0?'<div style="font-size:12px;color:#94a3b8;margin-top:8px">💡 Configura una meta de ahorro en Ajustes para ver la racha.</div>':'')+'</div></div>';
@@ -1018,17 +1386,17 @@ function insScore(todos,pres,tot,mT,eT,totPas){
   var sc=calcScore(pres,tot,ST.settings.metaAhorro||0,mT,eT,totPas);
   var lab=scoreLabel(sc.total),col=scoreColor(sc.total);
   var tipTexto="";
-  if(sc.parts.presupuesto<30)tipTexto="💡 Para mejorar: el mayor impacto está en no pasarse del presupuesto semanal. Revisa las categorías de mayor gasto.";
-  else if(sc.parts.ahorro<15)tipTexto="💡 Para mejorar: intenten cerrar las semanas con saldo positivo. Cada peso ahorrado sube el score.";
-  else if(sc.parts.balance<15)tipTexto="💡 Para mejorar: el gasto está desbalanceado entre los dos. Traten de distribuirlo más equitativamente.";
-  else if(sc.parts.tendencia<15)tipTexto="💡 Para mejorar: esta semana gastan más que la pasada. Identifiquen qué cambió.";
-  else tipTexto="✅ Score muy sólido. Sigan así para mantenerlo arriba.";
+  if(sc.parts.presupuesto<30)tipTexto=t('insScoreTip1');
+  else if(sc.parts.ahorro<15)tipTexto=t('insScoreTip2');
+  else if(sc.parts.balance<15)tipTexto=t('insScoreTip3');
+  else if(sc.parts.tendencia<15)tipTexto=t('insScoreTip4');
+  else tipTexto=t('insScoreTip5');
 
   var bars=[
-    {label:"🧾 Presupuesto",val:sc.parts.presupuesto,max:40,color:"#3b82f6",desc:"¿Se mantuvieron dentro del límite semanal?"},
-    {label:"🎯 Ahorro",val:sc.parts.ahorro,max:20,color:"#10b981",desc:"¿Lograron guardar algo esta semana?"},
-    {label:"⚖️ Balance",val:sc.parts.balance,max:20,color:"#8b5cf6",desc:"¿Gastan de forma equitativa entre los dos?"},
-    {label:"📉 Tendencia",val:sc.parts.tendencia,max:20,color:"#f59e0b",desc:"¿Están gastando menos que la semana pasada?"}
+    {label:t('insScoreParts')[0],val:sc.parts.presupuesto,max:40,color:"#3b82f6",desc:t('insScorePartDescs')[0]},
+    {label:t('insScoreParts')[1],val:sc.parts.ahorro,max:20,color:"#10b981",desc:t('insScorePartDescs')[1]},
+    {label:t('insScoreParts')[2],val:sc.parts.balance,max:20,color:"#8b5cf6",desc:t('insScorePartDescs')[2]},
+    {label:t('insScoreParts')[3],val:sc.parts.tendencia,max:20,color:"#f59e0b",desc:t('insScorePartDescs')[3]}
   ];
 
   return'<div class="ins-section"><div class="ins-head"><span class="ins-tag" style="background:#f0fdf4;color:#065f46">🏁 SCORE</span><div class="ins-title">Puntaje financiero</div><div class="ins-desc">Un número del 0 al 100 que resume qué tan bien están llevando las finanzas esta semana. <b>70+ es muy bueno, 85+ es excelente.</b></div></div><div class="ins-body"><div style="display:flex;align-items:center;gap:16px;margin-bottom:16px"><div style="font-size:58px;font-weight:900;color:'+col+';letter-spacing:-3px;line-height:1">'+sc.total+'</div><div><div style="font-size:18px;font-weight:900;color:'+col+'">'+lab+'</div><div style="font-size:12px;color:#64748b;margin-top:4px">sobre 100 puntos posibles</div></div></div>'+bars.map(function(b){var pct=Math.round((b.val/b.max)*100);return'<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px"><div style="font-size:12px;font-weight:800">'+b.label+'</div><div style="font-size:12px;font-weight:900;color:'+b.color+'">'+b.val+' / '+b.max+'</div></div><div style="background:#f1f5f9;border-radius:50px;height:7px;overflow:hidden"><div style="height:7px;border-radius:50px;background:'+b.color+';width:'+pct+'%"></div></div><div style="font-size:11px;color:#94a3b8;margin-top:3px">'+b.desc+'</div></div>';}).join("")+'<div style="background:#f8fafc;border-radius:12px;padding:12px;margin-top:8px;font-size:12px;color:#374151;line-height:1.6">'+tipTexto+'</div></div></div>';
@@ -1066,11 +1434,11 @@ function renderApp(){
   var tot=semA.reduce(function(s,g){return s+g.monto;},0),disp=presTot-tot,pct=Math.min((tot/Math.max(presTot,1))*100,100),rojo=disp<0,hBg=rojo?"#dc2626":COL[u];
   var html='<div id="hdr" style="background:'+hBg+'">'
     +'<div class="htop"><div>'
-    +'<div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:2px">Semana actual</div>'
+    +'<div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:2px">'+t('homeWeek')+'</div>'
     +'<div style="font-size:21px;font-weight:900;margin-top:2px">'+p[u].emoji+' '+p[u].nombre+'</div>'
-    +'<div style="margin-top:4px"><span class="hbadge">'+fmtR(iA,fA)+' · '+DIAS[dI]+'</span>'+(esSemNueva?'<span style="background:#22c55e;border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;margin-left:6px">🆕 Nueva semana</span>':'')+(roll>0?'<span class="hroll">+'+fmt(roll)+' 🔄</span>':'')+'</div></div>'
+    +'<div style="margin-top:4px"><span class="hbadge">'+fmtR(iA,fA)+' · '+DIAS[dI]+'</span>'+(esSemNueva?'<span style="background:#22c55e;border-radius:50px;padding:3px 10px;font-size:11px;font-weight:700;margin-left:6px">'+t('homeNewWeek')+'</span>':'')+(roll>0?'<span class="hroll">+'+fmt(roll)+' 🔄</span>':'')+'</div></div>'
     +'<button class="bcam" id="bcam">Salir 🔄</button></div>'
-    +'<div style="font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:4px">'+(rojo?"⚠️ Te pasaste por":"💰 Disponible")+'</div>'
+    +'<div style="font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;text-align:center;margin-bottom:4px">'+(rojo?t('homeOver'):t('homeAvail'))+'</div>'
     +'<div class="hmonto">'+fmt(Math.abs(disp))+'</div>'
     +'<div class="hsub">Gastado <b>'+fmt(tot)+'</b> de '+fmt(presTot)+' · '+(pct>=100?"🔴":"🟢")+' '+Math.round(pct)+'%</div>'
     +'<div class="barw"><div class="barf" style="width:'+pct+'%;background:'+(rojo?"#fbbf24":"rgba(255,255,255,.85)")+';"></div></div>'
@@ -1079,9 +1447,9 @@ function renderApp(){
     +'<input type="number" inputmode="decimal" id="inp-ajuste" value="'+ajuste+'" min="1" style="flex:1;min-width:0;border:2px solid rgba(255,255,255,.35);border-radius:10px;background:rgba(255,255,255,.12);color:#fff;padding:8px 10px;font-size:15px;font-weight:900;font-family:inherit;outline:none;text-align:center"/>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">'+AJS.map(function(a){return'<button class="aj btn-aj" data-a="'+a+'">'+a+'</button>';}).join("")+'</div></div>'
     +'<div class="pmrow"><button class="pm pmm" id="bmen">− '+fmt(ajuste)+'</button><button class="pm pmp" id="bmas">+ '+fmt(ajuste)+'</button></div></div>'
-    +'<div class="hdr-quick-btns"><button class="hdr-qbtn" id="btn-quick-gasto">➕ Agregar gasto</button><button class="hdr-qbtn" id="btn-quick-ingreso">💰 Ingreso extra</button></div>'
+    +'<div class="hdr-quick-btns"><button class="hdr-qbtn" id="btn-quick-gasto">➕ '+t('tabAgregar').replace('➕ ','')+'</button><button class="hdr-qbtn" id="btn-quick-ingreso">💰 '+t('finIncomeTitle').replace('💼 ','')+'</button></div>'
     +periodoActualHTML()+'</div>'
-    +'<div id="tabs">'+[{v:"home",label:(t('tabs')||[])[0]||"📊 Resumen"},{v:"insights",label:(t('tabs')||[])[1]||"✨ Insights"},{v:"agregar",label:(t('tabs')||[])[2]||"➕ Agregar"},{v:"historial",label:(t('tabs')||[])[3]||"📅 Historial"},{v:"analisis",label:(t('tabs')||[])[4]||"📈 Análisis"},{v:"finanzas",label:(t('tabs')||[])[5]||"💰 Finanzas"},{v:"config",label:(t('tabs')||[])[6]||"⚙️ Ajustes"}].map(function(t){return'<button class="tab btn-tab'+(vista===t.v?" on":"")+'\" data-v="'+t.v+'">'+t.label+'</button>';}).join("")+'</div>'
+    +'<div id="tabs">'+[{v:"home",label:t('tabHome')},{v:"insights",label:t('tabInsights')},{v:"agregar",label:t('tabAgregar')},{v:"historial",label:t('tabHistorial')},{v:"analisis",label:t('tabAnalisis')},{v:"finanzas",label:t('tabFinanzas')},{v:"config",label:t('tabConfig')}].map(function(t){return'<button class="tab btn-tab'+(vista===t.v?" on":"")+'\" data-v="'+t.v+'">'+t.label+'</button>';}).join("")+'</div>'
     +'<div id="view">'+buildVista(semA,todos,presTot,tot,disp,roll)+'</div>'
     +((emojiFor||reactFor||editGastoId)?renderModal():"")
     +'<div id="toast"></div>';
@@ -1128,7 +1496,7 @@ function bindAll(todos){
       var nid="cat_"+Date.now();
       ST.categorias.push({id:nid,l:nm,i:newCatInlineEmoji,c:"#64748b"});
       cat=nid;newCatInlineOpen=false;newCatInlineName="";newCatInlineEmoji="📦";
-      saveDB();toast("✅ Categoría '"+nm+"' creada");renderApp();
+      saveDB();toast(t('toastCatAdded')+' \"'+nm+'\"');renderApp();
     };
     var ncc=g("newcat-cancel-btn");if(ncc)ncc.onclick=function(){newCatInlineOpen=false;newCatInlineName="";renderApp();};
     var nni=g("newcat-name-inp");if(nni){nni.oninput=function(){newCatInlineName=this.value;};nni.onclick=function(e){e.stopPropagation();};}
@@ -1234,7 +1602,7 @@ function applyHistFilter(todos){
   if(!listEl)return;
   var filtered=getFilteredTodos(todos);
   var p=ST.perfiles;
-  if(!filtered.length){listEl.innerHTML='<div class="empty"><div style="font-size:48px">🔍</div><div style="margin-top:8px">Sin resultados para ese filtro</div></div>';return;}
+  if(!filtered.length){listEl.innerHTML='<div class="empty"><div style="font-size:48px">🔍</div><div style="margin-top:8px">'+t('histNoResults')+'</div></div>';return;}
   listEl.innerHTML=filtered.map(function(gx){return buildGastoRow(gx,p);}).join("");
   // Re-bind delete/edit/react
   var qa=function(sel,fn){document.querySelectorAll(sel).forEach(fn);};
@@ -1260,7 +1628,7 @@ function buildCalendar(todos){
   // Use mesOffset? No — calendar always shows current month for simplicity
   var dim=new Date(mY,mM+1,0).getDate();
   var firstDow=new Date(mY,mM,1).getDay();
-  var mesNom=MESES[mM]+" "+mY;
+  var mesNom=getMeses()[mM]+" "+mY;
   // Build day totals
   var dayTot={};
   todos.forEach(function(g){
@@ -1269,7 +1637,7 @@ function buildCalendar(todos){
     dayTot[d]=(dayTot[d]||0)+(g.monto||0);
   });
   var hoyD=hoy.getMonth()===mM&&hoy.getFullYear()===mY?hoy.getDate():0;
-  var headers=['D','L','M','X','J','V','S'].map(function(d){return'<div class="cal-day-hdr">'+d+'</div>';}).join('');
+  var headers=t('histCalDays').split(',').map(function(d){return'<div class="cal-day-hdr">'+d+'</div>';}).join('');
   var cells='';
   for(var i=0;i<firstDow;i++)cells+='<div class="cal-day empty-day"></div>';
   for(var d=1;d<=dim;d++){
@@ -1284,7 +1652,7 @@ function buildCalendar(todos){
   return'<div class="chcard" style="padding:14px">'
     +'<div style="text-align:center;font-weight:900;font-size:14px;margin-bottom:10px">'+mesNom+'</div>'
     +'<div class="cal-grid">'+headers+cells+'</div>'
-    +'<div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:10px">Toca un día para filtrar</div>'
+    +'<div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:10px">'+t('histCalTitle')+'</div>'
     +'</div>';
 }
 function calDayClick(d){
@@ -1326,7 +1694,7 @@ function bHome(sem,todos,pres,tot,disp,roll){
 
   // Daily card
   var dc=calcDiario(sem,pres),dc2="";
-  if(dc.presHoy>0){var pctD=Math.min((dc.gastHoy/Math.max(dc.presHoy,1))*100,100),okD=dc.dispHoy>=0;dc2='<div class="'+(okD?"alert an":"alert aw")+'"><div style="font-size:24px">'+(okD?"📅":"⚡")+'</div><div><div class="at">Hoy ('+dc.diaNom+'): '+fmt(dc.gastHoy)+' gastados</div><div class="as">'+(okD?"Restan "+fmt(dc.dispHoy)+" · "+dc.diasRest+" días en la semana":"Te pasaste hoy en "+fmt(Math.abs(dc.dispHoy)))+'</div><div style="background:rgba(0,0,0,.1);border-radius:50px;height:4px;margin-top:6px"><div style="height:4px;border-radius:50px;background:'+(okD?"#059669":"#dc2626")+'";width:'+pctD+'%"></div></div></div></div>';}
+  if(dc.presHoy>0){var pctD=Math.min((dc.gastHoy/Math.max(dc.presHoy,1))*100,100),okD=dc.dispHoy>=0;dc2='<div class="'+(okD?"alert an":"alert aw")+'"><div style="font-size:24px">'+(okD?"📅":"⚡")+'</div><div><div class="at">Hoy ('+dc.diaNom+'): '+fmt(dc.gastHoy)+' gastados</div><div class="as">'+(okD?t('homeRemain')+" "+fmt(dc.dispHoy)+" · "+dc.diasRest+" "+t('homeDaysLeft'):t('homeOver2')+" "+fmt(Math.abs(dc.dispHoy)))+'</div><div style="background:rgba(0,0,0,.1);border-radius:50px;height:4px;margin-top:6px"><div style="height:4px;border-radius:50px;background:'+(okD?"#059669":"#dc2626")+'";width:'+pctD+'%"></div></div></div></div>';}
 
   // User cards
   var ul='<div class="ucards"><div class="ucard '+(usuario==="manolo"?"act":"")+'"><div style="display:flex;align-items:center;gap:8px"><span>'+p.manolo.emoji+'</span><span style="font-size:13px;font-weight:900">'+escapeHtml(p.manolo.nombre)+'</span></div><div style="font-size:22px;font-weight:900;margin:6px 0">'+fmt(mT)+'</div><div class="mbw"><div class="mbf" style="width:'+pctM+'%;background:#2563EB"></div></div></div><div class="ucard '+(usuario==="esposa"?"act":"")+'"><div style="display:flex;align-items:center;gap:8px"><span>'+p.esposa.emoji+'</span><span style="font-size:13px;font-weight:900">'+escapeHtml(p.esposa.nombre)+'</span></div><div style="font-size:22px;font-weight:900;margin:6px 0">'+fmt(eT)+'</div><div class="mbw"><div class="mbf" style="width:'+pctE+'%;background:#DB2777"></div></div></div></div>';
@@ -1347,7 +1715,7 @@ function bHome(sem,todos,pres,tot,disp,roll){
     var totPago=deudasActivas.reduce(function(s,d){return s+(d.pagoMensual||0);},0);
     var top3=deudasActivas.slice(0,3);
     var tipoIcon={tarjeta:"💳",prestamo:"🏦",diferido:"🗓️",otro:"📋"};
-    deudaHtml='<div style="background:#fff;border-radius:var(--ra);padding:18px;margin-bottom:12px;box-shadow:var(--sh);border-left:4px solid #6366f1"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:15px;font-weight:900">💳 Deudas activas</div><div style="font-size:11px;color:#64748b">'+deudasActivas.length+' activa'+(deudasActivas.length!==1?"s":"")+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div style="background:#f5f3ff;border-radius:12px;padding:10px"><div style="font-size:10px;color:#5b21b6;font-weight:800;text-transform:uppercase">Saldo total</div><div style="font-size:20px;font-weight:900;color:#6d28d9">'+fmt(totSaldo)+'</div></div><div style="background:#fef3c7;border-radius:12px;padding:10px"><div style="font-size:10px;color:#92400e;font-weight:800;text-transform:uppercase">Pago mensual</div><div style="font-size:20px;font-weight:900;color:#d97706">'+fmt(totPago)+'</div></div></div>'+top3.map(function(d){return'<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:18px">'+(tipoIcon[d.tipo]||"📋")+'</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escapeHtml(d.nombre)+'</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:900;color:#374151">'+fmt(d.saldo)+'</div></div></div>';}).join("")+'<button onclick="vista=\'finanzas\';renderApp();" style="background:none;border:none;color:#6366f1;font-size:12px;font-weight:800;margin-top:8px;cursor:pointer;font-family:inherit;padding:4px 0">Ver todas en Finanzas →</button></div>';
+    deudaHtml='<div style="background:#fff;border-radius:var(--ra);padding:18px;margin-bottom:12px;box-shadow:var(--sh);border-left:4px solid #6366f1"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:15px;font-weight:900">💳 Deudas activas</div><div style="font-size:11px;color:#64748b">'+deudasActivas.length+' '+t('homeDebts').replace('💳 ','')+'</div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><div style="background:#f5f3ff;border-radius:12px;padding:10px"><div style="font-size:10px;color:#5b21b6;font-weight:800;text-transform:uppercase">Saldo total</div><div style="font-size:20px;font-weight:900;color:#6d28d9">'+fmt(totSaldo)+'</div></div><div style="background:#fef3c7;border-radius:12px;padding:10px"><div style="font-size:10px;color:#92400e;font-weight:800;text-transform:uppercase">Pago mensual</div><div style="font-size:20px;font-weight:900;color:#d97706">'+fmt(totPago)+'</div></div></div>'+top3.map(function(d){return'<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:18px">'+(tipoIcon[d.tipo]||"📋")+'</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escapeHtml(d.nombre)+'</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:900;color:#374151">'+fmt(d.saldo)+'</div></div></div>';}).join("")+'<button onclick="vista=\'finanzas\';renderApp();" style="background:none;border:none;color:#6366f1;font-size:12px;font-weight:800;margin-top:8px;cursor:pointer;font-family:inherit;padding:4px 0">Ver todas en Finanzas →</button></div>';
   }
 
   // Resumen IA
@@ -1382,19 +1750,19 @@ function bAgregar(){
   var frec=(ST.frecuentes||[]).filter(function(f){if(!f.auto)return true;return !f.ultimoUso||((Date.now()-f.ultimoUso)<3*86400000);}),cats=allCats();
   var frecHtml=frec.length?'<div class="frecg">'+frec.map(function(f,i){return'<button class="frecb" data-i="'+i+'"><span>'+escapeHtml(f.desc)+'</span><span style="color:var(--uc);font-weight:900;margin-left:4px">'+fmt(f.monto)+'</span></button>';}).join("")+'</div>':"";
   var catHtml='<div class="cg">'+cats.map(function(c){return'<button class="cb btn-cat '+(cat===c.id?"on":"")+'\" data-c="'+c.id+'"><span>'+c.i+'</span>'+escapeHtml(c.l)+'</button>';}).join("")+'</div>';
-  return '<div class="fcard"><div style="font-size:18px;font-weight:900;margin-bottom:16px">'+(LANG==="en"?"➕ Record expense":"➕ Registrar gasto")
-    +(frec.length?'<div><div class="flbl" style="margin-bottom:6px">⚡ Accesos rápidos</div>'+frecHtml+'</div>':"")
-    +'<div class="flbl" style="margin-top:12px">'+(LANG==="en"?"💵 Amount":"💵 Monto")+"</div>"
-    +'<input id="im" type="number" inputmode="decimal" placeholder="0.00" class="inpm"/>'
-    +'<div class="flbl" style="margin-top:12px">'+(LANG==="en"?"📝 Description":"📝 Descripción")+"</div>"
-    +'<input id="id2" type="text" placeholder="¿En qué gastaron?"/>'
-    +'<div class="flbl" style="margin-top:14px">'+(LANG==="en"?"🏷️ Category":"🏷️ Categoría")+"</div>"
+  return '<div class="fcard"><div style="font-size:18px;font-weight:900;margin-bottom:16px">'+t('addTitle')
+    +(frec.length?'<div><div class="flbl" style="margin-bottom:6px">'+t('addQuick')+'</div>'+frecHtml+'</div>':"")
+    +'<div class="flbl" style="margin-top:12px">'+t('addMonto')+'</div>'
+    +'<input id="im" type="number" inputmode="decimal" placeholder="'+t('addMontoPlaceholder')+'" class="inpm"/>'
+    +'<div class="flbl" style="margin-top:12px">'+t('addDesc')+'</div>'
+    +'<input id="id2" type="text" placeholder="'+t('addDescPlaceholder')+'"/>'
+    +'<div class="flbl" style="margin-top:14px">'+t('addCat')+'</div>'
     +catHtml
     +'<div id="split-row" class="splitrow '+(splitActivo?"on":"")+'"><div><div style="font-size:14px;font-weight:700">Gasto compartido</div><div style="font-size:12px;color:#64748b;margin-top:2px">Dividir entre los dos</div></div><div class="stgl '+(splitActivo?"on":"")+'"></div></div>'
     +'<div id="nota-row" class="splitrow '+(notaActiva?"on":"")+'"><div><div style="font-size:14px;font-weight:700">Agregar nota</div><div style="font-size:12px;color:#64748b;margin-top:2px">Comentario adicional</div></div><div class="stgl '+(notaActiva?"on":"")+'"></div></div>'
-    +(notaActiva?'<textarea id="nota-inp" placeholder="Escribe una nota..."></textarea>':"")
+    +(notaActiva?'<textarea id="nota-inp" placeholder="'+t('addNotePlaceholder')+'"></textarea>':"")
     +'<div id="inv-row" class="splitrow '+(esInvitacion?"on":"")+'"><div><div style="font-size:14px;font-weight:700">Solicitar cobro</div><div style="font-size:12px;color:#64748b;margin-top:2px">Enviar solicitud al otro usuario</div></div><div class="stgl '+(esInvitacion?"on":"")+'"></div></div>'
-    +'<button class="ocrbtn '+(ocrLoading?"loading":"")+'\" id="ocrbtn"><span>'+(ocrLoading?(LANG==="en"?"⏳ Reading receipt...":"⏳ Leyendo ticket..."):(LANG==="en"?"📷 Scan receipt (OCR)":"📷 Escanear ticket (OCR)"))+'</span></button>'
+    +'<button class="ocrbtn '+(ocrLoading?"loading":"")+'\" id="ocrbtn"><span>'+(ocrLoading?t('addOCRloading'):t('addOCR'))+'</span></button>'
     +'<button class="btng" id="bg" disabled>Registrar gasto</button></div>';
 }
 
@@ -1402,7 +1770,7 @@ function bHistorial(todos){
   var filtered=getFilteredTodos(todos);
   var p=ST.perfiles;
   var totalFiltrado=filtered.reduce(function(s,g){return s+g.monto;},0);
-  var calToggleBtn='<button id="btn-cal-toggle" style="background:'+(histVistaCalendario?'var(--uc)':'#f1f5f9')+';color:'+(histVistaCalendario?'#fff':'#64748b')+';border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">'+(histVistaCalendario?'📋 Lista':'📅 Calendario')+'</button>';
+  var calToggleBtn='<button id="btn-cal-toggle" style="background:'+(histVistaCalendario?'var(--uc)':'#f1f5f9')+';color:'+(histVistaCalendario?'#fff':'#64748b')+';border:none;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">'+(histVistaCalendario?t('histList'):t('histCal'))+'</button>';
   return '<div>'
     +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:18px;font-weight:900">'+(LANG==="en"?"📅 History":"📅 Historial")+'</div><div style="display:flex;align-items:center;gap:8px">'+(filtered.length?'<div style="font-size:12px;font-weight:800;color:#64748b">'+filtered.length+' mov.</div>':'')+calToggleBtn+'</div></div>'
     +'<div class="hist-filter-bar">'
@@ -1412,7 +1780,7 @@ function bHistorial(todos){
     +'<button class="preset-btn '+(histFiltroPreset==="semana"?"on":"")+'\" data-pre="semana">Esta semana</button>'
     +'<button class="preset-btn '+(histFiltroPreset==="mes"?"on":"")+'\" data-pre="mes">Este mes</button>'
     +'</div>'
-    +'<div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Rango de fechas personalizado</div>'
+    +'<div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">'+t('histCustomRange')+'</div>'
     +'<div class="date-range-row"><div><label class="flbl">Desde</label><input type="date" id="hist-from" value="'+histFiltroFrom+'"/></div><div><label class="flbl">Hasta</label><input type="date" id="hist-to" value="'+histFiltroTo+'"/></div></div>'
     +'</div>'
     +(histVistaCalendario?buildCalendar(todos):
@@ -1454,7 +1822,7 @@ function bAnalisis(todos){
 
   // ── Day-of-week pattern ──
   var dw=dowAverages(del,31);
-  var diasNom=DIAS;
+  var diasNom=getDias();
 
   // ── Per-user ──
   var uBreakdown=['manolo','esposa'].map(function(r){return{r:r,v:del.filter(function(g){return g.usuario===r;}).reduce(function(s,g){return s+g.monto;},0)};});
@@ -1464,15 +1832,15 @@ function bAnalisis(todos){
 
   // Main totals
   var mainCard='<div class="brcard">'
-    +'<div style="font-size:11px;color:#64748b;font-weight:800;text-transform:uppercase;margin-bottom:4px">Total gastado en '+MESES[m]+'</div>'
+    +'<div style="font-size:11px;color:#64748b;font-weight:800;text-transform:uppercase;margin-bottom:4px">'+t('analTotalSpent')+' '+getMeses()[m]+'</div>'
     +'<div class="brmonto">'+fmt(tot)+'</div>'
-    +(trendPct!==null?'<div style="margin-top:6px"><span class="trend-badge '+(trendPct>0?"trend-up":trendPct<0?"trend-down":"trend-flat")+'">'+(trendPct>0?"▲ +":trendPct<0?"▼ ":"→ ")+Math.abs(trendPct)+'% vs mes anterior</span></div>':'')
-    +(bud>0?'<div style="margin-top:12px"><div style="background:rgba(0,0,0,.1);border-radius:50px;height:6px;overflow:hidden"><div style="height:6px;border-radius:50px;background:'+(okMes?"rgba(255,255,255,.8)":"#fbbf24")+';width:'+Math.min(100,Math.round((tot/Math.max(bud,1))*100))+'%"></div></div><div style="font-size:11px;opacity:.8;margin-top:4px">'+(okMes?"✅ Dentro del presupuesto ("+fmt(bud)+")":"⚠️ "+fmt(tot-bud)+" arriba del presupuesto ("+fmt(bud)+")")+'</div></div>':"")
+    +(trendPct!==null?'<div style="margin-top:6px"><span class="trend-badge '+(trendPct>0?"trend-up":trendPct<0?"trend-down":"trend-flat")+'">'+(trendPct>0?t('analTrendUp'):trendPct<0?t('analTrendDown'):t('analTrendFlat'))+Math.abs(trendPct)+'% vs mes anterior</span></div>':'')
+    +(bud>0?'<div style="margin-top:12px"><div style="background:rgba(0,0,0,.1);border-radius:50px;height:6px;overflow:hidden"><div style="height:6px;border-radius:50px;background:'+(okMes?"rgba(255,255,255,.8)":"#fbbf24")+';width:'+Math.min(100,Math.round((tot/Math.max(bud,1))*100))+'%"></div></div><div style="font-size:11px;opacity:.8;margin-top:4px">'+(okMes?t('analBudgetOk')+' ('+fmt(bud)+")":t('analBudgetOver').replace('{n}',fmt(tot-bud))+' ('+fmt(bud)+")")+'</div></div>':"")
     +'</div>';
 
   // Libre real card (only if income configured)
   var libreCard=ingreso>0?'<div style="background:#fff;border-radius:var(--ra);padding:16px;box-shadow:var(--sh);margin-bottom:12px">'
-    +'<div style="font-size:13px;font-weight:900;margin-bottom:10px">💰 Flujo del mes</div>'
+    +'<div style="font-size:13px;font-weight:900;margin-bottom:10px">'+t('analFlowTitle')+'</div>'
     +'<div style="display:flex;flex-direction:column;gap:6px">'
     +(ingreso>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:12px;color:#64748b">Ingreso mensual</span><span style="font-size:14px;font-weight:800;color:#374151">'+fmt(ingreso)+'</span></div>':"")
     +(fijosTot>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:12px;color:#64748b">Gastos fijos</span><span style="font-size:14px;font-weight:800;color:#ef4444">−'+fmt(fijosTot)+'</span></div>':"")
@@ -1484,8 +1852,8 @@ function bAnalisis(todos){
 
   // Fijos status (only current month)
   var fijosCard=recs.length&&isCurMonth?'<div style="background:#fff;border-radius:var(--ra);padding:16px;box-shadow:var(--sh);margin-bottom:12px">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:13px;font-weight:900">📋 Gastos fijos del mes</div>'
-    +(fijosPendientes>0?'<div style="font-size:11px;font-weight:800;color:#f59e0b">'+fmt(fijosPendientes)+' pendiente</div>':'<div style="font-size:11px;font-weight:800;color:#10b981">Todo pagado ✓</div>')+'</div>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:13px;font-weight:900">'+t('analFixedMonth')+'</div>'
+    +(fijosPendientes>0?'<div style="font-size:11px;font-weight:800;color:#f59e0b">'+fmt(fijosPendientes)+' pendiente</div>':'<div style="font-size:11px;font-weight:800;color:#10b981">'+t('analFixedAllPaid')+'</div>')+'</div>'
     +recs.map(function(r){var pg=pagadoState[r.nombre]||false;var adj=getFijoAdjM(r);return'<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:16px">'+(allCats().find(function(c){return c.id===r.categoria;})||{i:"📦"}).i+'</span><span style="flex:1;font-size:12px;font-weight:700;color:'+(pg?"#94a3b8":"#374151")+'">'+escapeHtml(r.nombre)+'</span><span style="font-size:12px;font-weight:800;color:'+(pg?"#10b981":"#f59e0b")+'">'+fmt(adj)+'</span><span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;background:'+(pg?"#d1fae5":"#fef3c7")+';color:'+(pg?"#065f46":"#92400e")+'">'+(pg?"✓ Pagado":"Pendiente")+'</span></div>';}).join("")
     +'</div>':"";
 
@@ -1509,7 +1877,7 @@ function bAnalisis(todos){
   // Day-of-week pattern
   var dowCard=dw.bestAvg>0?'<div class="ss"><div class="sst">Patrón por día de la semana</div><div class="scard"><div style="font-size:12px;color:#64748b;margin-bottom:10px">Promedio de gasto por día (últimos 30 días)</div>'
     +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px">'
-    +diasNom.map(function(dn,di){var avg=dw.avgs[di]||0;var h=avg>0?Math.round((avg/dw.bestAvg)*100):0;return'<div style="text-align:center"><div style="font-size:9px;color:#94a3b8;font-weight:700;margin-bottom:4px">'+dn+'</div><div style="height:48px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;border-radius:4px;background:'+(di===dw.bestDow?"#ef4444":"#3b82f6")+'66;height:'+Math.max(4,h)+'%"></div></div><div style="font-size:9px;font-weight:800;color:#374151;margin-top:2px">'+(avg>0?"$"+Math.round(avg):"")+'</div></div>';}).join("")
+    +getDias().map(function(dn,di){var avg=dw.avgs[di]||0;var h=avg>0?Math.round((avg/dw.bestAvg)*100):0;return'<div style="text-align:center"><div style="font-size:9px;color:#94a3b8;font-weight:700;margin-bottom:4px">'+dn+'</div><div style="height:48px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;border-radius:4px;background:'+(di===dw.bestDow?"#ef4444":"#3b82f6")+'66;height:'+Math.max(4,h)+'%"></div></div><div style="font-size:9px;font-weight:800;color:#374151;margin-top:2px">'+(avg>0?"$"+Math.round(avg):"")+'</div></div>';}).join("")
     +'</div><div style="font-size:11px;color:#94a3b8;margin-top:8px;text-align:center">🔴 Día con mayor gasto promedio</div>'
     +'</div></div>':"";
 
@@ -1540,12 +1908,12 @@ function bFinanzas(){
     +'</div>':"";
   var recHtml=recs.length?fijoSummary+recs.map(function(r,i){var pg=pagadoState[r.nombre]||false;var montoMes=getFijoMonto(r);var catInfo=allCats().find(function(c){return c.id===r.categoria;})||{i:"📦"};
     return'<div class="pagado-row"><div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0"><span style="font-size:20px">'+catInfo.i+'</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:'+(pg?"#94a3b8":"#374151")+'">'+escapeHtml(r.nombre)+'</div>'
-    +'<div style="font-size:11px;color:#94a3b8">'+MESES[new Date().getMonth()]+' · '+(pg?'<span style="color:#10b981;font-weight:700">Pagado ✓</span>':'<span style="color:#f59e0b;font-weight:700">Pendiente</span>')+'</div>'
+    +'<div style="font-size:11px;color:#94a3b8">'+getMeses()[new Date().getMonth()]+' · '+(pg?'<span style="color:#10b981;font-weight:700">'+t('finFixedPaid').replace('✅ ','')+'</span>':'<span style="color:#f59e0b;font-weight:700">'+t('finFixedPending').replace('⏳ ','')+'</span>')+'</div>'
     +'</div></div><div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
     +'<div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:3px 6px;display:flex;align-items:center;gap:2px">'
     +'<span style="font-size:11px;color:#94a3b8">$</span><input type="number" class="fijo-adj-inp" data-i="'+i+'" data-nombre="'+escapeHtml(r.nombre)+'" value="'+montoMes+'" min="0" style="width:64px;border:none;background:transparent;font-size:13px;font-weight:800;outline:none;font-family:inherit;text-align:right;color:#374151"/>'
     +'</div>'
-    +'<button class="btn-pagado" data-nombre="'+escapeHtml(r.nombre)+'" style="background:'+(pg?"#10b981":"none")+';color:'+(pg?"#fff":"#64748b")+';border:2px solid '+(pg?"#10b981":"#e2e8f0")+';border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;touch-action:manipulation;font-size:11px;font-weight:800">'+(pg?"✓ Pagado":"Pagar")+'</button>'
+    +'<button class="btn-pagado" data-nombre="'+escapeHtml(r.nombre)+'" style="background:'+(pg?"#10b981":"none")+';color:'+(pg?"#fff":"#64748b")+';border:2px solid '+(pg?"#10b981":"#e2e8f0")+';border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;touch-action:manipulation;font-size:11px;font-weight:800">'+(pg?t('finPaid'):t('finPay'))+'</button>'
     +'<button class="btn-del-rec" data-i="'+i+'" style="background:#fee2e2;border:none;border-radius:8px;padding:5px 6px;cursor:pointer;font-size:13px" title="Eliminar">🗑️</button>'
     +'</div></div>';
   }).join(""):'<div style="color:#94a3b8;font-size:13px;padding:8px 0;text-align:center">Sin gastos fijos registrados</div>';
@@ -1557,7 +1925,7 @@ function bFinanzas(){
     +'<div class="ss"><div class="sst">Ingresos y gastos fijos</div><div class="scard">'
     +'<div class="sr"><label class="flbl" style="margin:0">💵 Ingreso mensual</label><input id="inp-ingreso" type="number" inputmode="decimal" value="'+(f.ingresoMensual||"")+'" style="width:140px;padding:8px 10px;font-size:15px;font-weight:900;text-align:right"/></div>'
     +'<div style="margin-top:14px"><div style="font-size:13px;font-weight:800;margin-bottom:4px">📋 Gastos fijos del mes</div><div style="font-size:12px;color:#64748b;margin-bottom:10px">Marca como "Pagado" para descontar del presupuesto disponible.</div>'+recHtml
-    +'<button id="btn-add-rec" style="width:100%;margin-top:10px;padding:11px;background:#f8fafc;border:2px dashed #e2e8f0;border-radius:12px;color:#64748b;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">+ Agregar gasto fijo</button></div>'
+    +'<button id="btn-add-rec" style="width:100%;margin-top:10px;padding:11px;background:#f8fafc;border:2px dashed #e2e8f0;border-radius:12px;color:#64748b;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation" onclick="addRec()">'+t('finAddFixed')+'</button></div>'
     +(calc?'<div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:12px;padding:12px;margin-top:14px"><div style="font-size:12px;color:#1e40af;font-weight:800;margin-bottom:8px">📊 Distribución calculada</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center"><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">Disponible</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+fmt(calc.disp)+'</div></div><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">Por semana</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+fmt(calc.porSem)+'</div></div><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">Semanas</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+calc.sems+'</div></div></div>'+(calc.porSem!==ST.settings.presupuesto?'<button id="btn-apply-pres" data-v="'+calc.porSem+'" class="bprimary" style="background:#1d4ed8;margin-top:8px">Aplicar '+fmt(calc.porSem)+' como presupuesto semanal</button>':'')+'</div>':'')
     +'<button id="btn-save-fin" class="bprimary" style="background:#0ea5e9;margin-top:12px">💾 Guardar cambios</button></div></div>'
     +'<div class="ss"><div class="sst">Período personalizado</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">Define un período diferente a las semanas del calendario (ej: quincena).</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px"><div><label class="flbl">Inicio</label><input type="date" id="inp-periodo-ini" value="'+(ST.settings.periodoInicio||"")+'" style="font-size:14px;padding:10px"/></div><div><label class="flbl">Fin</label><input type="date" id="inp-periodo-fin" value="'+(ST.settings.periodoFin||"")+'" style="font-size:14px;padding:10px"/></div></div><button id="btn-save-periodo2" class="bprimary" style="background:#0ea5e9">Guardar período</button>'+(ST.settings.periodoInicio?'<button id="btn-clear-periodo" class="btnsec" style="margin-top:6px">Eliminar período</button>':'')+'</div></div>'
@@ -1573,7 +1941,7 @@ function bConfig(){
   var filteredEmojis=emojiSearchCat?EMOJI_ALL.filter(function(e){return e.includes(emojiSearchCat);}):EMOJI_ALL;
   return'<div>'
     +'<div class="ss"><div class="sst">Perfiles</div><div class="scard">'+["manolo","esposa"].map(function(k){var pf=p[k];return'<div class="pe"><button class="peeb" data-k="'+k+'">'+pf.emoji+'</button><div style="flex:1"><input class="peni" id="pinp-'+k+'" value="'+escapeHtml(pf.nombre)+'" placeholder="Nombre"/></div><button class="pesv" data-k="'+k+'" style="background:'+COL[k]+'">Guardar</button></div>';}).join("")+'</div></div>'
-    +'<div class="ss"><div class="sst">¿Cuándo inicia la semana?</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">Elige el día que consideran que empieza su semana de gastos.</div><div class="dg">'+DIAS.map(function(d,i){return'<button class="db '+(s.semanaInicia===i?"on":"")+'\" data-i="'+i+'">'+d+'</button>';}).join("")+'</div></div></div>'
+    +'<div class="ss"><div class="sst">¿Cuándo inicia la semana?</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">Elige el día que consideran que empieza su semana de gastos.</div><div class="dg">'+getDias().map(function(d,i){return'<button class="db '+(s.semanaInicia===i?"on":"")+'\" data-i="'+i+'">'+d+'</button>';}).join("")+'</div></div></div>'
     +'<div class="ss"><div class="sst">Meta de ahorro semanal</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">Define cuánto quieren ahorrar cada semana. Esto activa la barra de progreso y la racha en Insights.</div><div class="sr"><label class="flbl" style="margin:0">🎯 Meta semanal (MXN)</label><input id="inp-meta" type="number" inputmode="decimal" value="'+(s.metaAhorro||0)+'" style="width:120px;text-align:right;padding:8px 10px;font-size:15px;font-weight:900"/></div><button id="btn-save-meta" class="bprimary" style="background:#8b5cf6">Guardar meta</button></div></div>'
     // SPACE CODE — prominently displayed
     +'<div class="ss"><div class="sst">Código de tu espacio</div><div class="space-code-card"><div style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Comparte este código para invitar a alguien</div><div id="conf-code-val" class="space-code-value">···</div><div class="space-code-label">Código de invitación</div><button id="btn-copy-spcode" class="btn-copy-code">📋 Copiar código</button></div><div style="font-size:12px;color:#94a3b8;padding:8px">El otro usuario lo ingresa en "Unirme a un espacio" al crear su cuenta.</div></div>'
@@ -1584,7 +1952,7 @@ function bConfig(){
     +(recientes.length&&!emojiSearchCat?'<div class="emoji-section-label">Recientes</div><div class="emoji-grid">'+recientes.map(function(e){return'<button class="emoji-opt '+(tempCatEmoji===e?"sel":"")+'\" data-e="'+e+'">'+e+'</button>';}).join("")+'</div>':"")
     +'<div class="emoji-section-label">Todos</div><div class="emoji-grid">'+filteredEmojis.map(function(e){return'<button class="emoji-opt '+(tempCatEmoji===e?"sel":"")+'\" data-e="'+e+'">'+e+'</button>';}).join("")+'</div></div>':"")
     +'</div>'
-    +'<div style="display:flex;gap:8px;margin-bottom:8px"><input id="inp-cat-nombre" type="text" placeholder="Nombre de la categoría" style="flex:1;padding:10px 12px;font-size:14px"/></div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:8px"><input id="inp-cat-nombre" type="text" placeholder="'+t('cfgCatPlaceholder')+'" style="flex:1;padding:10px 12px;font-size:14px"/></div>'
     +'<button id="btn-add-catcustom" style="width:100%;padding:11px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px dashed #93c5fd;border-radius:12px;color:#1d4ed8;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">+ Agregar categoría</button>'
     +(custCats.length?'<div style="margin-top:12px">'+custCats.map(function(c,i){return'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:24px">'+c.i+'</span><span style="flex:1;font-size:14px;font-weight:700">'+escapeHtml(c.l)+'</span><button class="btn-del-catcustom" data-i="'+i+'" style="background:#fee2e2;border:none;border-radius:8px;padding:6px 8px;cursor:pointer;font-size:14px">🗑️</button></div>';}).join("")+'</div>':"")
     +'</div></div>'
@@ -1592,7 +1960,7 @@ function bConfig(){
     +'<button id="lang-es-cfg" onclick="setLang(\'es\');renderApp();" style="background:'+(LANG==='es'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='es'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇲🇽 Español</button>'
     +'<button id="lang-en-cfg" onclick="setLang(\'en\');renderApp();" style="background:'+(LANG==='en'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='en'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇺🇸 English</button>'
     +'</div></div></div></div>'
-    +'<div class="ss"><div class="sst">Notificaciones</div><div class="scard"><div class="sr"><div><div style="font-size:14px;font-weight:700">🔔 Recordatorios diarios</div><div style="font-size:12px;color:#64748b;margin-top:2px">Avisos para registrar tus gastos</div></div><button id="btn-notif" class="btnpill '+(s.notifActivas?"":"sec")+'">'+(s.notifActivas?"Activadas":"Activar")+'</button></div></div></div>'
+    +'<div class="ss"><div class="sst">Notificaciones</div><div class="scard"><div class="sr"><div><div style="font-size:14px;font-weight:700">🔔 Recordatorios diarios</div><div style="font-size:12px;color:#64748b;margin-top:2px">Avisos para registrar tus gastos</div></div><button id="btn-notif" class="btnpill '+(s.notifActivas?"":"sec")+'">'+(s.notifActivas?t('cfgNotifOn'):t('cfgNotifOff'))+'</button></div></div></div>'
     +'</div>';
 }
 
@@ -1606,6 +1974,7 @@ function renderModal(){
 // ── CHARTS ──
 function renderCharts(todos){
   var h=new Date(),d=new Date(h.getFullYear(),h.getMonth()+mesOffset,1);var y=d.getFullYear(),m=d.getMonth();var ini=new Date(y,m,1),fin=new Date(y,m+1,0,23,59,59);var del=todos.filter(function(g){var f=new Date(g.fecha);return f>=ini&&f<=fin;});var cats=allCats();
+  var MESES_CUR=getMeses();
   var canvCat=document.getElementById("chartCat");
   if(canvCat){var catData=cats.map(function(c){return del.filter(function(g){return g.categoria===c.id;}).reduce(function(s,g){return s+g.monto;},0);});var nonZeroCats=cats.filter(function(c,i){return catData[i]>0;});var nonZeroData=catData.filter(function(v){return v>0;});var catLabels=nonZeroCats.map(function(c){return c.i+" "+c.l;});var catColors=nonZeroCats.map(function(c){return c.c;});
   if(nonZeroData.length){try{chartCat=new Chart(canvCat,{type:"doughnut",data:{labels:catLabels,datasets:[{data:nonZeroData,backgroundColor:catColors,borderWidth:3,borderColor:"#fff"}]},options:{responsive:true,plugins:{legend:{position:"bottom",labels:{font:{family:"Nunito",weight:"700"},boxWidth:12,padding:12}}}}});}catch(e){}}}
@@ -1615,7 +1984,7 @@ function renderCharts(todos){
 }
 
 // ── ACTIONS ──
-function camPres(delta){var nuevo=Math.max(0,(ST.settings.presupuesto||0)+delta);ST.settings.presupuesto=nuevo;saveDB();toast((delta>0?"💚 +":"🔴 ")+fmt(Math.abs(delta)),(delta>0?"#10b981":"#ef4444"));renderApp();}
+function camPres(delta){var nuevo=Math.max(0,(ST.settings.presupuesto||0)+delta);ST.settings.presupuesto=nuevo;saveDB();toast((delta>0?t('toastGoal')+' +':t('toastOver')+' ')+fmt(Math.abs(delta)),(delta>0?"#10b981":"#ef4444"));renderApp();}
 function chkF(){var im=document.getElementById("im"),id2=document.getElementById("id2");var bg=document.getElementById("bg");if(bg)bg.disabled=!(parseFloat(im&&im.value)>0&&(id2&&id2.value||"").trim().length>0);}
 function doAgregar(){
   var im=document.getElementById("im"),id2=document.getElementById("id2"),nota=document.getElementById("nota-inp");
@@ -1633,21 +2002,21 @@ function doAgregar(){
   else{(ST.frecuentes||[]).forEach(function(f){if(f.desc===desc&&f.monto===monto)f.ultimoUso=Date.now();});}
   saveDB();
   if(im)im.value="";if(id2)id2.value="";splitActivo=false;notaActiva=false;esInvitacion=false;
-  toast("✅ Gasto registrado!");vista="home";renderApp();
+  toast(t('toastRecorded'));vista="home";renderApp();
 }
-function delGasto(id){if(!confirm("¿Eliminar este gasto?"))return;delete ST.gastos[id];saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
+function delGasto(id){if(!confirm(t('confirmDelete')))return;delete ST.gastos[id];saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
 function addReaccion(gid,r){if(!ST.reacciones)ST.reacciones={};if(!ST.reacciones[gid])ST.reacciones[gid]={};ST.reacciones[gid][usuario]=r;reactFor=null;saveDB();renderApp();}
 function selEmoji(k,e){ST.perfiles[k].emoji=e;emojiFor=null;saveDB();renderApp();}
-function savePerfil(k){var inp=document.getElementById("pinp-"+k);var n=(inp&&inp.value||"").trim();if(!n){toast("Escribe un nombre","#f59e0b");return;}ST.perfiles[k].nombre=n;saveDB();toast("✅ Guardado");renderApp();}
+function savePerfil(k){var inp=document.getElementById("pinp-"+k);var n=(inp&&inp.value||"").trim();if(!n){toast("Escribe un nombre","#f59e0b");return;}ST.perfiles[k].nombre=n;saveDB();toast(t('toastSaved'));renderApp();}
 function setDia(i){ST.settings.semanaInicia=i;saveDB();renderApp();}
-function saveMeta(){var v=parseFloat(document.getElementById("inp-meta")&&document.getElementById("inp-meta").value)||0;ST.settings.metaAhorro=v;saveDB();toast("🎯 Meta guardada");renderApp();}
-function pedirNotif(){if(!("Notification" in window)){toast("Tu navegador no soporta notificaciones","#ef4444");return;}Notification.requestPermission().then(function(perm){ST.settings.notifActivas=perm==="granted";saveDB();toast(perm==="granted"?"🔔 Notificaciones activadas":"❌ Permiso denegado",perm==="granted"?"#10b981":"#ef4444");renderApp();});}
-function saveFinanzas(){var inp=document.getElementById("inp-ingreso");var ing=parseFloat(inp&&inp.value)||0;ST.finanzas.ingresoMensual=ing;saveDB();toast("💾 Guardado");renderApp();}
-function aplicarPres(v){ST.settings.presupuesto=v;saveDB();toast("✅ Presupuesto actualizado a "+fmt(v));renderApp();}
-function addRec(){var n=prompt("Nombre del gasto fijo:");if(!n)return;var m=parseFloat(prompt("Monto mensual:"));if(!m)return;if(!ST.finanzas.gastosRecurrentes)ST.finanzas.gastosRecurrentes=[];ST.finanzas.gastosRecurrentes.push({nombre:n,monto:m,categoria:"renta"});saveDB();toast("✅ Gasto fijo agregado");renderApp();}
-function delRec(i){if(!confirm("¿Eliminar este gasto fijo?"))return;ST.finanzas.gastosRecurrentes.splice(i,1);saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
-function addFrecuente(){var d=prompt("Descripción del gasto frecuente:");if(!d)return;var m=parseFloat(prompt("Monto:"));if(!m)return;if(!ST.frecuentes)ST.frecuentes=[];ST.frecuentes.push({desc:d,monto:m,cat:"otro"});saveDB();toast("✅ Frecuente guardado");renderApp();}
-function delFrecuente(i){if(!confirm("¿Eliminar?"))return;ST.frecuentes.splice(i,1);saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
+function saveMeta(){var v=parseFloat(document.getElementById("inp-meta")&&document.getElementById("inp-meta").value)||0;ST.settings.metaAhorro=v;saveDB();toast(t('toastMetaSaved'));renderApp();}
+function pedirNotif(){if(!("Notification" in window)){toast(t('notifUnsupported'),"#ef4444");return;}Notification.requestPermission().then(function(perm){ST.settings.notifActivas=perm==="granted";saveDB();toast(perm==="granted"?t('notifGranted'):t('notifDenied'),perm==="granted"?"#10b981":"#ef4444");renderApp();});}
+function saveFinanzas(){var inp=document.getElementById("inp-ingreso");var ing=parseFloat(inp&&inp.value)||0;ST.finanzas.ingresoMensual=ing;saveDB();toast(t('toastSaved'));renderApp();}
+function aplicarPres(v){ST.settings.presupuesto=v;saveDB();toast(t('toastBudgetUpdated')+' '+fmt(v));renderApp();}
+function addRec(){var n=prompt(t('finFixedName'));if(!n)return;var m=parseFloat(prompt(t('finFixedAmount')));if(!m)return;if(!ST.finanzas.gastosRecurrentes)ST.finanzas.gastosRecurrentes=[];ST.finanzas.gastosRecurrentes.push({nombre:n,monto:m,categoria:"renta"});saveDB();toast("✅ Gasto fijo agregado");renderApp();}
+function delRec(i){if(!confirm(t('confirmDelFixed')))return;ST.finanzas.gastosRecurrentes.splice(i,1);saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
+function addFrecuente(){var d=prompt(t('finFrecDesc2'));if(!d)return;var m=parseFloat(prompt(t('finFrecAmount')));if(!m)return;if(!ST.frecuentes)ST.frecuentes=[];ST.frecuentes.push({desc:d,monto:m,cat:"otro"});saveDB();toast("✅ Frecuente guardado");renderApp();}
+function delFrecuente(i){if(!confirm(t('confirmDelFrec')))return;ST.frecuentes.splice(i,1);saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
 function addDeudaFin(){
   var tipo=prompt("Tipo de deuda:\n• tarjeta\n• prestamo\n• diferido\n• otro");
   if(!tipo)return;tipo=tipo.trim().toLowerCase();
@@ -1660,7 +2029,7 @@ function addDeudaFin(){
   ST.deudas.push({tipo:tipo,nombre:nombre.trim(),saldo:saldo,pagoMensual:pago,fechaPago:fecha.trim(),activa:true});
   saveDB();toast("💳 Deuda agregada");renderApp();
 }
-function delDeuda(i){if(!confirm("¿Eliminar esta deuda?"))return;ST.deudas.splice(i,1);saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
+function delDeuda(i){if(!confirm(t('confirmDelDebt')))return;ST.deudas.splice(i,1);saveDB();toast("🗑️ Eliminado","#64748b");renderApp();}
 function toggleDeudaActiva(i){if(!ST.deudas[i])return;ST.deudas[i].activa=!ST.deudas[i].activa;saveDB();toast(ST.deudas[i].activa?"✅ Deuda activada":"⏸️ Deuda pausada");renderApp();}
 function addCatCustom(){
   var nombre=(document.getElementById("inp-cat-nombre")&&document.getElementById("inp-cat-nombre").value||"").trim();
@@ -1670,9 +2039,9 @@ function addCatCustom(){
   ST.categorias.push({id:id,l:nombre,i:tempCatEmoji,c:"#64748b"});
   if(document.getElementById("inp-cat-nombre"))document.getElementById("inp-cat-nombre").value="";
   tempCatEmoji="📦";emojiPickerOpenCat=false;
-  saveDB();toast("✅ Categoría agregada");renderApp();
+  saveDB();toast(t('toastCatAdded'));renderApp();
 }
-function delCatCustom(i){if(!confirm("¿Eliminar categoría?"))return;ST.categorias.splice(i,1);saveDB();toast("🗑️ Eliminada","#64748b");renderApp();}
+function delCatCustom(i){if(!confirm(t('confirmDelCat')))return;ST.categorias.splice(i,1);saveDB();toast(t('toastCatDeleted'),"#64748b");renderApp();}
 function agregarIngresoExtra(){var m=parseFloat(prompt("¿Cuánto ingreso extra agregar al presupuesto de esta semana?"));if(!m||m<=0)return;var dI=ST.settings.semanaInicia||4,kHoy=keyI(iniSem(dI,0));ST.rollovers[kHoy]=(ST.rollovers[kHoy]||0)+m;saveDB();toast("💚 +"+fmt(m)+" agregado","#10b981");renderApp();}
 function aceptarInv(id){if(!ST.invitaciones||!ST.invitaciones[id])return;ST.invitaciones[id].estado="aceptado";var inv=ST.invitaciones[id];var key=db.ref("espacios/"+spaceId+"/gastos").push().key;ST.gastos[key]={usuario:usuario,monto:inv.monto,descripcion:inv.desc+" (cobrado)",categoria:"otro",fecha:new Date().toISOString()};saveDB();toast("✅ Pago aceptado y registrado");renderApp();}
 function rechazarInv(id){if(!ST.invitaciones||!ST.invitaciones[id])return;ST.invitaciones[id].estado="rechazado";saveDB();toast("❌ Solicitud rechazada","#ef4444");renderApp();}
@@ -1680,25 +2049,25 @@ function exportarCSV(){
   var todos=Object.entries(ST.gastos||{}).map(function(e){return Object.assign({id:e[0]},e[1]);}).sort(function(a,b){return new Date(b.fecha)-new Date(a.fecha);});
   var p=ST.perfiles;
   // Section 1: variable expenses
-  var rows=[["TIPO","Fecha","Usuario","Monto","Descripción","Categoría","Split","Ticket"]];
-  todos.forEach(function(g){var c=allCats().find(function(x){return x.id===g.categoria;})||{l:"Otro"};rows.push(["Gasto",fmtD(g.fecha),(p[g.usuario]||{nombre:g.usuario}).nombre,g.monto,g.descripcion||"",c.l,g.split?"Sí":"No",g.ticketThumb?"Sí":"No"]);});
+  var rows=[[t("csvType"),t("csvDate"),t("csvUser"),t("csvAmount"),t("csvDesc"),t("csvCat"),t("csvSplit"),t("csvTicket")]];
+  todos.forEach(function(g){var c=allCats().find(function(x){return x.id===g.categoria;})||{l:"Otro"};rows.push([t("analVariable").replace("💰 ","").replace("Gastos ","").replace("Variable ","").split(" ")[0]||"Gasto",fmtD(g.fecha),(p[g.usuario]||{nombre:g.usuario}).nombre,g.monto,g.descripcion||"",c.l,g.split?(LANG==="en"?"Yes":"Sí"):(LANG==="en"?"No":"No"),g.ticketThumb?(LANG==="en"?"Yes":"Sí"):(LANG==="en"?"No":"No")]);});
   // Section 2: fixed expenses
   var pagadoState=getPagadoState();
   var recs=ST.finanzas&&ST.finanzas.gastosRecurrentes||[];
   if(recs.length){
     rows.push([]);
-    rows.push(["── GASTOS FIJOS "+MESES[new Date().getMonth()]+" ──","","","","","","",""]);
-    rows.push(["TIPO","Nombre","Monto base","Monto ajustado mes","Categoría","Estado","",""]);}
+    rows.push([t("csvSection")+" "+getMeses()[new Date().getMonth()]+" "+t("csvOf"),"","","","","","",""]);
+    rows.push([t("csvType"),t("csvDesc"),t("csvBaseAmt"),t("csvAdjAmt"),t("csvCat"),t("csvStatus"),"",""]);}
   recs.forEach(function(r){
     var cat=allCats().find(function(x){return x.id===r.categoria;})||{l:"Otro"};
     var adj=r.monto;try{var k="fijoAdj_"+(spaceId||"local")+"_"+mesKey()+"_"+btoa(encodeURIComponent(r.nombre)).slice(0,16);var v=localStorage.getItem(k);if(v!==null)adj=parseFloat(v);}catch(e){}
     var pg=pagadoState[r.nombre]||false;
-    rows.push(["Fijo",r.nombre,r.monto,adj,cat.l,pg?"Pagado":"Pendiente","",""]);
+    rows.push([t("csvFixed"),r.nombre,r.monto,adj,cat.l,pg?t("csvPaid"):t("csvPending"),"",""]);
   });
   if(!todos.length&&!recs.length){toast("No hay datos para exportar","#f59e0b");return;}
   var csv=rows.map(function(r){return r.map(function(v){return'"'+(v||"").toString().replace(/"/g,'""')+'"';}).join(",");}).join("\n");
   var blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
-  var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="saldo_exportacion_"+(new Date().toISOString().split("T")[0])+".csv";a.click();URL.revokeObjectURL(url);toast("📥 CSV exportado (gastos + fijos)");
+  var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download="saldo_exportacion_"+(new Date().toISOString().split("T")[0])+".csv";a.click();URL.revokeObjectURL(url);toast(t('csvExported'));
 }
 
 function viewTicket(id){
@@ -1729,7 +2098,7 @@ document.getElementById("ocrin").onchange=async function(e){
     try{
       var res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:200,messages:[{role:"user",content:[{type:"image",source:{type:"base64",media_type:f.type,data:b64}},{type:"text",text:"Extrae el TOTAL del ticket. Responde SOLO con JSON: {\"monto\": NUMBER, \"desc\": \"ESTABLECIMIENTO\"}. Si no puedes, {\"monto\":0,\"desc\":\"\"}"}]}]})});
       var data=await res.json();var txt=(data.content&&data.content[0]&&data.content[0].text)||"{}";
-      try{var cl=txt.replace(/```json|```/g,"").trim();var parsed=JSON.parse(cl);if(parsed.monto){var im2=document.getElementById("im"),id3=document.getElementById("id2");if(im2)im2.value=parsed.monto;if(id3)id3.value=parsed.desc||"Ticket escaneado";chkF();toast("📷 "+fmt(parsed.monto)+" detectado");}else if(!parsed.monto){toast("Ticket guardado sin monto detectado. Ingrésalo manualmente.","#f59e0b");}}catch(e2){toast("Ticket guardado. Ingresa monto y descripción.","#f59e0b");}
+      try{var cl=txt.replace(/```json|```/g,"").trim();var parsed=JSON.parse(cl);if(parsed.monto){var im2=document.getElementById("im"),id3=document.getElementById("id2");if(im2)im2.value=parsed.monto;if(id3)id3.value=parsed.desc||"Ticket escaneado";chkF();toast(t('ocrDetected').replace('{n}',fmt(parsed.monto)));}else if(!parsed.monto){toast(t('ocrNoAmount'),"#f59e0b");}}catch(e2){toast(t('ocrFail'),"#f59e0b");}
     }catch(err){toast("Error de red","#ef4444");}
     ocrLoading=false;renderApp();
   };
@@ -1880,7 +2249,7 @@ function renderOnbStep(){
     document.getElementById("onb-back").onclick=onbBack;
   } else if(ONB_STEP===5){
     // App tour
-    var sections=[
+    var ONB_SECTIONS_ES=[
       {icon:"📊",title:"Resumen",desc:"Tu centro de mando: ve cuánto llevas gastado esta semana, cuánto tienes disponible y tus últimos movimientos de un vistazo."},
       {icon:"➕",title:"Agregar gasto",desc:"Registra cualquier gasto en segundos. Elige categoría, monto y descripción. Puedes escanear el ticket para autocompletar."},
       {icon:"💰",title:"Finanzas / Gastos fijos",desc:"Agrega tu renta, servicios y suscripciones. Marca cada mes cuánto pagaste — los montos pueden variar y tú los controlas."},
@@ -1889,7 +2258,17 @@ function renderOnbStep(){
       {icon:"📈",title:"Análisis",desc:"Vista mensual completa: ingreso real disponible, gastos fijos vs variables, alertas, tendencias y desglose por categoría."},
       {icon:"⚙️",title:"Ajustes",desc:"Personaliza nombres, emojis, categorías propias, meta de ahorro semanal y exporta tus datos a CSV."}
     ];
-    c.innerHTML='<div class="onb-icon">🗺️</div><div class="onb-title">Conoce Saldo</div><div class="onb-desc">Cada sección tiene un propósito claro. Aquí un mapa rápido antes de empezar.</div>'
+    var ONB_SECTIONS_EN=[
+      {icon:"📊",title:"Summary",desc:"Your command center: see how much you've spent this week, what's available, and your latest transactions at a glance."},
+      {icon:"➕",title:"Add expense",desc:"Record any expense in seconds. Pick category, amount, description. You can scan a receipt to autocomplete."},
+      {icon:"💰",title:"Finances / Fixed expenses",desc:"Add your rent, utilities and subscriptions. Mark each month how much you paid — amounts can vary and you control it."},
+      {icon:"📅",title:"History",desc:"Search, filter and review all your transactions. List or calendar view. Filter by date, category or free text."},
+      {icon:"✨",title:"Insights",desc:"Automatic analysis: month projection, spending patterns, financial score and the 'what if...?' simulator."},
+      {icon:"📈",title:"Analysis",desc:"Full monthly view: real disposable income, fixed vs variable expenses, alerts, trends and category breakdown."},
+      {icon:"⚙️",title:"Settings",desc:"Customize names, emojis, custom categories, weekly savings goal and export your data to CSV."}
+    ];
+    var sections=LANG==="en"?ONB_SECTIONS_EN:ONB_SECTIONS_ES;
+    c.innerHTML='<div class="onb-icon">🗺️</div><div class="onb-title">'+(LANG==="en"?"Meet Saldo":"Conoce Saldo")+'</div><div class="onb-desc">'+(LANG==="en"?"Each section has a clear purpose. A quick map before you start.":"Cada sección tiene un propósito claro. Aquí un mapa rápido antes de empezar.")+'</div>'
       +'<div style="width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
       +sections.map(function(s){return'<div style="background:#fff;border-radius:14px;padding:12px 14px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 2px 6px rgba(0,0,0,.06)">'
         +'<div style="font-size:26px;flex-shrink:0;line-height:1.2">'+s.icon+'</div>'
