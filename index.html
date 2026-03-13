@@ -1730,6 +1730,16 @@ function cargarEspacio(sid,rol){
 }
 
 // ── AUTH STATE ──
+// Handle redirect result (for mobile/popup-blocked flows)
+auth.getRedirectResult().then(function(result){
+  // result.user will be null if no redirect was in progress — that's fine,
+  // onAuthStateChanged handles the rest.
+}).catch(function(err){
+  var errEl=document.getElementById("login-error");
+  if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
+  showSpin(false);
+});
+
 auth.onAuthStateChanged(function(user){
   if(!user){showScreen("scr-login");return;}
   currentUser=user;showSpin(true);
@@ -1830,19 +1840,28 @@ document.getElementById("btn-google-login").onclick=function(){
   showSpin(true);
   var provider=new firebase.auth.GoogleAuthProvider();
   provider.addScope("email");provider.addScope("profile");
-  auth.signInWithPopup(provider)
-    .then(function(){})
-    .catch(function(err){
-      if(err.code==="auth/popup-blocked"){
-        toast(t("toastRedirecting"),"#0ea5e9");
-        auth.signInWithRedirect(provider).catch(function(e2){showSpin(false);if(errEl){errEl.textContent="Error: "+e2.message;errEl.style.display="block";}});
-      }else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
-        showSpin(false);
-      }else{
-        showSpin(false);
-        if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
-      }
+  var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(isMobile){
+    // Mobile: go straight to redirect (popups unreliable)
+    auth.signInWithRedirect(provider).catch(function(err){
+      showSpin(false);
+      if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
     });
+  } else {
+    auth.signInWithPopup(provider)
+      .then(function(){})
+      .catch(function(err){
+        if(err.code==="auth/popup-blocked"||err.code==="auth/operation-not-supported-in-this-environment"){
+          toast(t("toastRedirecting"),"#0ea5e9");
+          auth.signInWithRedirect(provider).catch(function(e2){showSpin(false);if(errEl){errEl.textContent="Error: "+e2.message;errEl.style.display="block";}});
+        }else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
+          showSpin(false);
+        }else{
+          showSpin(false);
+          if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
+        }
+      });
+  }
 };
 
 // ── SETUP SCREENS ──
