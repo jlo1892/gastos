@@ -334,7 +334,7 @@ textarea:focus{border-color:var(--uc);background:#fff;}
 .inp-field::placeholder{color:#94a3b8;font-weight:600;}
 .auth-link{background:none;border:none;color:#2563EB;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;padding:4px;text-decoration:none;touch-action:manipulation;}
 .auth-link:hover{text-decoration:underline;}
-.auth-err{color:#ef4444;font-size:13px;font-weight:700;margin-top:6px;text-align:center;max-width:280px;line-height:1.4;display:none;}
+.auth-err{color:#fff;background:#ef4444;font-size:13px;font-weight:700;margin-top:12px;text-align:left;max-width:320px;line-height:1.5;display:none;padding:10px 14px;border-radius:10px;word-break:break-word;}
 .auth-methods{display:flex;flex-direction:column;align-items:center;width:100%;gap:10px;}
 .auth-switch{margin-top:6px;font-size:13px;color:#64748b;}
 
@@ -1741,15 +1741,22 @@ auth.getRedirectResult().then(function(result){
 });
 
 auth.onAuthStateChanged(function(user){
+  console.log("[Saldo] onAuthStateChanged fired, user:", user?user.email:"null");
   if(!user){showScreen("scr-login");return;}
   currentUser=user;showSpin(true);
   db.ref("usuarios/"+user.uid).once("value",function(snap){
+    console.log("[Saldo] db user snap exists:", snap.exists());
     showSpin(false);
     if(snap.exists()&&snap.val().espacioId){
       var sid=snap.val().espacioId,savedRol=snap.val().rol||null;
       if(savedRol){cargarEspacio(sid,savedRol);}
       else{db.ref("espacios/"+sid+"/miembros/"+user.uid).once("value",function(ms){if(ms.exists()&&ms.val()){db.ref("usuarios/"+user.uid+"/rol").set(ms.val());cargarEspacio(sid,ms.val());}else{mostrarRoles(sid);}});}
     }else{var n=user.displayName?user.displayName.split(" ")[0]:"";var setupT=document.getElementById("setup-title");if(setupT&&n)setupT.textContent=t("greetHola")+n+"!";showScreen("scr-setup");}
+  }, function(dbErr){
+    console.error("[Saldo] db read error:", dbErr);
+    showSpin(false);
+    var errEl=document.getElementById("login-error");
+    if(errEl){errEl.textContent="Error de base de datos: "+dbErr.message+" (¿Reglas de Firebase bloqueando?)";errEl.style.display="block";}
   });
 });
 
@@ -1836,32 +1843,37 @@ function applyLangToLogin(){
 
 document.getElementById("btn-google-login").onclick=function(){
   var errEl=document.getElementById("login-error");
-  if(errEl)errEl.style.display="none";
+  if(errEl){errEl.style.display="none";errEl.textContent="";}
+  function showErr(msg){
+    showSpin(false);
+    if(errEl){errEl.textContent=msg;errEl.style.display="block";}
+    console.error("[Saldo Google Auth]",msg);
+  }
   showSpin(true);
+  console.log("[Saldo] Google login clicked, auth:",!!auth);
+  if(!auth){showErr("Firebase no inicializado");return;}
   var provider=new firebase.auth.GoogleAuthProvider();
   provider.addScope("email");provider.addScope("profile");
-  var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if(isMobile){
-    // Mobile: go straight to redirect (popups unreliable)
-    auth.signInWithRedirect(provider).catch(function(err){
-      showSpin(false);
-      if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
+  // Try popup first (works on desktop + some mobile)
+  auth.signInWithPopup(provider)
+    .then(function(r){console.log("[Saldo] popup ok",r&&r.user&&r.user.email);})
+    .catch(function(err){
+      console.warn("[Saldo] popup err:",err.code,err.message);
+      if(err.code==="auth/popup-blocked"
+        ||err.code==="auth/operation-not-supported-in-this-environment"
+        ||err.code==="auth/popup-closed-by-user"&&false){
+        // Popup blocked → try redirect
+        console.log("[Saldo] falling back to redirect...");
+        toast(t("toastRedirecting"),"#0ea5e9");
+        auth.signInWithRedirect(provider).catch(function(e2){showErr("Error redirect: "+e2.code+" "+e2.message);});
+      } else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
+        showSpin(false); // user closed, silently reset
+      } else if(err.code==="auth/unauthorized-domain"){
+        showErr("Dominio no autorizado en Firebase. Agrega este dominio en Firebase Console → Authentication → Authorized domains.");
+      } else {
+        showErr("Error ("+err.code+"): "+err.message);
+      }
     });
-  } else {
-    auth.signInWithPopup(provider)
-      .then(function(){})
-      .catch(function(err){
-        if(err.code==="auth/popup-blocked"||err.code==="auth/operation-not-supported-in-this-environment"){
-          toast(t("toastRedirecting"),"#0ea5e9");
-          auth.signInWithRedirect(provider).catch(function(e2){showSpin(false);if(errEl){errEl.textContent="Error: "+e2.message;errEl.style.display="block";}});
-        }else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
-          showSpin(false);
-        }else{
-          showSpin(false);
-          if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
-        }
-      });
-  }
 };
 
 // ── SETUP SCREENS ──
