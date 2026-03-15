@@ -2128,12 +2128,18 @@ function _routeUser(user) {
 }
 
 auth.onAuthStateChanged(function(user) {
-  if (_authDone) {
-    if (!user && currentUser) { currentUser = null; showScreen("scr-login"); }
-    return;
+  if (!_authDone) {
+    // First fire on page load — determines initial state
+    _authDone = true;
+    _routeUser(user);
+  } else if (user && !currentUser) {
+    // User just signed in (popup/redirect completed) — route them in
+    _routeUser(user);
+  } else if (!user && currentUser) {
+    // User signed out
+    currentUser = null;
+    showScreen("scr-login");
   }
-  _authDone = true;
-  _routeUser(user);
 });
 
 
@@ -2230,7 +2236,10 @@ document.getElementById("btn-google-login").onclick=function(){
     auth.signInWithRedirect(provider).catch(function(e){showErr("Error: "+e.message);});
   } else {
     auth.signInWithPopup(provider)
-      .then(function(){})
+      .then(function(result){
+        // Auth state change handled by onAuthStateChanged
+        showSpin(true);
+      })
       .catch(function(err){
         if(err.code==="auth/popup-blocked"||err.code==="auth/operation-not-supported-in-this-environment"){
           toast(t("toastRedirecting"),"#0ea5e9");
