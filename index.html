@@ -16,9 +16,9 @@ body{font-family:'Nunito',system-ui,sans-serif;background:#F0F4F8;color:#1e293b;
 #app{max-width:480px;margin:0 auto;min-height:100vh;}h
 
 /* ── AUTH ── */
-.auth-screen{display:none;flex-direction:column;align-items:center;justify-content:center;
+.auth-screen{display:none !important;flex-direction:column;align-items:center;justify-content:center;
   min-height:100vh;padding:36px 24px;background:linear-gradient(150deg,#e0f2fe 0%,#ede9fe 60%,#fce7f3 100%);}
-.auth-screen.active{display:flex;}
+.auth-screen.active{display:flex !important;}
 .auth-logo-wrap{background:#fff;border-radius:28px;padding:20px 28px;box-shadow:var(--sh2);margin-bottom:20px;display:flex;align-items:center;gap:14px;}
 .auth-logo{font-size:48px;line-height:1;}
 .auth-brand{font-size:28px;font-weight:900;letter-spacing:-1px;color:#1e293b;}
@@ -407,12 +407,72 @@ textarea:focus{border-color:var(--uc);background:#fff;}
 /* ── WEEKLY PLAN RESERVE BANNER ── */
 .plan-reserve-banner{background:#eff6ff;border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;}
 
+/* ── DESKTOP LOGIN LAYOUT ── */
+@media(min-width:700px){
+  .auth-screen.active{flex-direction:row;padding:0;align-items:stretch;justify-content:stretch;}
+  #scr-login{align-items:stretch;}
+  .auth-login-left{display:flex!important;}
+  .auth-login-right{border-radius:0;box-shadow:none;}
+}
+.auth-login-left{
+  display:none;
+  flex:1;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding:48px 56px;
+  background:linear-gradient(135deg,#1d4ed8 0%,#2563eb 40%,#4f46e5 100%);
+  color:#fff;
+}
+.auth-login-right{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:48px 40px;
+  min-height:100vh;
+  background:#fff;
+  width:100%;
+  max-width:460px;
+  overflow-y:auto;
+}
+.auth-feature-list{list-style:none;padding:0;margin:24px 0 0;display:flex;flex-direction:column;gap:14px;}
+.auth-feature-list li{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:700;opacity:.95;}
+.auth-feature-list li span:first-child{font-size:22px;width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* Desktop: email/signup screens stay centered with max-width */
+@media(min-width:700px){
+  #scr-email-login,#scr-email-signup,#scr-forgot,#scr-setup,#scr-codigo,#scr-join,#scr-rol{
+    max-width:480px;margin:0 auto;border-radius:24px;box-shadow:0 8px 48px rgba(0,0,0,.10);
+    min-height:auto;margin-top:80px;margin-bottom:80px;padding:48px 40px;
+  }
+  #auth-container{background:linear-gradient(160deg,#f0f7ff 0%,#e8f4ff 50%,#f5f0ff 100%);min-height:100vh;}
+  #scr-login{max-width:none;margin:0;border-radius:0;box-shadow:none;min-height:100vh;padding:0;}
+}
+
 </style>
 </head>
 <body>
-<div id="auth-container" style="display:flex;flex-direction:column">
+<div id="auth-container" style="display:block;overflow:hidden;min-height:100vh">
   <div id="scr-login" class="auth-screen active">
-    <div class="auth-logo-wrap">
+    <!-- Desktop left panel -->
+    <div class="auth-login-left">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:40px">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="rgba(255,255,255,.2)"/><rect x="8" y="30" width="6" height="10" rx="2" fill="white" opacity=".7"/><rect x="17" y="22" width="6" height="18" rx="2" fill="white" opacity=".85"/><rect x="26" y="14" width="6" height="26" rx="2" fill="white"/><path d="M36 9L39 6M39 6H36M39 6V9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-size:28px;font-weight:900;letter-spacing:-1px">Saldo</span>
+      </div>
+      <div style="font-size:38px;font-weight:900;line-height:1.15;letter-spacing:-1.5px;margin-bottom:12px">Tu dinero,<br>bajo control.</div>
+      <div style="font-size:15px;opacity:.8;line-height:1.6;max-width:320px">Saldo te dice cuánto puedes gastar esta semana — sin hojas de cálculo ni sorpresas.</div>
+      <ul class="auth-feature-list">
+        <li><span>📊</span><span>Presupuesto semanal automático</span></li>
+        <li><span>👫</span><span>Finanzas en pareja o en solitario</span></li>
+        <li><span>🎯</span><span>Metas y análisis de hábitos</span></li>
+        <li><span>🔒</span><span>Privado y seguro. Sin anuncios.</span></li>
+      </ul>
+    </div>
+    <!-- Right form panel -->
+    <div class="auth-login-right">
+    <div class="auth-logo-wrap" style="margin-bottom:8px">
       <svg class="saldo-icon" viewBox="0 0 44 44" fill="none">
         <rect width="44" height="44" rx="12" fill="#2563EB"/>
         <rect x="8" y="30" width="6" height="10" rx="2" fill="white" opacity=".6"/>
@@ -448,11 +508,12 @@ textarea:focus{border-color:var(--uc);background:#fff;}
     </div>
     <div id="spin" style="display:none;margin-top:20px"><div class="spin"></div><span>Iniciando sesión...</span></div>
     <div id="login-error" class="auth-err" style="display:none"></div>
-    <p class="auth-hint" style="margin-top:20px" id="lbl-login-hint">🔒 Tus datos son privados y seguros</p>
+    <p class="auth-hint" style="margin-top:20px" id="lbl-login-hint">🔒 Privado y seguro. Sin anuncios.</p>
     <div style="margin-top:16px;display:flex;align-items:center;gap:8px">
       <button onclick="setLang('es');applyLangToLogin();" id="lang-btn-es" style="border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">🇲🇽 ES</button>
       <button onclick="setLang('en');applyLangToLogin();" id="lang-btn-en" style="border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">🇺🇸 EN</button>
     </div>
+    </div><!-- /auth-login-right -->
   </div>
 
   <!-- EMAIL LOGIN -->
@@ -582,7 +643,7 @@ auth.getRedirectResult().then(function(r){
 });
 
 function showScreen(id){
-  document.getElementById("auth-container").style.display="flex";
+  document.getElementById("auth-container").style.display="block";
   document.getElementById("app").style.display="none";
   document.querySelectorAll(".auth-screen").forEach(function(s){s.classList.remove("active");});
   var s=document.getElementById(id);if(s)s.classList.add("active");
@@ -1844,36 +1905,30 @@ function applyLangToLogin(){
 document.getElementById("btn-google-login").onclick=function(){
   var errEl=document.getElementById("login-error");
   if(errEl){errEl.style.display="none";errEl.textContent="";}
-  function showErr(msg){
-    showSpin(false);
-    if(errEl){errEl.textContent=msg;errEl.style.display="block";}
-    console.error("[Saldo Google Auth]",msg);
-  }
+  function showErr(msg){showSpin(false);if(errEl){errEl.textContent=msg;errEl.style.display="block";}}
   showSpin(true);
-  console.log("[Saldo] Google login clicked, auth:",!!auth);
   if(!auth){showErr("Firebase no inicializado");return;}
   var provider=new firebase.auth.GoogleAuthProvider();
   provider.addScope("email");provider.addScope("profile");
-  // Try popup first (works on desktop + some mobile)
-  auth.signInWithPopup(provider)
-    .then(function(r){console.log("[Saldo] popup ok",r&&r.user&&r.user.email);})
-    .catch(function(err){
-      console.warn("[Saldo] popup err:",err.code,err.message);
-      if(err.code==="auth/popup-blocked"
-        ||err.code==="auth/operation-not-supported-in-this-environment"
-        ||err.code==="auth/popup-closed-by-user"&&false){
-        // Popup blocked → try redirect
-        console.log("[Saldo] falling back to redirect...");
-        toast(t("toastRedirecting"),"#0ea5e9");
-        auth.signInWithRedirect(provider).catch(function(e2){showErr("Error redirect: "+e2.code+" "+e2.message);});
-      } else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
-        showSpin(false); // user closed, silently reset
-      } else if(err.code==="auth/unauthorized-domain"){
-        showErr("Dominio no autorizado en Firebase. Agrega este dominio en Firebase Console → Authentication → Authorized domains.");
-      } else {
-        showErr("Error ("+err.code+"): "+err.message);
-      }
-    });
+  var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if(isMobile){
+    auth.signInWithRedirect(provider).catch(function(e){showErr("Error: "+e.message);});
+  } else {
+    auth.signInWithPopup(provider)
+      .then(function(){})
+      .catch(function(err){
+        if(err.code==="auth/popup-blocked"||err.code==="auth/operation-not-supported-in-this-environment"){
+          toast(t("toastRedirecting"),"#0ea5e9");
+          auth.signInWithRedirect(provider).catch(function(e2){showErr("Error: "+e2.message);});
+        } else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
+          showSpin(false);
+        } else if(err.code==="auth/unauthorized-domain"){
+          showErr("Dominio no autorizado. Agrégalo en Firebase Console → Authentication → Authorized domains.");
+        } else {
+          showErr("Error ("+err.code+"): "+err.message);
+        }
+      });
+  }
 };
 
 // ── SETUP SCREENS ──
