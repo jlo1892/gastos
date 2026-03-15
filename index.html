@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Saldo — Tu dinero, en orden</title>
+<title>Saldo — ¿Cuánto puedes gastar hoy?</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -16,8 +16,9 @@ body{font-family:'Nunito',system-ui,sans-serif;background:#F0F4F8;color:#1e293b;
 #app{max-width:480px;margin:0 auto;min-height:100vh;}h
 
 /* ── AUTH ── */
-.auth-screen{display:none !important;flex-direction:column;align-items:center;justify-content:center;
-  min-height:100vh;padding:36px 24px;background:linear-gradient(150deg,#e0f2fe 0%,#ede9fe 60%,#fce7f3 100%);}
+#auth-container{position:fixed;inset:0;z-index:9990;}
+#auth-container.hidden{display:none !important;}
+.auth-screen{display:none !important;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:36px 24px;background:linear-gradient(150deg,#e0f2fe 0%,#ede9fe 60%,#fce7f3 100%);}
 .auth-screen.active{display:flex !important;}
 .auth-logo-wrap{background:#fff;border-radius:28px;padding:20px 28px;box-shadow:var(--sh2);margin-bottom:20px;display:flex;align-items:center;gap:14px;}
 .auth-logo{font-size:48px;line-height:1;}
@@ -86,7 +87,7 @@ body{font-family:'Nunito',system-ui,sans-serif;background:#F0F4F8;color:#1e293b;
 /* ── TABS ── */
 #tabs{display:flex;background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(0,0,0,.05);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 #tabs::-webkit-scrollbar{display:none;}
-.tab{flex:0 0 auto;padding:11px 10px 9px;border:none;background:none;cursor:pointer;font-size:10px;color:#94a3b8;border-bottom:2.5px solid transparent;font-weight:700;font-family:inherit;white-space:nowrap;touch-action:manipulation;transition:color .15s;}
+.tab{flex:0 0 auto;padding:10px 10px 9px;border:none;background:none;cursor:pointer;font-size:11px;color:#94a3b8;border-bottom:2.5px solid transparent;font-weight:800;font-family:inherit;white-space:nowrap;touch-action:manipulation;transition:color .15s,border-color .15s;}
 .tab.on{color:var(--uc);border-bottom-color:var(--uc);font-weight:900;}
 
 /* ── VIEW ── */
@@ -409,10 +410,9 @@ textarea:focus{border-color:var(--uc);background:#fff;}
 
 /* ── DESKTOP LOGIN LAYOUT ── */
 @media(min-width:700px){
-  .auth-screen.active{flex-direction:row;padding:0;align-items:stretch;justify-content:stretch;}
-  #scr-login{align-items:stretch;}
+  #scr-login.active{flex-direction:row;padding:0;align-items:stretch;justify-content:stretch;}
   .auth-login-left{display:flex!important;}
-  .auth-login-right{border-radius:0;box-shadow:none;}
+  .auth-login-right{border-radius:0;box-shadow:none;overflow-y:auto;}
 }
 .auth-login-left{
   display:none;
@@ -429,8 +429,8 @@ textarea:focus{border-color:var(--uc);background:#fff;}
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  padding:48px 40px;
-  min-height:100vh;
+  padding:40px 28px;
+  min-height:100%;
   background:#fff;
   width:100%;
   max-width:460px;
@@ -440,20 +440,40 @@ textarea:focus{border-color:var(--uc);background:#fff;}
 .auth-feature-list li{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:700;opacity:.95;}
 .auth-feature-list li span:first-child{font-size:22px;width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
-/* Desktop: email/signup screens stay centered with max-width */
+/* Desktop: non-login screens wrap content in centered card */
 @media(min-width:700px){
-  #scr-email-login,#scr-email-signup,#scr-forgot,#scr-setup,#scr-codigo,#scr-join,#scr-rol{
-    max-width:480px;margin:0 auto;border-radius:24px;box-shadow:0 8px 48px rgba(0,0,0,.10);
-    min-height:auto;margin-top:80px;margin-bottom:80px;padding:48px 40px;
+  #scr-email-login .auth-logo-wrap,#scr-email-signup .auth-logo-wrap,#scr-forgot .auth-logo-wrap,
+  #scr-setup .auth-logo-wrap,#scr-codigo .auth-logo-wrap,#scr-join .auth-logo-wrap,#scr-rol .auth-logo-wrap{
+    margin-top:0;
   }
-  #auth-container{background:linear-gradient(160deg,#f0f7ff 0%,#e8f4ff 50%,#f5f0ff 100%);min-height:100vh;}
-  #scr-login{max-width:none;margin:0;border-radius:0;box-shadow:none;min-height:100vh;padding:0;}
+  #scr-login .auth-login-right{max-width:420px;}
 }
+
+/* Mobile: right panel transparent so gradient bg shows */
+@media(max-width:699px){
+  .auth-login-right{background:transparent;padding:32px 24px;justify-content:center;}
+  #scr-login .auth-logo-wrap{box-shadow:0 2px 16px rgba(37,99,235,.12);}
+}
+/* Auth screen spacing improvements */
+.auth-screen > .auth-logo-wrap{margin-top:0;}
+.auth-screen > .auth-title{font-size:24px !important;}
+.auth-screen > .inp-field{margin-top:4px;}
+.auth-screen > .btn-auth-primary{margin-top:16px;}
+#scr-forgot .auth-logo{margin-bottom:8px;}
+#scr-forgot .auth-sub{margin-bottom:20px;}
+
+/* Spin inside auth */
+.spin{width:28px;height:28px;border:3px solid #e2e8f0;border-top-color:var(--uc);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 </style>
 </head>
 <body>
-<div id="auth-container" style="display:block;overflow:hidden;min-height:100vh">
+<div id="auth-container">
+  <div id="auth-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(150deg,#e0f2fe 0%,#ede9fe 60%,#fce7f3 100%);z-index:10">
+    <svg width="48" height="48" viewBox="0 0 44 44" fill="none" style="margin-bottom:16px"><rect width="44" height="44" rx="12" fill="#2563EB"/><rect x="8" y="30" width="6" height="10" rx="2" fill="white" opacity=".6"/><rect x="17" y="22" width="6" height="18" rx="2" fill="white" opacity=".85"/><rect x="26" y="14" width="6" height="26" rx="2" fill="white"/></svg>
+    <div class="spin" style="border-color:#2563eb33;border-top-color:#2563eb"></div>
+  </div>
   <div id="scr-login" class="auth-screen active">
     <!-- Desktop left panel -->
     <div class="auth-login-left">
@@ -461,13 +481,13 @@ textarea:focus{border-color:var(--uc);background:#fff;}
         <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="rgba(255,255,255,.2)"/><rect x="8" y="30" width="6" height="10" rx="2" fill="white" opacity=".7"/><rect x="17" y="22" width="6" height="18" rx="2" fill="white" opacity=".85"/><rect x="26" y="14" width="6" height="26" rx="2" fill="white"/><path d="M36 9L39 6M39 6H36M39 6V9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span style="font-size:28px;font-weight:900;letter-spacing:-1px">Saldo</span>
       </div>
-      <div style="font-size:38px;font-weight:900;line-height:1.15;letter-spacing:-1.5px;margin-bottom:12px">Tu dinero,<br>bajo control.</div>
-      <div style="font-size:15px;opacity:.8;line-height:1.6;max-width:320px">Saldo te dice cuánto puedes gastar esta semana — sin hojas de cálculo ni sorpresas.</div>
+      <div style="font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:14px">¿Cuánto puedes<br>gastar hoy?</div>
+      <div style="font-size:16px;opacity:.85;line-height:1.65;max-width:340px">Saldo calcula tu gasto diario ideal y te avisa si vas bien o mal — sin hojas de cálculo, sin sorpresas.</div>
       <ul class="auth-feature-list">
-        <li><span>📊</span><span>Presupuesto semanal automático</span></li>
-        <li><span>👫</span><span>Finanzas en pareja o en solitario</span></li>
-        <li><span>🎯</span><span>Metas y análisis de hábitos</span></li>
-        <li><span>🔒</span><span>Privado y seguro. Sin anuncios.</span></li>
+        <li><span>📅</span><span>Te dice cuánto te queda esta semana</span></li>
+        <li><span>⚡</span><span>Gasto diario recomendado en tiempo real</span></li>
+        <li><span>👫</span><span>Solo o en pareja — tú decides</span></li>
+        <li><span>🔒</span><span>Privado, sin anuncios, siempre gratis</span></li>
       </ul>
     </div>
     <!-- Right form panel -->
@@ -482,8 +502,8 @@ textarea:focus{border-color:var(--uc);background:#fff;}
       </svg>
       <div class="auth-brand">Sal<span>do</span></div>
     </div>
-    <div class="auth-title" style="margin-bottom:4px" id="login-main-title">Tu dinero, en orden</div>
-    <div class="auth-sub">Registra, analiza y controla tus<br>finanzas personales o en pareja.</div>
+    <div class="auth-title" style="margin-bottom:4px;font-size:28px;letter-spacing:-1px" id="login-main-title">¿Cuánto puedes<br>gastar hoy?</div>
+    <div class="auth-sub" style="margin-bottom:24px">Saldo te dice cuánto te queda esta semana<br>y cuánto puedes gastar sin pasarte.</div>
     <div class="auth-methods">
       <button class="btn-google" id="btn-google-login">
         <svg class="google-icon" viewBox="0 0 48 48">
@@ -504,11 +524,11 @@ textarea:focus{border-color:var(--uc);background:#fff;}
         <span id="lbl-ms-login">Continuar con Microsoft</span>
       </button>
       <button class="btn-email" id="btn-go-email-login"><span id="lbl-email-login">✉️ &nbsp;Iniciar sesión con email</span></button>
-      <button class="btn-email primary" id="btn-go-email-signup"><span id="lbl-email-signup">Crear cuenta gratis</span></button>
+      <button class="btn-email primary" id="btn-go-email-signup"><span id="lbl-email-signup">Empezar gratis →</span></button>
     </div>
     <div id="spin" style="display:none;margin-top:20px"><div class="spin"></div><span>Iniciando sesión...</span></div>
     <div id="login-error" class="auth-err" style="display:none"></div>
-    <p class="auth-hint" style="margin-top:20px" id="lbl-login-hint">🔒 Privado y seguro. Sin anuncios.</p>
+    <p class="auth-hint" style="margin-top:16px" id="lbl-login-hint">🔒 Privado · Sin anuncios · Siempre gratis</p>
     <div style="margin-top:16px;display:flex;align-items:center;gap:8px">
       <button onclick="setLang('es');applyLangToLogin();" id="lang-btn-es" style="border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">🇲🇽 ES</button>
       <button onclick="setLang('en');applyLangToLogin();" id="lang-btn-en" style="border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">🇺🇸 EN</button>
@@ -631,19 +651,16 @@ var db=null,auth=null,currentUser=null,spaceId=null,dbListener=null;
 firebase.initializeApp(FC);
 db=firebase.database();
 auth=firebase.auth();
+// Ensure session persists across reloads (default is LOCAL, but set explicitly)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(){});
 
-auth.getRedirectResult().then(function(r){
-  if(r&&r.user){showSpin(true);}
-}).catch(function(err){
-  showSpin(false);
-  if(err.code&&err.code!=='auth/no-auth-event'){
-    var el=document.getElementById('login-error');
-    if(el){el.textContent='Error al iniciar sesión: '+err.message;el.style.display='block';}
-  }
-});
+// getRedirectResult handled below
+
 
 function showScreen(id){
-  document.getElementById("auth-container").style.display="block";
+  var ac=document.getElementById("auth-container");
+  ac.classList.remove("hidden");
+  ac.style.display="";
   document.getElementById("app").style.display="none";
   document.querySelectorAll(".auth-screen").forEach(function(s){s.classList.remove("active");});
   var s=document.getElementById(id);if(s)s.classList.add("active");
@@ -759,8 +776,8 @@ es:{
   rolTitle:'¿Quién eres tú?',rolSub:'Hay dos perfiles en este espacio.',
 
   /* Tabs */
-  tabHome:'📊 Mi semana',tabInsights:'✨ Insights',tabAgregar:'➕ Agregar',
-  tabHistorial:'📅 Historial',tabAnalisis:'📈 Análisis',tabFinanzas:'💰 Finanzas',tabConfig:'⚙️ Ajustes',
+  tabHome:'Semana',tabInsights:'Insights',tabAgregar:'+ Agregar',
+  tabHistorial:'Historial',tabAnalisis:'Análisis',tabFinanzas:'Finanzas',tabConfig:'Ajustes',
 
   /* Onboarding */
   onbSkip:'Saltar →',onbNext:'Continuar →',onbBack:'← Atrás',onbStart:'Empezar →',
@@ -773,9 +790,9 @@ es:{
   onbSuggestedLbl:'Tu presupuesto semanal sugerido',onbSuggestedSub:'({0} libres) ÷ 4.3 semanas del mes',
 
   /* Home */
-  homeWeek:'Esta semana',homeAvail:'💰 Disponible',homeOver:'⚠️ Te pasaste en',
+  homeWeek:'Esta semana',homeAvail:'Disponible esta semana',homeOver:'Te pasaste en',
   homeSpent:'Gastado',homeBudget:'Presupuesto',homeNewWeek:'🆕 Nueva semana',
-  homeSavWeek:'🌱 Tu semana en números',homeSpentLabel:'Gastado',homeThisMonth:'Este mes',
+  homeSavWeek:'Cómo vas esta semana',homeSpentLabel:'Gastado',homeThisMonth:'Este mes',
   homeAccumulated:'Ahorrado acumulado',homeEstMonth:'Proyección del mes',
   homeSavedPrev:'✨ Llevan ahorrado',homeSavedPrev2:'en semanas anteriores — ¡sigan así!',
   homeToday:'Hoy',homeRemain:'Restan',homeDaysLeft:'días en la semana',homeOver2:'Te pasaste hoy en',
@@ -977,12 +994,12 @@ es:{
   csvYes:'Sí',csvNo:'No',csvPaid:'Pagado',csvPending:'Pendiente',csvSection:'── GASTOS FIJOS',csvOf:'──',
 
   /* Header inline keys */
-  heroSignOut:'Salir ↩',heroAvailable:'💰 Disponible esta semana',heroOverBudget:'⚠️ Te pasaste en',
+  heroSignOut:'Salir ↩',heroAvailable:'Te quedan esta semana',heroOverBudget:'Te pasaste por',
   heroSpent:'Gastado',heroOf:'de',heroDailyBudget:'Guía diaria',heroWeekEnd:'Proyección semanal',
   heroAddExp:'➕ Agregar gasto',heroExtraInc:'💰 Ingreso extra',heroAdjBudget:'⚙️ Ajustar presupuesto ▾',
 
   /* Home inline keys */
-  homeDailyLeft:'disponible hoy',homeDailyOver:'Te pasaste hoy en',
+  homeDailyLeft:'para gastar hoy',homeDailyOver:'Pasaste el límite de hoy por',
   homeDailySpent:'Gastaste',homeDailyOf:'de tu guía diaria de',homeDailyDaysLeft:' días restantes en la semana',
   homeSavingsGoalPct:'de la meta semanal',homeInvRequests:'te pide',
   homeNoExpTip:'Toca ➕ para registrar tu primer gasto esta semana.',
@@ -1217,8 +1234,8 @@ en:{
   rolTitle:'Who are you?',rolSub:'There are two profiles in this space.',
 
   /* Tabs */
-  tabHome:'📊 My week',tabInsights:'✨ Insights',tabAgregar:'➕ Add',
-  tabHistorial:'📅 History',tabAnalisis:'📈 Analysis',tabFinanzas:'💰 Finances',tabConfig:'⚙️ Settings',
+  tabHome:'Week',tabInsights:'Insights',tabAgregar:'+ Add',
+  tabHistorial:'History',tabAnalisis:'Analysis',tabFinanzas:'Finances',tabConfig:'Settings',
 
   /* Onboarding */
   onbSkip:'Skip →',onbNext:'Continue →',onbBack:'← Back',onbStart:'Get started →',
@@ -1782,7 +1799,9 @@ function cargarEspacio(sid,rol){
     usuario=rol;
     var col=rol==="manolo"?"#2563EB":"#DB2777",light=rol==="manolo"?"#EFF6FF":"#FDF2F8";
     document.documentElement.style.setProperty("--uc",col);document.documentElement.style.setProperty("--ul",light);
-    document.getElementById("auth-container").style.display="none";document.getElementById("app").style.display="block";
+    document.getElementById("auth-container").style.display="none";
+    document.getElementById("auth-container").classList.add("hidden");
+    document.getElementById("app").style.display="block";
     checkSemana();checkMes();
     if(!ST.settings.onboardingDone){showOnboarding();}else{renderApp();}
     dbListener=function(snap2){if(!fbGuard&&snap2.exists()){var v2=snap2.val();if(v2.settings)ST.settings=Object.assign({},ST.settings,v2.settings);if(v2.perfiles)ST.perfiles=v2.perfiles;if(v2.finanzas)ST.finanzas=v2.finanzas;ST.gastos=v2.gastos||{};ST.rollovers=v2.rollovers||{};ST.resumenesMensuales=v2.resumenesMensuales||{};ST.frecuentes=v2.frecuentes||[];ST.invitaciones=v2.invitaciones||{};ST.reacciones=v2.reacciones||{};ST.deudas=v2.deudas||[];ST.autoadds=v2.autoadds||{};ST.categorias=v2.categorias||[];renderApp();}};
@@ -1791,33 +1810,71 @@ function cargarEspacio(sid,rol){
 }
 
 // ── AUTH STATE ──
-// Handle redirect result (for mobile/popup-blocked flows)
-auth.getRedirectResult().then(function(result){
-  // result.user will be null if no redirect was in progress — that's fine,
-  // onAuthStateChanged handles the rest.
-}).catch(function(err){
-  var errEl=document.getElementById("login-error");
-  if(errEl){errEl.textContent="Error: "+err.message;errEl.style.display="block";}
-  showSpin(false);
-});
+// We use a "resolved" flag to avoid the race condition where onAuthStateChanged
+// fires with null before Firebase has a chance to restore the session.
+// The auth-loading overlay stays up until we know the user's state for certain.
+var _authResolved = false;
 
-auth.onAuthStateChanged(function(user){
-  console.log("[Saldo] onAuthStateChanged fired, user:", user?user.email:"null");
-  if(!user){showScreen("scr-login");return;}
-  currentUser=user;showSpin(true);
-  db.ref("usuarios/"+user.uid).once("value",function(snap){
-    console.log("[Saldo] db user snap exists:", snap.exists());
-    showSpin(false);
-    if(snap.exists()&&snap.val().espacioId){
-      var sid=snap.val().espacioId,savedRol=snap.val().rol||null;
-      if(savedRol){cargarEspacio(sid,savedRol);}
-      else{db.ref("espacios/"+sid+"/miembros/"+user.uid).once("value",function(ms){if(ms.exists()&&ms.val()){db.ref("usuarios/"+user.uid+"/rol").set(ms.val());cargarEspacio(sid,ms.val());}else{mostrarRoles(sid);}});}
-    }else{var n=user.displayName?user.displayName.split(" ")[0]:"";var setupT=document.getElementById("setup-title");if(setupT&&n)setupT.textContent=t("greetHola")+n+"!";showScreen("scr-setup");}
-  }, function(dbErr){
-    console.error("[Saldo] db read error:", dbErr);
-    showSpin(false);
-    var errEl=document.getElementById("login-error");
-    if(errEl){errEl.textContent="Error de base de datos: "+dbErr.message+" (¿Reglas de Firebase bloqueando?)";errEl.style.display="block";}
+function _hideAuthLoading() {
+  var el = document.getElementById("auth-loading");
+  if (el) el.style.display = "none";
+}
+
+function _routeUser(user) {
+  if (!user) {
+    _hideAuthLoading();
+    showScreen("scr-login");
+    return;
+  }
+  currentUser = user;
+  db.ref("usuarios/" + user.uid).once("value", function(snap) {
+    _hideAuthLoading();
+    if (snap.exists() && snap.val().espacioId) {
+      var sid = snap.val().espacioId, savedRol = snap.val().rol || null;
+      if (savedRol) { cargarEspacio(sid, savedRol); }
+      else {
+        db.ref("espacios/" + sid + "/miembros/" + user.uid).once("value", function(ms) {
+          if (ms.exists() && ms.val()) { db.ref("usuarios/" + user.uid + "/rol").set(ms.val()); cargarEspacio(sid, ms.val()); }
+          else { mostrarRoles(sid); }
+        });
+      }
+    } else {
+      var n = user.displayName ? user.displayName.split(" ")[0] : "";
+      var setupT = document.getElementById("setup-title");
+      if (setupT && n) setupT.textContent = t("greetHola") + n + "!";
+      showScreen("scr-setup");
+    }
+  }, function(dbErr) {
+    _hideAuthLoading();
+    var errEl = document.getElementById("login-error");
+    if (errEl) { errEl.textContent = "Error de base de datos: " + dbErr.message; errEl.style.display = "block"; }
+    showScreen("scr-login");
+  });
+}
+
+// Process redirect result FIRST, then set up onAuthStateChanged.
+// This prevents the flicker where onAuthStateChanged fires with null
+// while a redirect login is in progress.
+auth.getRedirectResult().then(function(result) {
+  // If a redirect login just completed, onAuthStateChanged will fire with the user shortly.
+  // Nothing needed here — the listener below handles it.
+}).catch(function(err) {
+  if (err.code && err.code !== "auth/no-auth-event" && err.code !== "auth/null-user") {
+    var errEl = document.getElementById("login-error");
+    if (errEl) { errEl.textContent = "Error al entrar: " + err.message; errEl.style.display = "block"; }
+  }
+}).finally(function() {
+  // Start listening AFTER getRedirectResult resolves to avoid double-fire
+  auth.onAuthStateChanged(function(user) {
+    if (!_authResolved) {
+      _authResolved = true;
+      _routeUser(user);
+    } else if (!user) {
+      // Session expired / signed out
+      currentUser = null;
+      showScreen("scr-login");
+    }
+    // If user is truthy and already resolved = app already loaded, do nothing
   });
 });
 
@@ -1950,7 +2007,7 @@ function _doEntrar(sid,rol){
   spaceId=sid;usuario=rol;
   var col=rol==="manolo"?"#2563EB":"#DB2777",light=rol==="manolo"?"#EFF6FF":"#FDF2F8";
   document.documentElement.style.setProperty("--uc",col);document.documentElement.style.setProperty("--ul",light);
-  document.getElementById("auth-container").style.display="none";document.getElementById("app").style.display="block";
+  document.getElementById("auth-container").style.display="none";document.getElementById("auth-container").classList.add("hidden");document.getElementById("app").style.display="block";
   checkSemana();checkMes();
   if(!ST.settings.onboardingDone){showOnboarding();}else{renderApp();}
   db.ref("espacios/"+sid).once("value",function(snap){if(snap.exists()){var v=snap.val();if(v.settings)ST.settings=Object.assign({},ST.settings,v.settings);if(v.perfiles)ST.perfiles=v.perfiles;if(v.finanzas){ST.finanzas=Object.assign({gastosPlanificados:[]},v.finanzas);if(!ST.finanzas.gastosPlanificados)ST.finanzas.gastosPlanificados=[];}ST.gastos=v.gastos||{};ST.rollovers=v.rollovers||{};ST.ultimaSemana=v.ultimaSemana||null;ST.ultimoMes=v.ultimoMes||null;ST.resumenesMensuales=v.resumenesMensuales||{};ST.frecuentes=v.frecuentes||[];ST.invitaciones=v.invitaciones||{};ST.reacciones=v.reacciones||{};ST.deudas=v.deudas||[];ST.autoadds=v.autoadds||{};ST.categorias=v.categorias||[];renderApp();}},function(err){console.warn("Firebase read error:",err.message);});
