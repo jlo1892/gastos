@@ -2889,7 +2889,7 @@ function buildPlanForm(){
     +'<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
     +[{v:'gradual',lbl:'planTypeGradual',desc:'planTypeGradualDesc',ic:'📅'},{v:'semana',lbl:'planTypeWeek',desc:'planTypeWeekDesc',ic:'📌'},{v:'cubierto',lbl:'planTypeCovered',desc:'planTypeCoveredDesc',ic:'✅'}].map(function(opt){
       var sel=planTempTipo===opt.v;
-      return'<div id="plan-tipo-'+opt.v+'" onclick="planTempTipo=''+opt.v+'';renderApp();" style="display:flex;align-items:flex-start;gap:10px;background:'+(sel?'var(--ul)':'#fff')+';border:2px solid '+(sel?'var(--uc)':'#e2e8f0')+';border-radius:12px;padding:12px;cursor:pointer;touch-action:manipulation">'
+      return'<div id="plan-tipo-'+opt.v+'" onclick="planTempTipo=&#39;'+opt.v+'&#39;;renderApp();" style="display:flex;align-items:flex-start;gap:10px;background:'+(sel?'var(--ul)':'#fff')+';border:2px solid '+(sel?'var(--uc)':'#e2e8f0')+';border-radius:12px;padding:12px;cursor:pointer;touch-action:manipulation">'
         +'<span style="font-size:20px;flex-shrink:0">'+opt.ic+'</span>'
         +'<div><div style="font-size:13px;font-weight:800;color:'+(sel?'var(--uc)':'#374151')+'">'+t(opt.lbl)+'</div>'
         +'<div style="font-size:11px;color:#64748b;margin-top:2px">'+t(opt.desc)+'</div></div>'
@@ -2954,7 +2954,7 @@ function bFinanzas(){
         +'</div></div>';
     }).join(""):'<div style="color:#94a3b8;font-size:13px;padding:12px 0;text-align:center">'+t('planNoItems')+'</div>')
     +'<button id="btn-add-planificado" style="width:100%;margin-top:10px;padding:12px;background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px dashed #93c5fd;border-radius:12px;color:#1d4ed8;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">'+t('planAdd')+'</button>'
-    +(planAddOpen?buildPlanForm():'')';
+    +(planAddOpen?buildPlanForm():'');
 
   // ── SAVINGS GOAL ──
   var metaGoalHtml='<div style="font-size:13px;color:#64748b;margin-bottom:10px">'+t('finSavGoalDesc')+'</div>'
@@ -3029,8 +3029,8 @@ function bConfig(){
     +'<div class="ss"><div class="sst">'+t('cfgWeekTitle')+'</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">'+t('cfgWeekDesc')+'</div><div class="dg">'+ getDias().map(function(d,i){return'<button class="db '+(s.semanaInicia===i?"on":"")+'" data-i="'+i+'">'+d+'</button>';}).join("")+ '</div></div></div>'
     +'<div class="ss"><div class="sst">'+t('cfgCurrTitle')+'</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">'+t('cfgCurrDesc')+'</div>'+buildCurrencySelect('cfg-currency-sel',(s.currency||'MXN'))+'<button id="btn-save-currency" class="bprimary" style="background:#0ea5e9;margin-top:10px">'+t('cfgCurrSave')+'</button></div></div>'
     +'<div class="ss"><div class="sst">'+t('cfgLangTitle')+'</div><div class="scard"><div class="sr"><div style="font-size:14px;font-weight:700">🌐 '+t('cfgLangLabel')+'</div><div style="display:flex;gap:8px;margin-top:8px">'
-    +'<button id="lang-es-cfg" onclick="setLang('es');renderApp();" style="background:'+(LANG==='es'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='es'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇲🇽 Español</button>'
-    +'<button id="lang-en-cfg" onclick="setLang('en');renderApp();" style="background:'+(LANG==='en'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='en'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇺🇸 English</button>'
+    +'<button id="lang-es-cfg" onclick="setLang(&#39;es&#39;);renderApp();" style="background:'+(LANG==='es'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='es'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇲🇽 Español</button>'
+    +'<button id="lang-en-cfg" onclick="setLang(&#39;en&#39;);renderApp();" style="background:'+(LANG==='en'?'#2563EB':'#f1f5f9')+';color:'+(LANG==='en'?'#fff':'#475569')+';border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">🇺🇸 English</button>'
     +'</div></div></div></div>'
     +'<div class="ss"><div class="sst">'+t('cfgNotifTitle')+'</div><div class="scard"><div class="sr"><div><div style="font-size:14px;font-weight:700">'+t('cfgNotifLabel')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('cfgNotifSub')+'</div></div><button id="btn-notif" class="btnpill '+(s.notifActivas?"":"sec")+'">'+( s.notifActivas?t('cfgNotifOn'):t('cfgNotifOff'))+'</button></div></div></div>'
     +proSection
