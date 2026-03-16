@@ -2127,10 +2127,16 @@ function _routeUser(user) {
   });
 }
 
-// ── REDIRECT RESULT (for popup-blocked fallback) ──
+// ── REDIRECT RESULT (for popup-blocked fallback on mobile) ──
+var _redirectDone = false;
+var _pendingAuthUser = undefined;
 auth.getRedirectResult().then(function(result){
+  _redirectDone = true;
   if(result && result.user){ showSpin(true); }
+  else if(_pendingAuthUser !== undefined){ _authDone=true; _routeUser(_pendingAuthUser); }
 }).catch(function(err){
+  _redirectDone = true;
+  if(_pendingAuthUser !== undefined){ _authDone=true; _routeUser(_pendingAuthUser); }
   if(err && err.code && err.code!=="auth/no-auth-event"){
     showSpin(false);
     showErr("Error al iniciar sesión: "+err.message);
@@ -2139,7 +2145,8 @@ auth.getRedirectResult().then(function(result){
 
 auth.onAuthStateChanged(function(user) {
   if (!_authDone) {
-    // First fire on page load — determines initial state
+    // First fire on page load — wait for getRedirectResult before routing
+    if(!_redirectDone){ _pendingAuthUser = user; return; }
     _authDone = true;
     _routeUser(user);
   } else if (user && !currentUser) {
