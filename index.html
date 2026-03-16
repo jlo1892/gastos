@@ -2127,6 +2127,16 @@ function _routeUser(user) {
   });
 }
 
+// ── REDIRECT RESULT (for popup-blocked fallback) ──
+auth.getRedirectResult().then(function(result){
+  if(result && result.user){ showSpin(true); }
+}).catch(function(err){
+  if(err && err.code && err.code!=="auth/no-auth-event"){
+    showSpin(false);
+    showErr("Error al iniciar sesión: "+err.message);
+  }
+});
+
 auth.onAuthStateChanged(function(user) {
   if (!_authDone) {
     // First fire on page load — determines initial state
