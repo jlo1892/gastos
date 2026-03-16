@@ -335,7 +335,7 @@ textarea:focus{border-color:var(--uc);background:#fff;}
 .inp-field::placeholder{color:#94a3b8;font-weight:600;}
 .auth-link{background:none;border:none;color:#2563EB;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;padding:4px;text-decoration:none;touch-action:manipulation;}
 .auth-link:hover{text-decoration:underline;}
-.auth-err{color:#fff;background:#ef4444;font-size:13px;font-weight:700;margin-top:12px;text-align:left;max-width:320px;line-height:1.5;display:none;padding:10px 14px;border-radius:10px;word-break:break-word;}
+.auth-err{color:#fff;background:#dc2626;font-size:13px;font-weight:700;margin-top:16px;text-align:left;width:100%;max-width:320px;line-height:1.5;display:none;padding:12px 16px;border-radius:12px;word-break:break-word;border:2px solid #991b1b;box-shadow:0 4px 16px rgba(220,38,38,.3);}
 .auth-methods{display:flex;flex-direction:column;align-items:center;width:100%;gap:10px;}
 .auth-switch{margin-top:6px;font-size:13px;color:#64748b;}
 
@@ -570,7 +570,7 @@ textarea:focus{border-color:var(--uc);background:#fff;}
       <button class="btn-email" id="btn-go-email-login"><span id="lbl-email-login">✉️ &nbsp;Iniciar sesión con email</span></button>
       <button class="btn-email primary" id="btn-go-email-signup"><span id="lbl-email-signup">Empezar gratis →</span></button>
     </div>
-    <div id="spin" style="display:none;margin-top:20px"><div class="spin"></div><span>Iniciando sesión...</span></div>
+    <div id="spin" style="display:none;margin-top:16px;flex-direction:column;align-items:center;gap:8px;color:#64748b;font-size:13px;font-weight:700"><div class="spin"></div><span>Redirigiendo a Google...</span></div>
     <div id="login-error" class="auth-err" style="display:none"></div>
     <p class="auth-hint" style="margin-top:16px" id="lbl-login-hint">🔒 Privado · Sin anuncios · Siempre gratis</p>
     <div style="margin-top:16px;display:flex;align-items:center;gap:8px">
@@ -2176,10 +2176,14 @@ function _routeUser(user) {
 
 // ── REDIRECT RESULT (for popup-blocked fallback on mobile) ──
 var _authDone = false;
-auth.getRedirectResult().then(function(){}).catch(function(err){
+auth.getRedirectResult().then(function(result){
+  // If redirect login completed, onAuthStateChanged will fire with the user
+  if(result&&result.user){showSpin(true);}
+}).catch(function(err){
   if(err&&err.code&&err.code!=="auth/no-auth-event"&&err.code!=="auth/null-user"){
     var el=document.getElementById("login-error");
-    if(el){el.textContent="Error: "+err.message;el.style.display="block";}
+    if(el){el.textContent="Error al iniciar: "+err.message;el.style.display="block";el.scrollIntoView({behavior:"smooth",block:"center"});}
+    showSpin(false);
   }
 });
 
@@ -2281,33 +2285,25 @@ function applyLangToLogin(){
 document.getElementById("btn-google-login").onclick=function(){
   var errEl=document.getElementById("login-error");
   if(errEl){errEl.style.display="none";errEl.textContent="";}
-  function showErr(msg){showSpin(false);if(errEl){errEl.textContent=msg;errEl.style.display="block";}}
-  showSpin(true);
+  function showErr(msg){
+    showSpin(false);
+    // Show error visibly
+    if(errEl){errEl.textContent=msg;errEl.style.display="block";}
+    // Scroll error into view
+    if(errEl)errEl.scrollIntoView({behavior:"smooth",block:"center"});
+  }
   if(!auth){showErr("Firebase no inicializado");return;}
+  showSpin(true);
   var provider=new firebase.auth.GoogleAuthProvider();
   provider.addScope("email");provider.addScope("profile");
-  var isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  if(isMobile){
-    auth.signInWithRedirect(provider).catch(function(e){showErr("Error: "+e.message);});
-  } else {
-    auth.signInWithPopup(provider)
-      .then(function(result){
-        // Auth state change handled by onAuthStateChanged
-        showSpin(true);
-      })
-      .catch(function(err){
-        if(err.code==="auth/popup-blocked"||err.code==="auth/operation-not-supported-in-this-environment"){
-          toast(t("toastRedirecting"),"#0ea5e9");
-          auth.signInWithRedirect(provider).catch(function(e2){showErr("Error: "+e2.message);});
-        } else if(err.code==="auth/popup-closed-by-user"||err.code==="auth/cancelled-popup-request"){
-          showSpin(false);
-        } else if(err.code==="auth/unauthorized-domain"){
-          showErr("Dominio no autorizado. Agrégalo en Firebase Console → Authentication → Authorized domains.");
-        } else {
-          showErr("Error ("+err.code+"): "+err.message);
-        }
-      });
-  }
+  // Always use redirect — most reliable across all browsers and environments
+  auth.signInWithRedirect(provider).catch(function(err){
+    if(err.code==="auth/unauthorized-domain"){
+      showErr("Dominio no autorizado en Firebase. Ve a Firebase Console → Authentication → Authorized domains y agrega este dominio.");
+    } else {
+      showErr("Error: "+err.message+" ("+err.code+")");
+    }
+  });
 };
 
 // ── SETUP SCREENS ──
