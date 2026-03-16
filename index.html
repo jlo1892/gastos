@@ -1960,7 +1960,7 @@ en:{
   addCatSection:'Your categories',addCatSectionDesc:'Create custom categories to organize your spending.',
   addQuickSection:'Quick access',
   addQuickSectionDesc:'Expenses you repeat often. Tap to add in one click.',
-
+h
   /* Analysis */
   analCommitted:'Committed',analFixed:'Fixed',analFixedPending:'Pending fixed',
   analVariable:'Variable',analPendingLabel:'Pending',
@@ -2987,7 +2987,7 @@ function bHome(sem,todos,pres,tot,disp,roll){
 
   // ── INVITATIONS ──
   var inv=ST.invitaciones&&Object.values(ST.invitaciones).filter(function(i){return i.estado==="pendiente"&&i.para===usuario;});
-  var invHtml=inv&&inv.length?'<div class="alert aw"><div style="font-size:24px">💸</div><div><div class="at">'+p[inv[0].de].nombre+' '+t('homeInvRequests')+' '+fmt(inv[0].monto)+'</div><div class="as">'+escapeHtml(inv[0].desc)+'</div><div style="display:flex;gap:8px;margin-top:8px"><button style="background:#22c55e;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="aceptarInv(''+inv[0].id+'')">'+t('invAccept')+'</button><button style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="rechazarInv(''+inv[0].id+'')">'+t('invReject')+'</button></div></div></div>':"";
+  var invHtml=inv&&inv.length?'<div class="alert aw"><div style="font-size:24px">💸</div><div><div class="at">'+p[inv[0].de].nombre+' '+t('homeInvRequests')+' '+fmt(inv[0].monto)+'</div><div class="as">'+escapeHtml(inv[0].desc)+'</div><div style="display:flex;gap:8px;margin-top:8px"><button style="background:#22c55e;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="aceptarInv(\''+inv[0].id+'\')">'+t('invAccept')+'</button><button style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="rechazarInv(\''+inv[0].id+'\')">'+t('invReject')+'</button></div></div></div>':"";
 
   // ── PLANNED PAYMENTS ALERT ──
   var planHtml="";
