@@ -467,6 +467,52 @@ textarea:focus{border-color:var(--uc);background:#fff;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
 
+/* ── ADD MODE BUTTONS ── */
+.add-mode-btn{width:100%;border:none;cursor:pointer;font-family:inherit;touch-action:manipulation;transition:all .15s;}
+.add-mode-btn:active{transform:scale(.96);}
+
+/* ── HERO IMPROVEMENTS ── */
+.hmonto{font-size:clamp(42px,10vw,68px);font-weight:900;letter-spacing:-3px;line-height:1;color:#fff;}
+.hero-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:2.5px;opacity:.8;margin-bottom:4px;}
+.hero-sub{font-size:13px;opacity:.85;margin-top:4px;font-weight:600;}
+
+/* ── TABS CLEANER ── */
+#tabs{display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid #f1f5f9;background:#fff;padding:0 4px;}
+#tabs::-webkit-scrollbar{display:none;}
+.tab{flex:1;min-width:0;padding:11px 4px 9px;border:none;background:none;cursor:pointer;font-size:11px;color:#94a3b8;border-bottom:2.5px solid transparent;font-weight:800;font-family:inherit;white-space:nowrap;touch-action:manipulation;transition:color .15s,border-color .15s;text-align:center;}
+.tab.on{color:var(--uc);border-color:var(--uc);font-weight:900;}
+
+/* ── FINCARD container ── */
+.fincard{background:transparent;}
+
+/* ── ADD MODE BUTTONS active state ── */
+.add-mode-btn:active{transform:scale(.95);}
+
+/* ── HOME hero improvements ── */
+.hero-center{padding:12px 0 16px;}
+.hmonto{font-size:clamp(44px,11vw,72px) !important;font-weight:900;letter-spacing:-3px;line-height:1;color:#fff;}
+
+/* ── Daily card tighter ── */
+.daily-card{border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:12px;}
+.daily-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.daily-main{font-size:17px;font-weight:900;line-height:1.2;}
+.daily-sub{font-size:12px;color:rgba(0,0,0,.55);margin-top:2px;font-weight:600;}
+.daily-ok{background:linear-gradient(135deg,#ecfdf5,#d1fae5);border-left:4px solid #10b981;}
+.daily-warn{background:linear-gradient(135deg,#fffbeb,#fef3c7);border-left:4px solid #f59e0b;}
+.daily-over{background:linear-gradient(135deg,#fef2f2,#fee2e2);border-left:4px solid #ef4444;}
+
+/* ── Cleaner fcard ── */
+.fcard{background:#fff;border-radius:20px;padding:18px 16px;margin-bottom:0;}
+.ss{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;}
+.sst{font-size:13px;font-weight:900;margin-bottom:10px;color:#1e293b;}
+.scard{background:#f8fafc;border-radius:12px;padding:12px;}
+
+/* ── Improve scroll on auth screens ── */
+.auth-screen{overflow-y:auto !important;-webkit-overflow-scrolling:touch;}
+
+/* ── Remove double-border on fincard sections ── */
+.fincard .ss{box-shadow:none;border:1.5px solid #f1f5f9;}
+
 </style>
 </head>
 <body>
@@ -478,11 +524,12 @@ textarea:focus{border-color:var(--uc);background:#fff;}
         <svg width="44" height="44" viewBox="0 0 44 44" fill="none"><rect width="44" height="44" rx="12" fill="rgba(255,255,255,.2)"/><rect x="8" y="30" width="6" height="10" rx="2" fill="white" opacity=".7"/><rect x="17" y="22" width="6" height="18" rx="2" fill="white" opacity=".85"/><rect x="26" y="14" width="6" height="26" rx="2" fill="white"/><path d="M36 9L39 6M39 6H36M39 6V9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span style="font-size:28px;font-weight:900;letter-spacing:-1px">Saldo</span>
       </div>
-      <div style="font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:14px">¿Cuánto puedes<br>gastar hoy?</div>
+      <div style="font-size:40px;font-weight:900;line-height:1.1;letter-spacing:-2px;margin-bottom:14px">Sabe cuánto puedes<br>gastar esta semana.</div>
       <div style="font-size:16px;opacity:.85;line-height:1.65;max-width:340px">Saldo calcula tu gasto diario ideal y te avisa si vas bien o mal — sin hojas de cálculo, sin sorpresas.</div>
       <ul class="auth-feature-list">
-        <li><span>📅</span><span>Te dice cuánto te queda esta semana</span></li>
-        <li><span>⚡</span><span>Gasto diario recomendado en tiempo real</span></li>
+        <li><span>📅</span><span>Cuánto te queda esta semana — al instante</span></li>
+        <li><span>⚡</span><span>Tu guía de gasto diario para no pasarte</span></li>
+        <li><span>🔮</span><span>Proyección de cierre de semana en tiempo real</span></li>
         <li><span>👫</span><span>Solo o en pareja — tú decides</span></li>
         <li><span>🔒</span><span>Privado, sin anuncios, siempre gratis</span></li>
       </ul>
@@ -499,8 +546,8 @@ textarea:focus{border-color:var(--uc);background:#fff;}
       </svg>
       <div class="auth-brand">Sal<span>do</span></div>
     </div>
-    <div class="auth-title" style="margin-bottom:4px;font-size:28px;letter-spacing:-1px" id="login-main-title">¿Cuánto puedes<br>gastar hoy?</div>
-    <div class="auth-sub" style="margin-bottom:24px">Saldo te dice cuánto te queda esta semana<br>y cuánto puedes gastar sin pasarte.</div>
+    <div class="auth-title" style="margin-bottom:4px;font-size:26px;letter-spacing:-1px;line-height:1.2" id="login-main-title">Sabe cuánto puedes<br>gastar esta semana.</div>
+    <div class="auth-sub" style="margin-bottom:24px">Sin hojas de cálculo.<br>Sin adivinar. Sin sorpresas.</div>
     <div class="auth-methods">
       <button class="btn-google" id="btn-google-login">
         <svg class="google-icon" viewBox="0 0 48 48">
@@ -772,7 +819,7 @@ es:{
   rolTitle:'¿Quién eres tú?',rolSub:'Hay dos perfiles en este espacio.',
 
   /* Tabs */
-  tabHome:'Semana',tabInsights:'Insights',tabAgregar:'+ Agregar',
+  tabHome:'Semana',tabInsights:'Insights',tabAgregar:'Agregar',
   tabHistorial:'Historial',tabAnalisis:'Análisis',tabFinanzas:'Finanzas',tabConfig:'Ajustes',
 
   /* Onboarding */
@@ -788,7 +835,7 @@ es:{
   /* Home */
   homeWeek:'Esta semana',homeAvail:'Disponible esta semana',homeOver:'Te pasaste en',
   homeSpent:'Gastado',homeBudget:'Presupuesto',homeNewWeek:'🆕 Nueva semana',
-  homeSavWeek:'Cómo vas esta semana',homeSpentLabel:'Gastado',homeThisMonth:'Este mes',
+  homeSavWeek:'Ahorro esta semana',homeSpentLabel:'Gastado',homeThisMonth:'Este mes',
   homeAccumulated:'Ahorrado acumulado',homeEstMonth:'Proyección del mes',
   homeSavedPrev:'✨ Llevan ahorrado',homeSavedPrev2:'en semanas anteriores — ¡sigan así!',
   homeToday:'Hoy',homeRemain:'Restan',homeDaysLeft:'días en la semana',homeOver2:'Te pasaste hoy en',
@@ -990,12 +1037,12 @@ es:{
   csvYes:'Sí',csvNo:'No',csvPaid:'Pagado',csvPending:'Pendiente',csvSection:'── GASTOS FIJOS',csvOf:'──',
 
   /* Header inline keys */
-  heroSignOut:'Salir ↩',heroAvailable:'Te quedan esta semana',heroOverBudget:'Te pasaste por',
+  heroSignOut:'Salir ↩',heroAvailable:'Lo que te queda esta semana',heroOverBudget:'Te pasaste por',
   heroSpent:'Gastado',heroOf:'de',heroDailyBudget:'Guía diaria',heroWeekEnd:'Proyección semanal',
   heroAddExp:'➕ Agregar gasto',heroExtraInc:'💰 Ingreso extra',heroAdjBudget:'⚙️ Ajustar presupuesto ▾',
 
   /* Home inline keys */
-  homeDailyLeft:'para gastar hoy',homeDailyOver:'Pasaste el límite de hoy por',
+  homeDailyLeft:'puedes gastar hoy',homeDailyOver:'Pasaste el límite de hoy por',
   homeDailySpent:'Gastaste',homeDailyOf:'de tu guía diaria de',homeDailyDaysLeft:' días restantes en la semana',
   homeSavingsGoalPct:'de la meta semanal',homeInvRequests:'te pide',
   homeNoExpTip:'Toca ➕ para registrar tu primer gasto esta semana.',
@@ -1051,7 +1098,7 @@ es:{
   analBudgetOver2:'⚠️ Excedido por ',
 
   /* Onboarding */
-  onb1Title:'¿Cómo usas Saldo?',
+  onb1Title:'Bienvenido a Saldo',
   onb1Desc:'Saldo no es un rastreador de gastos genérico — es tu guía semanal. Te dice cuánto puedes gastar hoy y cómo vas a cerrar la semana.',
   onb2Title:'¿Cómo te llamas?',
   onb2Desc:'Personaliza tu perfil. Puedes cambiarlo cuando quieras.',
@@ -1061,9 +1108,9 @@ es:{
   onb4Desc:'Renta, servicios y suscripciones. Los restamos primero del ingreso, para que tu presupuesto semanal muestre solo el dinero que realmente puedes usar.',
   onb5Title:'¿Cuándo te pagan?',
   onb5Desc:'Elige cómo divides el mes. Saldo ajusta tu presupuesto y proyecciones según el ciclo que elijas.',
-  onb6Title:'Así funciona Saldo',
+  onb6Title:'Tu mapa de Saldo',
   onb6Desc:'Un recorrido rápido para que saques el máximo desde el primer día.',
-  onb7Title:'Tu presupuesto está listo 🎉',
+  onb7Title:'¡Listo para empezar! 🎉',
   onb7Desc:'Esto es cuánto puedes gastar por semana:',
   onb7Tip:'💡 Un gasto fijo no siempre es el mismo monto — pero es un compromiso recurrente. En <b>Finanzas</b> puedes ajustar el monto mes a mes.',
   onb7StartBtn:'¡Empezar ahora →',
@@ -1381,7 +1428,7 @@ en:{
   rolTitle:'Who are you?',rolSub:'There are two profiles in this space.',
 
   /* Tabs */
-  tabHome:'Week',tabInsights:'Insights',tabAgregar:'+ Add',
+  tabHome:'Week',tabInsights:'Insights',tabAgregar:'Add',
   tabHistorial:'History',tabAnalisis:'Analysis',tabFinanzas:'Finances',tabConfig:'Settings',
 
   /* Onboarding */
@@ -1634,7 +1681,7 @@ en:{
   heroAddExp:'➕ Add expense',heroExtraInc:'💰 Extra income',heroAdjBudget:'⚙️ Adjust budget ▾',
 
   /* Home inline keys */
-  homeDailyLeft:'left today',homeDailyOver:'Over today by',
+  homeDailyLeft:'safe to spend today',homeDailyOver:'Over today by',
   homeDailySpent:"You spent",homeDailyOf:'of your daily guide of',
   homeDailyDaysLeft:' days left in the week',
   homeSavingsGoalPct:'of weekly goal',homeInvRequests:'requests',
@@ -2128,36 +2175,27 @@ function _routeUser(user) {
 }
 
 // ── REDIRECT RESULT (for popup-blocked fallback on mobile) ──
-var _redirectDone = false;
-var _pendingAuthUser = undefined;
-auth.getRedirectResult().then(function(result){
-  _redirectDone = true;
-  if(result && result.user){ showSpin(true); }
-  else if(_pendingAuthUser !== undefined){ _authDone=true; _routeUser(_pendingAuthUser); }
-}).catch(function(err){
-  _redirectDone = true;
-  if(_pendingAuthUser !== undefined){ _authDone=true; _routeUser(_pendingAuthUser); }
-  if(err && err.code && err.code!=="auth/no-auth-event"){
-    showSpin(false);
-    showErr("Error al iniciar sesión: "+err.message);
+var _authDone = false;
+auth.getRedirectResult().then(function(){}).catch(function(err){
+  if(err&&err.code&&err.code!=="auth/no-auth-event"&&err.code!=="auth/null-user"){
+    var el=document.getElementById("login-error");
+    if(el){el.textContent="Error: "+err.message;el.style.display="block";}
   }
 });
 
-auth.onAuthStateChanged(function(user) {
-  if (!_authDone) {
-    // First fire on page load — wait for getRedirectResult before routing
-    if(!_redirectDone){ _pendingAuthUser = user; return; }
-    _authDone = true;
+auth.onAuthStateChanged(function(user){
+  if(!_authDone){
+    _authDone=true;
     _routeUser(user);
-  } else if (user && !currentUser) {
-    // User just signed in (popup/redirect completed) — route them in
+  } else if(user&&!currentUser){
     _routeUser(user);
-  } else if (!user && currentUser) {
-    // User signed out
-    currentUser = null;
+  } else if(!user&&currentUser){
+    currentUser=null;
     showScreen("scr-login");
   }
 });
+
+
 
 
 // ── MICROSOFT AUTH ──
@@ -2609,6 +2647,7 @@ function updateWhatIf(todos){
 
 // ── RENDER APP ──
 function buildVista(sem,todos,pres,tot,disp,roll){
+  if(vista==="insights"||vista==="analisis"){vista="finanzas";}
   if(vista==="home")return bHome(sem,todos,pres,tot,disp,roll);
   if(vista==="insights")return bInsights(sem,todos,pres,tot,disp,roll);
   if(vista==="agregar")return bAgregar();
@@ -2619,6 +2658,7 @@ function buildVista(sem,todos,pres,tot,disp,roll){
   return "";
 }
 
+var _rSem=[],_rTodos=[],_rPres=0,_rTot=0,_rDisp=0,_rRoll=0;
 function renderApp(){
   if(chartCat){try{chartCat.destroy();}catch(e){}chartCat=null;}
   if(chartMes){try{chartMes.destroy();}catch(e){}chartMes=null;}
@@ -2655,8 +2695,8 @@ function renderApp(){
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">'+AJS.map(function(a){return'<button class="aj btn-aj" data-a="'+a+'">'+a+'</button>';}).join("")+'</div></div>'
     +'<div class="pmrow"><button class="pm pmm" id="bmen">− '+fmt(ajuste)+'</button><button class="pm pmp" id="bmas">+ '+fmt(ajuste)+'</button></div></div></details>'
     +periodoActualHTML()+'</div>'
-    +'<div id="tabs">'+[{v:"home",label:t('tabHome')},{v:"insights",label:t('tabInsights')},{v:"agregar",label:t('tabAgregar')},{v:"historial",label:t('tabHistorial')},{v:"analisis",label:t('tabAnalisis')},{v:"finanzas",label:t('tabFinanzas')},{v:"config",label:t('tabConfig')}].map(function(tb){return'<button class="tab btn-tab'+(vista===tb.v?" on":"")+'\" data-v="'+tb.v+'">'+tb.label+'</button>';}).join("")+'</div>'
-    +'<div id="view">'+buildVista(semA,todos,presTot,tot,disp,roll)+'</div>'
+    +'<div id="tabs">'+[{v:"home",label:t('tabHome')},{v:"agregar",label:t('tabAgregar')},{v:"finanzas",label:t('tabFinanzas')},{v:"historial",label:t('tabHistorial')},{v:"config",label:t('tabConfig')}].map(function(tb){return'<button class="tab btn-tab'+(vista===tb.v?" on":"")+'\" data-v="'+tb.v+'">'+tb.label+'</button>';}).join("")+'</div>'
+    +'<div id="view">'+(_rSem=semA,_rTodos=todos,_rPres=presTot,_rTot=tot,_rDisp=disp,_rRoll=roll,buildVista(semA,todos,presTot,tot,disp,roll))+'</div>'
     +((emojiFor||reactFor||editGastoId)?renderModal():"")
     +'<div id="toast"></div>';
   document.getElementById("app").innerHTML=html;
@@ -2719,6 +2759,8 @@ function bindAll(todos){
       sorpresaManejo="semana";
       renderApp();
     };
+    // Add mode buttons
+    qa(".add-mode-btn",function(b){b.onclick=function(){addMode=b.dataset.mode;renderApp();};});
     var so1=g("sorpresa-opt1");if(so1)so1.onclick=function(e){e.stopPropagation();sorpresaManejo="semana";renderApp();};
     var so2=g("sorpresa-opt2");if(so2)so2.onclick=function(e){e.stopPropagation();sorpresaManejo="mes";renderApp();};
     var nr=g("nota-row");
@@ -2788,6 +2830,8 @@ function bindAll(todos){
   if(vista==="finanzas"){
     var bar=g("btn-add-rec");if(bar)bar.onclick=addRec;
     var bsf=g("btn-save-fin");if(bsf)bsf.onclick=saveFinanzas;
+    // Finanzas sub-tab buttons
+    qa('[data-finsub]',function(b){b.onclick=function(){window._finSubTab=b.dataset.finsub;renderApp();};});
     var bsmf=g("btn-save-meta-fin");if(bsmf)bsmf.onclick=function(){var v=parseFloat(g("inp-meta-fin")&&g("inp-meta-fin").value)||0;ST.settings.metaAhorro=v;saveDB();toast(t('toastMetaSaved'));renderApp();};
     // Plan bindings
     var bap2=g("btn-add-planificado");if(bap2)bap2.onclick=function(){planAddOpen=!planAddOpen;renderApp();};
@@ -2921,114 +2965,78 @@ function buildGastoRow(gx,p){
 
 // ── VIEW BUILDERS ──
 function bHome(sem,todos,pres,tot,disp,roll){
-  var p=ST.perfiles,dI=ST.settings.semanaInicia||4;
-  var mT=sem.filter(function(g){return g.usuario==="manolo";}).reduce(function(s,g){return s+g.monto;},0);
-  var eT=sem.filter(function(g){return g.usuario==="esposa";}).reduce(function(s,g){return s+g.monto;},0);
-  var pctM=Math.min((mT/Math.max(pres,1))*100,100),pctE=Math.min((eT/Math.max(pres,1))*100,100);
+  var p=ST.perfiles,u=usuario;
+  var ok=disp>=0;
+  var pct=Math.min((tot/Math.max(pres,1))*100,100);
+  var hBg=ok
+    ?(pct<60?"linear-gradient(160deg,#1d4ed8,#2563eb)":pct<85?"linear-gradient(160deg,#1d4ed8,#7c3aed)":"linear-gradient(160deg,#9333ea,#6d28d9)")
+    :"linear-gradient(160deg,#991b1b,#dc2626)";
 
-  // DAILY CARD
+  // ── DAILY GUIDE ──
   var dc=calcDiario(sem,pres);
-  var dailyCardHtml="";
+  var dailyHtml="";
   if(dc.presHoy>0){
     var okD=dc.dispHoy>=0;
     var pctD=Math.min((dc.gastHoy/Math.max(dc.presHoy,1))*100,100);
-    var cardClass=okD?(pctD<60?"daily-ok":"daily-warn"):"daily-over";
-    var icon=okD?(pctD<60?"✅":"⚡"):"🔴";
-    var mainMsg=okD
-      ?fmt(dc.dispHoy)+' '+t('homeDailyLeft')
-      :t('homeDailyOver')+' '+fmt(Math.abs(dc.dispHoy));
-    var subMsg=okD
-      ?t('homeDailySpent')+' '+fmt(dc.gastHoy)+' '+t('homeDailyOf')+' '+fmt(dc.presHoy)
-      :(dc.diasRest+t('homeDailyDaysLeft'));
-    dailyCardHtml='<div class="daily-card '+cardClass+'"><div class="daily-icon">'+icon+'</div>'
-      +'<div style="flex:1"><div class="daily-main">'+mainMsg+'</div>'
-      +'<div class="daily-sub">'+subMsg+'</div>'
-      +'<div style="background:rgba(0,0,0,.1);border-radius:50px;height:4px;margin-top:6px"><div style="height:4px;border-radius:50px;background:'+(okD?"#059669":"#dc2626")+';width:'+pctD+'%"></div></div>'
-      +'</div></div>';
+    dailyHtml='<div class="daily-card '+(okD?(pctD<60?"daily-ok":"daily-warn"):"daily-over")+'">'      +'<div class="daily-icon">'+(okD?(pctD<60?"✅":"⚡"):"🔴")+'</div>'      +'<div style="flex:1">'      +'<div class="daily-main">'+(okD?fmt(dc.dispHoy)+' '+t('homeDailyLeft'):t('homeDailyOver')+' '+fmt(Math.abs(dc.dispHoy)))+'</div>'      +'<div class="daily-sub">'+(okD?t('homeDailySpent')+' '+fmt(dc.gastHoy)+' '+t('homeDailyOf')+' '+fmt(dc.presHoy):(dc.diasRest+t('homeDailyDaysLeft')))+'</div>'      +'<div style="background:rgba(0,0,0,.1);border-radius:50px;height:4px;margin-top:6px"><div style="height:4px;border-radius:50px;background:'+(okD?"#059669":"#dc2626")+';width:'+pctD+'%"></div></div>'      +'</div></div>';
   }
 
-  // SAVINGS CARD
+  // ── WEEKLY PROJECTION ──
   var ah=calcAhorro(pres,todos);
-  var ahHtml='<div class="ahorro-card">'
-    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">'
-    +'<div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#065f46">'+t('homeSavWeek')+'</div>'
-    +'<div style="font-size:36px;font-weight:900;color:#047857;letter-spacing:-1.5px;line-height:1;margin-top:4px">'+fmt(ah.ahorroSem)+'</div></div>'
-    +'<div style="text-align:right"><div style="font-size:10px;color:#065f46;font-weight:700;text-transform:uppercase">'+t('heroSpent')+'</div><div style="font-size:16px;font-weight:900;color:#374151">'+fmt(ah.gastSem)+'</div></div></div>'
-    +(ah.meta>0?'<div class="ahorro-bar-w"><div class="ahorro-bar-f" style="width:'+ah.pct+'%"></div></div><div style="font-size:11px;color:#065f46;font-weight:700;text-align:right;margin-bottom:4px">'+ah.pct+'% '+t('homeSavingsGoalPct')+' ('+fmt(ah.meta)+')</div>':'')
-    +'<div class="ahorro-grid-3">'
-    +'<div class="ahorro-stat"><div style="font-size:9px;color:#065f46;font-weight:800;text-transform:uppercase;margin-bottom:3px">'+t('homeThisMonth')+'</div><div style="font-size:15px;font-weight:900;color:#047857">'+fmt(ah.ahorroMes)+'</div></div>'
-    +'<div class="ahorro-stat" style="border:2px solid #34d399"><div style="font-size:9px;color:#065f46;font-weight:800;text-transform:uppercase;margin-bottom:3px">'+t('homeAccumulated')+'</div><div style="font-size:15px;font-weight:900;color:#047857">'+fmt(ah.totalConActual)+'</div></div>'
-    +'<div class="ahorro-stat"><div style="font-size:9px;color:#065f46;font-weight:800;text-transform:uppercase;margin-bottom:3px">'+t('homeEstMonth')+'</div><div style="font-size:15px;font-weight:900;color:#047857">'+fmt(ah.estimacion)+'</div></div>'
-    +'</div>'
-    +(ah.ahorroAcumulado>0?'<div style="background:rgba(255,255,255,.5);border-radius:10px;padding:8px 12px;margin-top:8px;font-size:12px;color:#065f46;font-weight:700">✨ '+t('homeSavedPrev')+' <b>'+fmt(ah.ahorroAcumulado)+'</b> '+t('homeSavedPrev2')+'</div>':'')
-    +'</div>';
-
-  // PLANNED EXPENSES CARD
   var planData=calcPlanificados();
+
+  // ── RECENT EXPENSES ──
+  var ult=sem.slice(0,5);
+  var ultHtml='<div class="ss"><div class="sst">'+t('homeLastExpenses')+'</div>'    +(sem.length      ?'<div class="scard">'+ult.map(function(gx){return buildGastoRow(gx,p);}).join("")+'</div>'       +'<button id="btn-ver-hist" style="width:100%;background:none;border:none;color:var(--uc);font-size:13px;font-weight:800;padding:8px;cursor:pointer;font-family:inherit;margin-top:4px">'+t('homeViewAll')+'</button>'      :'<div class="empty" style="padding:32px 0"><div style="font-size:44px">🌱</div><div style="margin-top:8px;font-weight:700">'+t('homeNoExp')+'</div><div style="font-size:12px;margin-top:4px;color:#94a3b8">'+t('homeNoExpTip')+'</div></div>')    +'</div>';
+
+  // ── INVITATIONS ──
+  var inv=ST.invitaciones&&Object.values(ST.invitaciones).filter(function(i){return i.estado==="pendiente"&&i.para===usuario;});
+  var invHtml=inv&&inv.length?'<div class="alert aw"><div style="font-size:24px">💸</div><div><div class="at">'+p[inv[0].de].nombre+' '+t('homeInvRequests')+' '+fmt(inv[0].monto)+'</div><div class="as">'+escapeHtml(inv[0].desc)+'</div><div style="display:flex;gap:8px;margin-top:8px"><button style="background:#22c55e;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="aceptarInv(''+inv[0].id+'')">'+t('invAccept')+'</button><button style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="rechazarInv(''+inv[0].id+'')">'+t('invReject')+'</button></div></div></div>':"";
+
+  // ── PLANNED PAYMENTS ALERT ──
   var planHtml="";
   if(planData.reservaSemanal>0||planData.dueThisWeek.length>0){
     var hasDue=planData.dueThisWeek.length>0;
-    planHtml='<div style="background:linear-gradient(135deg,'+(hasDue?'#fff7ed,#fef3c7':'#f0f9ff,#e0f2fe')+');border-radius:var(--ra);padding:16px;margin-bottom:12px;box-shadow:var(--sh);border-left:4px solid '+(hasDue?'#f59e0b':'#0ea5e9')+'">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
-      +'<div style="font-size:13px;font-weight:900;color:'+(hasDue?'#92400e':'#0c4a6e')+'">'+(hasDue?'⚠️ '+t('planDueThisWeek'):'📌 '+t('planTitle'))+'</div>'
-      +'<button onclick="vista=\'finanzas\';renderApp();" style="background:none;border:none;color:var(--uc);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit">'+t('homeViewFin')+'</button></div>'
-      +'<div style="font-size:12px;color:#374151;margin-bottom:6px">'
-      +planData.dueThisWeek.slice(0,2).map(function(p){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0"><span>📌 '+escapeHtml(p.nombre)+'</span><span style="font-weight:900;color:#92400e">'+fmt(p.monto)+'</span></div>';}).join('')
-      +(planData.activosGradual.length?planData.activosGradual.slice(0,2).map(function(x){return'<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0"><span>💰 '+escapeHtml(x.p.nombre)+'</span><span style="font-weight:900;color:#0369a1">'+fmt(x.weeklyRes)+t('planWeeklyReserve').replace('Reserva semanal sugerida','').replace('Suggested weekly reserve','')+'</span></div>';}).join(''):'')
-      +'</div>'
-      +'<div style="background:rgba(0,0,0,.07);border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center">'
-      +'<div style="font-size:11px;font-weight:700;color:'+(hasDue?'#92400e':'#0c4a6e')+'">'+(LANG==='en'?'Weekly reserve':'Reserva semanal')+'</div>'
-      +'<div style="font-size:15px;font-weight:900;color:'+(hasDue?'#f59e0b':'#0ea5e9')+'">'+fmt(planData.reservaSemanal)+'</div></div>'
-      +'</div>';
+    planHtml='<div style="background:linear-gradient(135deg,'+(hasDue?"#fff7ed,#fef3c7":"#f0f9ff,#e0f2fe")+');border-radius:16px;padding:14px 16px;margin-bottom:12px;border-left:4px solid '+(hasDue?"#f59e0b":"#0ea5e9")+'">'      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'      +'<div style="font-size:13px;font-weight:900;color:'+(hasDue?"#92400e":"#0c4a6e")+'">'+(hasDue?"⚠️ "+t('planDueThisWeek'):"📌 "+t('planTitle'))+'</div>'      +'<button onclick="vista='finanzas';renderApp();" style="background:none;border:none;color:var(--uc);font-size:11px;font-weight:800;cursor:pointer;font-family:inherit">'+t('homeViewFin')+'</button></div>'      +'<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.06);border-radius:10px;padding:8px 12px">'      +'<span style="font-size:12px;font-weight:700;color:'+(hasDue?"#92400e":"#0c4a6e")+'">'+(LANG==="en"?"Weekly reserve":"Reserva semanal")+'</span>'      +'<span style="font-size:15px;font-weight:900;color:'+(hasDue?"#f59e0b":"#0ea5e9")+'">'+fmt(planData.reservaSemanal)+'</span></div>'      +'</div>';
   }
 
-  // USER CARDS (only for shared accounts)
+  // ── SAVINGS SUMMARY (collapsed, secondary) ──
+  var savHtml='';
+  if(ah.ahorroSem>0||ah.meta>0){
+    var savPct=ah.meta>0?Math.min(Math.round(ah.ahorroSem/ah.meta*100),100):0;
+    savHtml='<div style="background:#f0fdf4;border-radius:16px;padding:14px 16px;margin-bottom:12px;border-left:4px solid #10b981">'      +'<div style="display:flex;justify-content:space-between;align-items:center">'      +'<div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#065f46">'+t('homeSavWeek')+'</div>'      +'<div style="font-size:24px;font-weight:900;color:#047857;letter-spacing:-1px">'+fmt(ah.ahorroSem)+'</div></div>'      +'<div style="text-align:right">'      +(ah.meta>0?'<div style="font-size:10px;color:#065f46;font-weight:700">'+savPct+'% de meta</div><div style="font-size:13px;font-weight:900;color:#374151">'+fmt(ah.meta)+'</div>':'')      +'</div></div>'      +(ah.meta>0?'<div style="background:#bbf7d0;border-radius:50px;height:4px;margin-top:8px"><div style="height:4px;border-radius:50px;background:#059669;width:'+savPct+'%"></div></div>':'')      +'</div>';
+  }
+
+  // ── USER SPLIT (shared only) ──
+  var mT=sem.filter(function(g){return g.usuario==="manolo";}).reduce(function(s,g){return s+g.monto;},0);
+  var eT=sem.filter(function(g){return g.usuario==="esposa";}).reduce(function(s,g){return s+g.monto;},0);
+  var pctM=Math.min((mT/Math.max(pres,1))*100,100),pctE=Math.min((eT/Math.max(pres,1))*100,100);
   var ul="";
   if(ST.settings.tipoCuenta==="compartida"){
-    ul='<div class="ucards"><div class="ucard '+(usuario==="manolo"?"act":"")+'"><div style="display:flex;align-items:center;gap:8px"><span>'+p.manolo.emoji+'</span><span style="font-size:12px;font-weight:900">'+escapeHtml(p.manolo.nombre)+'</span></div><div style="font-size:20px;font-weight:900;margin:5px 0">'+fmt(mT)+'</div><div class="mbw"><div class="mbf" style="width:'+pctM+'%;background:#2563EB"></div></div></div>'
-      +'<div class="ucard '+(usuario==="esposa"?"act":"")+'"><div style="display:flex;align-items:center;gap:8px"><span>'+p.esposa.emoji+'</span><span style="font-size:12px;font-weight:900">'+escapeHtml(p.esposa.nombre)+'</span></div><div style="font-size:20px;font-weight:900;margin:5px 0">'+fmt(eT)+'</div><div class="mbw"><div class="mbf" style="width:'+pctE+'%;background:#DB2777"></div></div></div></div>';
+    ul='<div class="ucards"><div class="ucard '+(usuario==="manolo"?"act":"")+'"><div style="display:flex;align-items:center;gap:8px"><span>'+p.manolo.emoji+'</span><span style="font-size:12px;font-weight:900">'+escapeHtml(p.manolo.nombre)+'</span></div><div style="font-size:20px;font-weight:900;margin:5px 0">'+fmt(mT)+'</div><div class="mbw"><div class="mbf" style="width:'+pctM+'%;background:#2563EB"></div></div></div>'      +'<div class="ucard '+(usuario==="esposa"?"act":"")+'"><div style="display:flex;align-items:center;gap:8px"><span>'+p.esposa.emoji+'</span><span style="font-size:12px;font-weight:900">'+escapeHtml(p.esposa.nombre)+'</span></div><div style="font-size:20px;font-weight:900;margin:5px 0">'+fmt(eT)+'</div><div class="mbw"><div class="mbf" style="width:'+pctE+'%;background:#DB2777"></div></div></div></div>';
   }
 
-  // INVITATIONS
-  var inv=ST.invitaciones&&Object.values(ST.invitaciones).filter(function(i){return i.estado==="pendiente"&&i.para===usuario;});
-  var invHtml=inv&&inv.length?'<div class="alert aw"><div style="font-size:24px">💸</div><div><div class="at">'+p[inv[0].de].nombre+' '+t('homeInvRequests')+' '+fmt(inv[0].monto)+'</div><div class="as">'+escapeHtml(inv[0].desc)+'</div><div style="display:flex;gap:8px;margin-top:8px"><button style="background:#22c55e;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="aceptarInv(\''+inv[0].id+'\')">'+t('invAccept')+'</button><button style="background:#ef4444;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:inherit" onclick="rechazarInv(\''+inv[0].id+'\')">'+t('invReject')+'</button></div></div></div>':"";
+  // ── AI SUMMARY ──
+  var rMes=ST.resumenesMensuales&&ST.resumenesMensuales[mesKey()];
+  var resumenHtml=rMes?'<div style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:16px;padding:14px 16px;margin-bottom:12px;border-top:3px solid #0ea5e9"><div style="font-size:13px;font-weight:900;margin-bottom:6px">'+t('aiMonthSummary')+'</div><div style="font-size:13px;line-height:1.6;color:#374151">'+escapeHtml(rMes.texto).replace(/\n/g,"<br/>")+"</div></div>":"";
 
-  // RECENT EXPENSES
-  var ult=sem.slice(0,5);
-  var ultHtml='<div class="ss"><div class="sst">'+t('homeLastExpenses')+'</div>'
-    +(sem.length
-      ?'<div class="scard">'+ult.map(function(gx){return buildGastoRow(gx,p);}).join("")+'</div>'
-       +'<button id="btn-ver-hist" style="width:100%;background:none;border:none;color:var(--uc);font-size:13px;font-weight:800;padding:8px;cursor:pointer;font-family:inherit;margin-top:4px">'+t('homeViewAll')+'</button>'
-      :'<div class="empty" style="padding:32px 0"><div style="font-size:44px">🌱</div><div style="margin-top:8px;font-weight:700">'+t('homeNoExp')+'</div><div style="font-size:12px;margin-top:4px;color:#94a3b8">'+t('homeNoExpTip')+'</div></div>')
-    +'</div>';
-
-  // ACTIVE DEBTS
+  // ── ACTIVE DEBTS ──
   var deudasActivas=(ST.deudas||[]).filter(function(d){return d.activa;});
   var deudaHtml="";
   if(deudasActivas.length){
     var totSaldo=deudasActivas.reduce(function(s,d){return s+(d.saldo||0);},0);
     var totPago=deudasActivas.reduce(function(s,d){return s+(d.pagoMensual||0);},0);
-    var tipoIcon={tarjeta:"💳",prestamo:"🏦",diferido:"🗓️",otro:"📋"};
-    deudaHtml='<div style="background:#fff;border-radius:var(--ra);padding:18px;margin-bottom:12px;box-shadow:var(--sh);border-left:4px solid #6366f1">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:14px;font-weight:900">💳 '+t('homeDebts')+'</div><div style="font-size:11px;color:#64748b">'+deudasActivas.length+' '+(deudasActivas.length===1?t('finDebtActive'):t('finDebtActives'))+'</div></div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
-      +'<div style="background:#f5f3ff;border-radius:12px;padding:10px"><div style="font-size:9px;color:#5b21b6;font-weight:800;text-transform:uppercase">'+t('homeDebtTotal')+'</div><div style="font-size:18px;font-weight:900;color:#6d28d9">'+fmt(totSaldo)+'</div></div>'
-      +'<div style="background:#fef3c7;border-radius:12px;padding:10px"><div style="font-size:9px;color:#92400e;font-weight:800;text-transform:uppercase">'+t('homeDebtMonthly')+'</div><div style="font-size:18px;font-weight:900;color:#d97706">'+fmt(totPago)+'</div></div>'
-      +'</div>'
-      +deudasActivas.slice(0,3).map(function(d){return'<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f1f5f9"><span style="font-size:16px">'+(tipoIcon[d.tipo]||"📋")+'</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+escapeHtml(d.nombre)+'</div></div><div style="font-size:14px;font-weight:900;color:#374151">'+fmt(d.saldo)+'</div></div>';}).join("")
-      +'<button onclick="vista=\'finanzas\';renderApp();" style="background:none;border:none;color:#6366f1;font-size:12px;font-weight:800;margin-top:8px;cursor:pointer;font-family:inherit;padding:4px 0">'+t('homeViewFin')+'</button></div>';
+    deudaHtml='<div style="background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;border-left:4px solid #6366f1"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:14px;font-weight:900">💳 '+t('homeDebts')+'</div><button onclick="vista=\'finanzas\';renderApp();" style="background:none;border:none;color:#6366f1;font-size:11px;font-weight:800;cursor:pointer;font-family:inherit">'+t('homeViewFin')+'</button></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:#f5f3ff;border-radius:10px;padding:9px"><div style="font-size:9px;color:#5b21b6;font-weight:800;text-transform:uppercase">'+t('homeDebtTotal')+'</div><div style="font-size:17px;font-weight:900;color:#6d28d9">'+fmt(totSaldo)+'</div></div><div style="background:#fef3c7;border-radius:10px;padding:9px"><div style="font-size:9px;color:#92400e;font-weight:800;text-transform:uppercase">'+t('homeDebtMonthly')+'</div><div style="font-size:17px;font-weight:900;color:#d97706">'+fmt(totPago)+'</div></div></div></div>';
   }
 
-  // AI SUMMARY
-  var rMes=ST.resumenesMensuales&&ST.resumenesMensuales[mesKey()];
-  var resumenHtml=rMes?'<div style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:var(--ra);padding:18px;margin-bottom:12px;box-shadow:var(--sh);border-top:4px solid #0ea5e9"><div style="font-size:14px;font-weight:900;margin-bottom:8px">'+t('aiMonthSummary')+'</div><div style="font-size:13px;line-height:1.7;color:#374151">'+escapeHtml(rMes.texto).replace(/\n/g,"<br/>")+'</div></div>':"";
+  // ── ADD EXPENSE CTA ──
+  var addCTA='<button onclick="vista=\'agregar\';renderApp();" style="width:100%;background:var(--uc);color:#fff;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:900;cursor:pointer;font-family:inherit;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(37,99,235,.3)">➕ '+t('heroAddExp')+'</button>';
 
-  // CTA to Insights
-  var insightsCTA='<button id="go-insights" style="width:100%;background:linear-gradient(135deg,#8b5cf6,#6366f1);border:none;border-radius:16px;padding:13px;color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px">'+t('homeInsightsCTA')+'</button>';
+  var rolloverBanner=(esSemNueva&&rolloverVal>0?'<div class="alert an"><div style="font-size:24px">🔄</div><div><div class="at">'+t('homeRollover')+' '+fmt(rolloverVal)+'. '+t('homeRollover2')+' '+fmt(pres)+'</div></div></div>':"");
 
-  return (esSemNueva&&rolloverVal>0?'<div class="alert an"><div style="font-size:24px">🔄</div><div><div class="at">'+t('homeRollover')+' '+fmt(rolloverVal)+'. '+t('homeRollover2')+' '+fmt(pres)+'</div></div></div>':"")
-    +invHtml+dailyCardHtml+planHtml+ahHtml+ul+ultHtml+deudaHtml+resumenHtml+insightsCTA;
+  return rolloverBanner+invHtml+dailyCardHtml+addCTA+planHtml+savHtml+ul+ultHtml+deudaHtml+resumenHtml;
 }
+
 
 function bInsights(sem,todos,pres,tot,disp,roll){
   var p=ST.perfiles,dI=ST.settings.semanaInicia||4;
@@ -3084,7 +3092,6 @@ function bAgregar(){
   var frecHtml=frec.length?'<div class="frecg" style="margin-top:4px">'+frec.map(function(f,i){return'<button class="frecb" data-i="'+i+'"><span>'+escapeHtml(f.desc)+'</span><span style="color:var(--uc);font-weight:900;margin-left:4px">'+fmt(f.monto)+'</span></button>';}).join("")+'</div>':"";
   var catHtml='<div class="cg">'+cats.map(function(c){return'<button class="cb btn-cat '+(cat===c.id?"on":"")+'" data-c="'+c.id+'"><span>'+c.i+'</span>'+escapeHtml(c.l)+'</button>';}).join("")+'</div>';
 
-  // Inline new category form
   var newCatForm=newCatInlineOpen?
     '<div style="background:#f8fafc;border:2px solid #e2e8f0;border-radius:14px;padding:14px;margin-top:10px">'
     +'<div style="font-size:12px;font-weight:800;color:#475569;margin-bottom:8px">'+t('addNewCatLabel')+'</div>'
@@ -3099,39 +3106,93 @@ function bAgregar(){
     +'</div>'
     :'';
 
-  // Surprise expense handling UI
-  var sorpresaHtml='<div id="sorpresa-row" class="splitrow '+(sorpresaActivo?"on":"")+'"><div><div style="font-size:14px;font-weight:700">'+t('surpriseToggle')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('surpriseSub')+'</div></div><div class="stgl '+(sorpresaActivo?"on":"")+'"></div></div>'
-  +(sorpresaActivo?'<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:12px;padding:12px;margin-top:2px">'
-    +'<div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:8px">'+t('surpriseHandleTitle')+'</div>'
-    +'<div style="display:flex;gap:8px">'
-    +'<button id="sorpresa-opt1" style="flex:1;padding:10px 8px;border-radius:10px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;border:2px solid '+(sorpresaManejo==="semana"?"var(--uc)":"#e2e8f0")+';background:'+(sorpresaManejo==="semana"?"var(--ul)":"#fff")+'">'+t('surpriseOpt1')+'</button>'
-    +'<button id="sorpresa-opt2" style="flex:1;padding:10px 8px;border-radius:10px;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;border:2px solid '+(sorpresaManejo==="mes"?"var(--uc)":"#e2e8f0")+';background:'+(sorpresaManejo==="mes"?"var(--ul)":"#fff")+'">'+t('surpriseOpt2')+'</button>'
-    +'</div>'
-    +'<div style="font-size:11px;color:#78350f;margin-top:6px">'+(sorpresaManejo==="semana"?t('surpriseOpt1Desc'):t('surpriseOpt2Desc'))+'</div>'
-    +'</div>':'');
+  // MODE SELECTOR — 3 clear actions
+  var modes=[
+    {id:'normal',   icon:'💳', title:(LANG==='en'?'Regular expense':'Gasto normal'),   sub:(LANG==='en'?'Something you spent today or this week':'Lo que gastaste hoy o esta semana')},
+    {id:'imprevisto',icon:'🎲',title:(LANG==='en'?'Unexpected expense':'Imprevisto'),  sub:(LANG==='en'?"Didn't plan for it? We won't mess up your week":'No lo planeabas. No dejamos que descuadre tu semana')},
+    {id:'planeado', icon:'📅', title:(LANG==='en'?'Planned payment':'Pago planeado'), sub:(LANG==='en'?'Future payment you already know is coming':'Un gasto futuro que ya sabes que viene')},
+  ];
+  var modeBar='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px">'
+    +modes.map(function(m){
+      var sel=addMode===m.id;
+      return'<button class="add-mode-btn" data-mode="'+m.id+'" style="background:'+(sel?'var(--uc)':'#fff')+';border:2px solid '+(sel?'var(--uc)':'#e2e8f0')+';border-radius:14px;padding:12px 8px;cursor:pointer;font-family:inherit;text-align:center;touch-action:manipulation;transition:all .15s">'
+        +'<div style="font-size:22px;margin-bottom:5px">'+m.icon+'</div>'
+        +'<div style="font-size:12px;font-weight:900;color:'+(sel?'#fff':'#1e293b')+';line-height:1.2">'+m.title+'</div>'
+        +'</button>';
+    }).join('')
+    +'</div>';
 
-  return '<div class="fcard" style="padding-bottom:24px"><div style="font-size:18px;font-weight:900;margin-bottom:16px">'+t('addTitle')+'</div>'
+  // Mode description
+  var modeDesc='';
+  if(addMode==='imprevisto'){
+    modeDesc='<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#92400e;font-weight:700">'
+      +'🎲 '+(LANG==='en'?'How should this affect your budget?':'¿Cómo afecta a tu presupuesto?')
+      +'</div>';
+    sorpresaActivo=true;
+  } else if(addMode==='planeado'){
+    modeDesc='<div style="background:#f0f9ff;border:1.5px solid #7dd3fc;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#0c4a6e;font-weight:700">'
+      +'📅 '+(LANG==='en'?'This will be reserved from your weekly budget until it's due.':'Se reservará de tu presupuesto semanal hasta la fecha de pago.')
+      +'</div>';
+  } else {
+    sorpresaActivo=false;
+  }
+
+  // If planeado mode → show planned payment form from bFinanzas
+  if(addMode==='planeado'){
+    return '<div class="fcard" style="padding-bottom:24px">'
+      +'<div style="font-size:18px;font-weight:900;margin-bottom:4px">'+t('addTitle')+'</div>'
+      +'<div style="font-size:12px;color:#64748b;margin-bottom:16px">'+(LANG==='en'?'Choose what type of expense this is:'Enter what type of expense this is:')+'Elige qué tipo de gasto es:</div>'
+      +modeBar+modeDesc
+      +buildPlanForm()
+      +'</div>';
+  }
+
+  // Surprise / normal form
+  var splitRow=isShared?'<div id="split-row" class="splitrow '+(splitActivo?"on":"")+'" ><div><div style="font-size:14px;font-weight:700">'+t('addShared')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('addSharedSub')+'</div></div><div class="stgl '+(splitActivo?"on":"")+'"></div></div>':"";
+  var invRow=isShared?'<div id="inv-row" class="splitrow '+(esInvitacion?"on":"")+'">'
+    +'<div><div style="font-size:14px;font-weight:700">'+t('addRequest')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('addRequestSub')+'</div></div>'
+    +'<div class="stgl '+(esInvitacion?"on":"")+'"></div></div>':"";
+
+  var surpriseSection=addMode==='imprevisto'?
+    '<div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:12px;padding:12px 14px;margin-bottom:12px">'
+    +'<div style="font-size:13px;font-weight:900;margin-bottom:10px">'+t('surpriseHandleTitle')+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+    +'<button id="sorpresa-opt1" style="border:2px solid '+(sorpresaManejo==="semana"?"#f59e0b":"#e2e8f0")+';background:'+(sorpresaManejo==="semana"?"#fef3c7":"#fff")+';border-radius:12px;padding:10px;cursor:pointer;font-family:inherit;text-align:left;touch-action:manipulation">'
+    +'<div style="font-size:11px;font-weight:900;color:#92400e">'+t('surpriseOpt1')+'</div>'
+    +'<div style="font-size:10px;color:#64748b;margin-top:3px">'+t('surpriseOpt1Desc')+'</div></button>'
+    +'<button id="sorpresa-opt2" style="border:2px solid '+(sorpresaManejo==="mes"?"#f59e0b":"#e2e8f0")+';background:'+(sorpresaManejo==="mes"?"#fef3c7":"#fff")+';border-radius:12px;padding:10px;cursor:pointer;font-family:inherit;text-align:left;touch-action:manipulation">'
+    +'<div style="font-size:11px;font-weight:900;color:#92400e">'+t('surpriseOpt2')+'</div>'
+    +'<div style="font-size:10px;color:#64748b;margin-top:3px">'+t('surpriseOpt2Desc')+'</div></button>'
+    +'</div></div>'
+    :"";
+
+  var notaHtml=notaActiva?
+    '<textarea id="nota-ta" placeholder="'+t('addNotePlaceholder')+'" style="width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none;resize:none;height:64px;margin-top:4px">'+escapeHtml(notaTexto||"")+'</textarea>':"";
+
+  return '<div class="fcard" style="padding-bottom:24px"><div style="font-size:18px;font-weight:900;margin-bottom:4px">'+t('addTitle')+'</div>'
+    +'<div style="font-size:12px;color:#64748b;margin-bottom:16px">'+(LANG==='en'?'Choose what type of expense this is:':'Elige qué tipo de gasto es:')+'</div>'
+    +modeBar+modeDesc
     +(frec.length?'<div class="sst" style="margin-bottom:4px">'+t('addQuickSection')+'</div>'
     +'<div style="font-size:11px;color:#94a3b8;margin-bottom:6px">'+t('frecContextNote')+'</div>'+frecHtml:"")
     +'<div class="flbl" style="margin-top:12px">'+t('addMonto')+'</div>'
-    +'<input id="im" type="number" inputmode="decimal" placeholder="'+t('addMontoPlaceholder')+'" class="inpm"/>'
-    +'<div class="flbl" style="margin-top:12px">'+t('addDesc')+'</div>'
-    +'<input id="id2" type="text" placeholder="'+t('addDescPlaceholder')+'"/>'
-    +'<div class="flbl" style="margin-top:14px">'+t('addCat')+'</div>'
-    +catHtml
-    +'<button id="btn-newcat-inline" style="width:100%;margin-top:8px;padding:9px;background:#f8fafc;border:2px dashed #e2e8f0;border-radius:12px;color:#64748b;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">'+(newCatInlineOpen?'✕ '+t('addNewCatCancel'):'+ '+t('addNewCat'))+'</button>'
-    +newCatForm
-    +sorpresaHtml
-    +(isShared?'<div id="split-row" class="splitrow '+(splitActivo?"on":"")+'"><div><div style="font-size:14px;font-weight:700">'+t('addShared')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('addSharedSub')+'</div></div><div class="stgl '+(splitActivo?"on":"")+'"></div></div>':"")
-    +'<div id="nota-row" class="splitrow '+(notaActiva?"on":"")+'"><div><div style="font-size:14px;font-weight:700">'+t('addNote')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('addNoteSub')+'</div></div><div class="stgl '+(notaActiva?"on":"")+'"></div></div>'
-    +(notaActiva?'<textarea id="nota-inp" placeholder="'+t('addNotePlaceholder')+'"></textarea>':"")
-    +(isShared?'<div id="inv-row" class="splitrow '+(esInvitacion?"on":"")+'"><div><div style="font-size:14px;font-weight:700">'+t('addRequest')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('addRequestSub')+'</div></div><div class="stgl '+(esInvitacion?"on":"")+'"></div></div>':"")
+    +'<input id="im" type="number" inputmode="decimal" placeholder="'+t('addMontoPlaceholder')+'" style="font-size:28px;font-weight:900;border:none;border-bottom:2.5px solid var(--uc);border-radius:0;padding:8px 0;background:transparent;outline:none;width:100%;margin-bottom:12px"/>'
+    +'<div class="flbl">'+t('addDesc')+'</div>'
+    +'<input id="id2" type="text" placeholder="'+t('addDescPlaceholder')+'" autocomplete="off"/>'
+    +'<div class="flbl" style="margin-top:8px">'+t('addCat')+'</div>'
+    +catHtml+newCatForm
+    +'<button id="btn-new-cat-inline" style="background:none;border:1.5px dashed #cbd5e1;border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;font-family:inherit;margin-top:8px;width:100%">'+t('addNewCat')+'</button>'
+    +surpriseSection
+    +(splitRow||invRow?'<div style="margin-top:8px">'+splitRow+invRow+'</div>':"")
+    +'<div id="nota-row" class="splitrow '+(notaActiva?"on":"")+'">'
+    +'<div><div style="font-size:14px;font-weight:700">'+t('addNote')+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+t('addNoteSub')+'</div></div><div class="stgl '+(notaActiva?"on":"")+'"></div></div>'
+    +notaHtml
     +'<button class="ocrbtn '+(ocrLoading?"loading":"")+'" id="ocrbtn"><span>'+(ocrLoading?t('addOCRloading'):t('addOCR'))+'</span></button>'
     +'<button class="btng" id="bg" disabled>'+t('addBtn')+'</button>'
     +buildCatManagerSection()
     +buildQuickAccessManager()
     +'</div>';
 }
+
 
 function bHistorial(todos){
   var filtered=getFilteredTodos(todos);
@@ -3300,6 +3361,16 @@ function buildPlanForm(){
 }
 
 function bFinanzas(){
+  // Sub-navigation: Finanzas | Insights | Análisis
+  if(typeof window._finSubTab==='undefined')window._finSubTab='finanzas';
+  var finSubTab=window._finSubTab;
+  var subNavHtml='<div style="display:flex;gap:6px;margin-bottom:16px;background:#f1f5f9;border-radius:12px;padding:4px">'
+    +[{v:'finanzas',l:(LANG==='en'?'Finances':'Finanzas')},{v:'insights',l:'Insights'},{v:'analisis',l:(LANG==='en'?'Analysis':'Análisis')}].map(function(s){
+      var sel=finSubTab===s.v;
+      return'<button data-finsub="'+s.v+'" style="flex:1;padding:8px 4px;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;background:'+(sel?'#fff':'transparent')+';color:'+(sel?'var(--uc)':'#64748b')+';box-shadow:'+(sel?'0 1px 6px rgba(0,0,0,.08)':'none')+';transition:all .15s;touch-action:manipulation">'+s.l+'</button>';
+    }).join('')+'</div>';
+  if(finSubTab==='insights'){return'<div class="fcard">'+subNavHtml+bInsights(_rSem,_rTodos,_rPres,_rTot,_rDisp,_rRoll)+'</div>';}
+  if(finSubTab==='analisis'){return'<div class="fcard">'+subNavHtml+bAnalisis(_rTodos)+'</div>';}
   var f=ST.finanzas,res=ST.resumenesMensuales||{},frec=ST.frecuentes||[];
   var pagadoState=getPagadoState();
   var calc=calcPres();
@@ -3374,7 +3445,7 @@ function bFinanzas(){
     }).join(""):'<div style="color:#94a3b8;font-size:13px;padding:8px 0">'+t('finNoDebts')+'</div>')
     +'<button id="btn-add-deuda" style="width:100%;margin-top:10px;padding:11px;background:linear-gradient(135deg,#ede9fe,#ddd6fe);border:2px dashed #a78bfa;border-radius:12px;color:#5b21b6;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation">'+t('finAddDebt')+'</button>';
 
-  return'<div class="fincard"><div style="font-size:18px;font-weight:900;margin-bottom:16px">'+t('finTitle')+'</div>'
+  return'<div class="fincard">'+subNavHtml+'<div style="font-size:18px;font-weight:900;margin-bottom:16px">'+t('finTitle')+'</div>'
     +'<div class="ss"><div class="sst">'+t('finIncomeTitle')+'</div><div class="scard">'
     +'<div class="sr"><label class="flbl" style="margin:0">'+t('finIncomeLabel')+'</label><input id="inp-ingreso" type="number" inputmode="decimal" value="'+( f.ingresoMensual||"")+'" style="width:140px;padding:8px 10px;font-size:15px;font-weight:900;text-align:right"/></div>'
     +'<div style="margin-top:14px"><div style="font-size:13px;font-weight:800;margin-bottom:4px">'+t('finFixedTitle')+'</div><div style="font-size:12px;color:#64748b;margin-bottom:10px">'+t('finFixedDesc')+'</div>'+recHtml
@@ -3775,13 +3846,11 @@ function renderOnbStep(){
   } else if(ONB_STEP===5){
     // App tour
     var ONB_SECTIONS_ES=[
-      {icon:"📊",title:"Mi semana",desc:"Tu pantalla principal. Muestra cuánto llevas gastado, cuánto tienes disponible hoy y cómo vas a cerrar la semana — de un vistazo."},
-      {icon:"➕",title:"Agregar gasto",desc:"Registra cualquier gasto en segundos: categoría, monto y descripción. Cada gasto que agregas actualiza al instante tu disponible semanal y tu guía diaria."},
-      {icon:"💰",title:"Finanzas",desc:"Aquí defines tu ingreso y tus gastos fijos mensuales (renta, servicios, suscripciones). Saldo los resta primero para que tu presupuesto semanal sea dinero que realmente puedes usar."},
-      {icon:"📅",title:"Historial",desc:"Todos tus movimientos en un solo lugar. Busca por fecha, categoría o texto. Vista de lista o calendario."},
-      {icon:"✨",title:"Insights",desc:"Análisis automático: proyección de cierre del mes, patrones de gasto, puntaje financiero semanal y el simulador '¿qué pasaría si...?'"},
-      {icon:"📈",title:"Análisis",desc:"Vista mensual completa: flujo de dinero, desglose por categoría, tendencias y alertas inteligentes."},
-      {icon:"⚙️",title:"Ajustes",desc:"Configura tu meta de ahorro semanal (activa la racha), personaliza categorías y exporta tus datos."}
+      {icon:"📅",title:"Semana",desc:"Tu pantalla principal. Ves de un vistazo cuánto te queda esta semana, cuánto puedes gastar hoy y cómo vas a cerrar."},
+      {icon:"➕",title:"Agregar",desc:"Registra gastos en 3 tipos: normal, imprevisto o pago planeado. Cada uno afecta tu semana de forma distinta."},
+      {icon:"💰",title:"Finanzas",desc:"Define tu ingreso, gastos fijos y metas de ahorro. Saldo los descuenta automáticamente para calcular tu presupuesto real."},
+      {icon:"📅",title:"Historial",desc:"Todos tus movimientos en un solo lugar. Busca por fecha, categoría o texto."},
+      {icon:"⚙️",title:"Ajustes",desc:"Configura tu perfil, semana de inicio, moneda y exporta tus datos."}
     ];
     var ONB_SECTIONS_EN=[
       {icon:"📊",title:"My week",desc:"Your main screen. Shows how much you have left this week, your safe daily amount, and how you are tracking — all at a glance."},
