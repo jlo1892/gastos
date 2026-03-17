@@ -2140,7 +2140,13 @@ function cargarEspacio(sid,rol){
 // ── AUTH STATE ──
 // ── AUTH STATE ──
 // ── AUTH STATE ──
-var _authDone = false;
+// ── AUTH ──
+// Pattern: getRedirectResult() has priority.
+// If it finds a user (coming back from Google redirect) → route immediately.
+// onAuthStateChanged handles all other cases (page load with existing session,
+// sign-out, and manual popup login). Both paths are mutually exclusive via _routed flag.
+
+var _routed = false;
 
 function _routeUser(user) {
   if (!user) { showScreen("scr-login"); return; }
@@ -2150,8 +2156,9 @@ function _routeUser(user) {
     showSpin(false);
     if (snap.exists() && snap.val().espacioId) {
       var sid = snap.val().espacioId, savedRol = snap.val().rol || null;
-      if (savedRol) { cargarEspacio(sid, savedRol); }
-      else {
+      if (savedRol) {
+        cargarEspacio(sid, savedRol);
+      } else {
         db.ref("espacios/" + sid + "/miembros/" + user.uid).once("value", function(ms) {
           if (ms.exists() && ms.val()) {
             db.ref("usuarios/" + user.uid + "/rol").set(ms.val());
@@ -2167,36 +2174,41 @@ function _routeUser(user) {
     }
   }, function(dbErr) {
     showSpin(false);
-    var errEl = document.getElementById("login-error");
-    if (errEl) { errEl.textContent = "Error DB: " + dbErr.message; errEl.style.display = "block"; }
+    var el = document.getElementById("login-error");
+    if (el) { el.textContent = "Error de conexión: " + dbErr.message; el.style.display = "block"; }
     showScreen("scr-login");
   });
 }
 
-// ── REDIRECT RESULT (for popup-blocked fallback on mobile) ──
-var _authDone = false;
-auth.getRedirectResult().then(function(result){
-  // If redirect login completed, onAuthStateChanged will fire with the user
-  if(result&&result.user){showSpin(true);}
-}).catch(function(err){
-  if(err&&err.code&&err.code!=="auth/no-auth-event"&&err.code!=="auth/null-user"){
-    var el=document.getElementById("login-error");
-    if(el){el.textContent="Error al iniciar: "+err.message;el.style.display="block";el.scrollIntoView({behavior:"smooth",block:"center"});}
+// Step 1: Check if we just came back from a Google redirect
+auth.getRedirectResult().then(function(result) {
+  if (result && result.user) {
+    // ✅ Redirect just completed — user is authenticated.
+    // Route immediately WITHOUT waiting for onAuthStateChanged.
+    _routed = true;
+    _routeUser(result.user);
+  }
+  // If no redirect result, onAuthStateChanged below will handle it.
+}).catch(function(err) {
+  if (err && err.code && err.code !== "auth/no-auth-event" && err.code !== "auth/null-user") {
+    var el = document.getElementById("login-error");
+    if (el) { el.textContent = "Error Google: " + err.message; el.style.display = "block"; }
     showSpin(false);
   }
 });
 
-auth.onAuthStateChanged(function(user){
-  if(!_authDone){
-    _authDone=true;
-    _routeUser(user);
-  } else if(user&&!currentUser){
-    _routeUser(user);
-  } else if(!user&&currentUser){
-    currentUser=null;
-    showScreen("scr-login");
+// Step 2: Handle all other auth states (existing session, sign-out, popup login)
+auth.onAuthStateChanged(function(user) {
+  if (_routed) {
+    // Already handled by getRedirectResult — only react to sign-out
+    if (!user && currentUser) { currentUser = null; showScreen("scr-login"); }
+    return;
   }
+  // First fire: determines initial state (existing session or no session)
+  _routed = true;
+  _routeUser(user);
 });
+
 
 
 
