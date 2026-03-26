@@ -1851,9 +1851,10 @@ async function generarResumen(mStr){
 function calcPres(){
   var f=ST.finanzas;if(!f.ingresoMensual)return null;
   var pagadoState=getPagadoState();
+  // Helper to read adjusted per-month amount from localStorage
+  function getAdjMonto(r){try{var k="fijoAdj_"+(spaceId||"local")+"_"+mesKey()+"_"+btoa(encodeURIComponent(r.nombre)).slice(0,16);var v=localStorage.getItem(k);return v!==null?parseFloat(v):r.monto;}catch(e){return r.monto;}}
   var rec=(f.gastosRecurrentes||[]).reduce(function(s,r){
-    if(r.variable) return s+r.monto; // variable expenses always count as budgeted
-    return s+r.monto; // all fixed expenses count toward budget
+    return s+getAdjMonto(r);
   },0);
   var deudaRec=(ST.deudas||[]).filter(function(d){return d.tipo&&d.activa&&d.pagoMensual>0;}).reduce(function(s,d){return s+(d.pagoMensual||0);},0);
   rec+=deudaRec;
@@ -2229,9 +2230,9 @@ function bindAll(todos){
       inp.onchange=function(){
         var v=parseFloat(this.value);if(isNaN(v)||v<0)return;
         var nombre=this.dataset.nombre;
-        var idx=parseInt(this.dataset.i);
         try{localStorage.setItem("fijoAdj_"+(spaceId||"local")+"_"+mesKey()+"_"+btoa(encodeURIComponent(nombre)).slice(0,16),v);}catch(e){}
-        toast(t('toastAmtUpdatedMonth')+" "+getMeses()[new Date().getMonth()],"#0ea5e9");
+        toast(t('toastAmtUpdated'),"#0ea5e9");
+        renderApp();
       };
       inp.onclick=function(e){e.stopPropagation();};
     });
@@ -2713,7 +2714,7 @@ function bFinanzas(){
     +'<div class="sr"><label class="flbl" style="margin:0">'+t('finIncomeLabel')+'</label><input id="inp-ingreso" type="number" inputmode="decimal" value="'+(f.ingresoMensual||"")+'" style="width:140px;padding:8px 10px;font-size:15px;font-weight:900;text-align:right"/></div>'
     +'<div style="margin-top:14px"><div style="font-size:13px;font-weight:800;margin-bottom:4px">'+t('finFixedTitle')+'</div><div style="font-size:12px;color:#64748b;margin-bottom:10px">'+t('finFixedDesc')+'</div>'+recHtml
     +'<button id="btn-add-rec" style="width:100%;margin-top:10px;padding:11px;background:#f8fafc;border:2px dashed #e2e8f0;border-radius:12px;color:#64748b;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;touch-action:manipulation" onclick="addRec()">'+t('finAddFixed')+'</button></div>'
-    +(calc?'<div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:12px;padding:12px;margin-top:14px"><div style="font-size:12px;color:#1e40af;font-weight:800;margin-bottom:8px">'+t('finCalcDist')+'</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center"><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">'+t('finCalcAvail')+'</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+fmt(calc.disp)+'</div></div><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">'+t('finCalcPerWeek')+'</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+fmt(calc.porSem)+'</div></div><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">'+t('finCalcWeeks')+'</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+calc.sems+'</div></div></div>'+(calc.porSem!==ST.settings.presupuesto?'<button id="btn-apply-pres" data-v="'+calc.porSem+'" class="bprimary" style="background:#1d4ed8;margin-top:8px">'+t('finApplyBudget')+' '+fmt(calc.porSem)+'</button>':'')+'</div>':"")
+    +(calc?'<div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border-radius:12px;padding:12px;margin-top:14px"><div style="font-size:12px;color:#1e40af;font-weight:800;margin-bottom:4px">'+t('finCalcDist')+'</div>'+(calc.periodoCustom?'<div style="font-size:10px;color:#64748b;margin-bottom:8px">📅 '+calc.periodoInicio+' → '+calc.periodoFin+' ('+calc.diasPeriodo+' días)</div>':'<div style="font-size:10px;color:#64748b;margin-bottom:8px">'+getMeses()[new Date().getMonth()]+' '+new Date().getFullYear()+'</div>')+'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center"><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">'+t('finCalcAvail')+'</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+fmt(calc.disp)+'</div></div><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">'+t('finCalcPerWeek')+'</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+fmt(calc.porSem)+'</div></div><div><div style="font-size:10px;color:#64748b;font-weight:700;text-transform:uppercase">'+t('finCalcWeeks')+'</div><div style="font-size:16px;font-weight:900;color:#1d4ed8">'+calc.sems+'</div></div></div>'+(calc.porSem!==ST.settings.presupuesto?'<button id="btn-apply-pres" data-v="'+calc.porSem+'" class="bprimary" style="background:#1d4ed8;margin-top:8px">'+t('finApplyBudget')+' '+fmt(calc.porSem)+'</button>':'')+'</div>':"")
     +'<button id="btn-save-fin" class="bprimary" style="background:#0ea5e9;margin-top:12px">💾 '+t('finSave')+'</button></div></div>'
     +'<div class="ss"><div class="sst">'+t('finSectionPeriod')+'</div><div class="scard"><div style="font-size:13px;color:#64748b;margin-bottom:10px">'+t('finPeriodDesc')+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px"><div><label class="flbl">'+t('finPeriodStart')+'</label><input type="date" id="inp-periodo-ini" value="'+(ST.settings.periodoInicio||"")+'" style="font-size:14px;padding:10px"/></div><div><label class="flbl">'+t('finPeriodEnd')+'</label><input type="date" id="inp-periodo-fin" value="'+(ST.settings.periodoFin||"")+'" style="font-size:14px;padding:10px"/></div></div><button id="btn-save-periodo2" class="bprimary" style="background:#0ea5e9">'+t('finPeriodSave')+'</button>'+(ST.settings.periodoInicio?'<button id="btn-clear-periodo" class="btnsec" style="margin-top:6px">'+t('finPeriodClear')+'</button>':'')+'</div></div>'
     +'<div class="ss"><div class="sst">'+t('finSectionDebts')+'</div><div class="scard">'+deudaHtml+'</div></div>'
