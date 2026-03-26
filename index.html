@@ -1616,6 +1616,7 @@ function getTotalAbonado(nombre){return getAbonosFor(nombre).reduce(function(sum
 function addAbono(nombre){var mStr=prompt(t('finVarAbonoAmt'));if(!mStr)return;var m=parseFloat(mStr);if(isNaN(m)||m<=0)return;var nota=prompt(t('finVarAbonoNote'))||"";var s=getAbonosState();if(!s[nombre])s[nombre]=[];s[nombre].push({monto:m,nota:nota,fecha:new Date().toISOString()});saveAbonosState(s);toast(t('toastAbonoAdded'),"#10b981");renderApp();}
 function delAbono(nombre,idx){if(!confirm(t('confirmDelete')))return;var s=getAbonosState();if(s[nombre]){s[nombre].splice(idx,1);saveAbonosState(s);toast(t('toastAbonoDeleted'),"#64748b");renderApp();}}
 function toggleAbonosExpanded(nombre){abonosExpanded[nombre]=!abonosExpanded[nombre];renderApp();}
+function toggleVariable(i){var recs=ST.finanzas.gastosRecurrentes;if(!recs||!recs[i])return;recs[i].variable=!recs[i].variable;saveDB();toast(recs[i].variable?'📊 Variable':'📌 Exacto',"#6d28d9");renderApp();}
 function getEmojiRecientes(){try{return JSON.parse(localStorage.getItem("emojiRecientes")||"[]");}catch(e){return[];}}
 function saveEmojiReciente(e){var r=getEmojiRecientes();r=([e].concat(r.filter(function(x){return x!==e;}))).slice(0,16);localStorage.setItem("emojiRecientes",JSON.stringify(r));}
 
@@ -2239,6 +2240,7 @@ function bindAll(todos){
     qa(".btn-add-abono",function(b){b.onclick=function(){addAbono(b.dataset.nombre);};});
     qa(".btn-toggle-abonos",function(b){b.onclick=function(){toggleAbonosExpanded(b.dataset.nombre);};});
     qa(".btn-del-abono",function(b){b.onclick=function(){delAbono(b.dataset.nombre,parseInt(b.dataset.ai));};});
+    qa(".btn-toggle-var",function(b){b.onclick=function(){toggleVariable(parseInt(b.dataset.i));};});
     var baf=g("btn-add-frec");if(baf)baf.onclick=addFrecuente;
     qa(".btn-del-frec",function(b){b.onclick=function(){delFrecuente(parseInt(b.dataset.i));};});
     var bad=g("btn-add-deuda");if(bad)bad.onclick=addDeudaFin;
@@ -2672,6 +2674,7 @@ function bFinanzas(){
           var fd=new Date(a.fecha);var fStr=fd.getDate()+'/'+(fd.getMonth()+1);
           return'<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f8fafc"><div><span style="font-size:12px;font-weight:800;color:#374151">'+fmt(a.monto)+'</span><span style="font-size:11px;color:#94a3b8;margin-left:6px">'+fStr+(a.nota?' · '+escapeHtml(a.nota):'')+'</span></div><button class="btn-del-abono" data-nombre="'+escapeHtml(r.nombre)+'" data-ai="'+ai+'" style="background:none;border:none;cursor:pointer;font-size:12px;color:#94a3b8;padding:2px 4px;touch-action:manipulation">✕</button></div>';
         }).join('')+'</div>':'')
+        +'<button class="btn-toggle-var" data-i="'+i+'" style="background:none;border:none;color:#94a3b8;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 0;width:100%;text-align:center;touch-action:manipulation;margin-top:4px">📌 Cambiar a exacto</button>'
         +'</div>';
     }
     // ── FIXED EXACT EXPENSE: original behavior ──
@@ -2682,6 +2685,7 @@ function bFinanzas(){
     +'<span style="font-size:11px;color:#94a3b8">$</span><input type="number" class="fijo-adj-inp" data-i="'+i+'" data-nombre="'+escapeHtml(r.nombre)+'" value="'+montoMes+'" min="0" style="width:64px;border:none;background:transparent;font-size:13px;font-weight:800;outline:none;font-family:inherit;text-align:right;color:#374151"/>'
     +'</div>'
     +'<button class="btn-pagado" data-nombre="'+escapeHtml(r.nombre)+'" style="background:'+(pg?"#10b981":"none")+';color:'+(pg?"#fff":"#64748b")+';border:2px solid '+(pg?"#10b981":"#e2e8f0")+';border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;touch-action:manipulation;font-size:11px;font-weight:800">'+(pg?t('finPaid'):t('finPay'))+'</button>'
+    +'<button class="btn-toggle-var" data-i="'+i+'" style="background:#ede9fe;border:none;border-radius:8px;padding:5px 6px;cursor:pointer;font-size:10px;font-weight:800;color:#6d28d9;font-family:inherit;touch-action:manipulation" title="Cambiar a variable">📊</button>'
     +'<button class="btn-del-rec" data-i="'+i+'" style="background:#fee2e2;border:none;border-radius:8px;padding:5px 6px;cursor:pointer;font-size:13px" title="'+t('confirmDelFixed').replace('?','')+'">🗑️</button>'
     +'</div></div>';
   }).join(""):'<div style="color:#94a3b8;font-size:13px;padding:8px 0;text-align:center">'+t('finFixedNone')+'</div>';
